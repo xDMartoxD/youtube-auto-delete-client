@@ -1,0 +1,23 @@
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Prevent calendar overflow */
+.w-full.overflow-x-hidden {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.w-full.overflow-x-hidden > div {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.w-full.overflow-x-hidden [data-slot='calendar'] {
+  max-width: 100% !important;
+  width: 100% !important;
+}

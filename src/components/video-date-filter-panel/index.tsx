@@ -9,9 +9,11 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Calendar, Filter, CheckSquare } from 'lucide-react';
-import { usePlaylistVideos, useVideoSelection } from '@/hooks';
+import { usePlaylistVideos } from '@/hooks';
 import useYoutube from '@/stores/youtube';
 import { cn } from '@/lib/utils';
+import './index.css';
+import { RangeCalendar } from '../range-calendar';
 
 interface DateRange {
   start: Date | null;
@@ -25,23 +27,18 @@ export function VideoDateFilterPanel() {
     end: null,
   });
   const { videosItems } = usePlaylistVideos();
-  const { selectAllVideos, clearSelectedVideos } = useVideoSelection();
-  const {
-    selectedVideos,
-    toggleVideoSelection,
-    selectVideosByDateRange,
-  } = useYoutube();
+  const { selectedVideos, selectVideosByDateRange } = useYoutube();
 
   // Group videos by date (year-month)
   const videosByDate = useMemo(() => {
     const grouped: Record<string, typeof videosItems> = {};
-    
+
     videosItems.forEach((video) => {
       if (!video.snippet?.publishedAt) return;
-      
+
       const date = new Date(video.snippet.publishedAt);
       const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      
+
       if (!grouped[key]) {
         grouped[key] = [];
       }
@@ -108,8 +105,11 @@ export function VideoDateFilterPanel() {
     const start = new Date(year, month - 1, 1);
     const end = new Date(year, month, 0, 23, 59, 59, 999);
     const videosInRange = getVideosInRange(start, end);
-    return videosInRange.length > 0 && videosInRange.every((video) =>
-      selectedVideos.some((v) => v.id === video.id)
+    return (
+      videosInRange.length > 0 &&
+      videosInRange.every((video) =>
+        selectedVideos.some((v) => v.id === video.id)
+      )
     );
   };
 
@@ -129,7 +129,7 @@ export function VideoDateFilterPanel() {
           <span className="sm:hidden">Filtros</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
@@ -179,47 +179,23 @@ export function VideoDateFilterPanel() {
           {/* Custom Date Range */}
           <div className="space-y-2">
             <h3 className="text-sm font-semibold">Rango Personalizado</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-xs text-muted-foreground">
-                  Fecha Inicio
-                </label>
-                <input
-                  type="date"
-                  value={
-                    dateRange.start
-                      ? dateRange.start.toISOString().split('T')[0]
-                      : ''
-                  }
-                  onChange={(e) =>
-                    setDateRange({
-                      ...dateRange,
-                      start: e.target.value ? new Date(e.target.value) : null,
-                    })
-                  }
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs text-muted-foreground">
-                  Fecha Fin
-                </label>
-                <input
-                  type="date"
-                  value={
-                    dateRange.end
-                      ? dateRange.end.toISOString().split('T')[0]
-                      : ''
-                  }
-                  onChange={(e) =>
-                    setDateRange({
-                      ...dateRange,
-                      end: e.target.value ? new Date(e.target.value) : null,
-                    })
-                  }
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                />
-              </div>
+            <div className="w-full max-w-full overflow-x-hidden">
+              <RangeCalendar
+                dateRange={
+                  dateRange.start || dateRange.end
+                    ? {
+                        from: dateRange.start || undefined,
+                        to: dateRange.end || undefined,
+                      }
+                    : undefined
+                }
+                onDateRangeChange={(range) => {
+                  setDateRange({
+                    start: range?.from || null,
+                    end: range?.to || null,
+                  });
+                }}
+              />
             </div>
             <Button
               variant="default"
@@ -280,27 +256,8 @@ export function VideoDateFilterPanel() {
           </div>
 
           {/* Actions */}
-          <div className="flex gap-2 pt-4 border-t">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={selectAllVideos}
-              className="flex-1"
-            >
-              Seleccionar todo
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={clearSelectedVideos}
-              className="flex-1"
-            >
-              Deseleccionar todo
-            </Button>
-          </div>
         </div>
       </DialogContent>
     </Dialog>
   );
 }
-
