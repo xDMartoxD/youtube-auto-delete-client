@@ -22,6 +22,26 @@ export type AuthSuccessResponse = {
 };
 
 /**
+ * ContentDetails
+ *
+ * Detalles del contenido del video.
+ */
+export type ContentDetails = {
+    /**
+     * Videoid
+     *
+     * ID del video
+     */
+    videoId: string;
+    /**
+     * Videopublishedat
+     *
+     * Fecha de publicación del video original
+     */
+    videoPublishedAt?: string | null;
+};
+
+/**
  * GoogleCodeLogin
  */
 export type GoogleCodeLogin = {
@@ -79,6 +99,208 @@ export type PlaylistItem = {
 };
 
 /**
+ * PlaylistItemSnippet
+ *
+ * Snippet completo de un item en una playlist.
+ */
+export type PlaylistItemSnippetInput = {
+    /**
+     * Publishedat
+     *
+     * Fecha de publicación del item en la playlist
+     */
+    publishedAt: string;
+    /**
+     * Channelid
+     *
+     * ID del canal que agregó el video a la playlist
+     */
+    channelId: string;
+    /**
+     * Title
+     *
+     * Título del video
+     */
+    title: string;
+    /**
+     * Description
+     *
+     * Descripción del video
+     */
+    description?: string;
+    thumbnails?: Thumbnails | null;
+    /**
+     * Channeltitle
+     *
+     * Nombre del canal que agregó el video
+     */
+    channelTitle: string;
+    /**
+     * Playlistid
+     *
+     * ID de la playlist
+     */
+    playlistId: string;
+    /**
+     * Position
+     *
+     * Posición del video en la playlist
+     */
+    position: number;
+    /**
+     * ID del recurso (video)
+     */
+    resourceId: ResourceId;
+    /**
+     * Videoownerchanneltitle
+     *
+     * Título del canal que subió el video
+     */
+    videoOwnerChannelTitle?: string | null;
+    /**
+     * Videoownerchannelid
+     *
+     * ID del canal que subió el video
+     */
+    videoOwnerChannelId?: string | null;
+};
+
+/**
+ * PlaylistItemSnippet
+ *
+ * Snippet completo de un item en una playlist.
+ */
+export type PlaylistItemSnippetOutput = {
+    /**
+     * Publishedat
+     *
+     * Fecha de publicación del item en la playlist
+     */
+    publishedAt: string;
+    /**
+     * Channelid
+     *
+     * ID del canal que agregó el video a la playlist
+     */
+    channelId: string;
+    /**
+     * Title
+     *
+     * Título del video
+     */
+    title: string;
+    /**
+     * Description
+     *
+     * Descripción del video
+     */
+    description?: string;
+    thumbnails?: Thumbnails | null;
+    /**
+     * Channeltitle
+     *
+     * Nombre del canal que agregó el video
+     */
+    channelTitle: string;
+    /**
+     * Playlistid
+     *
+     * ID de la playlist
+     */
+    playlistId: string;
+    /**
+     * Position
+     *
+     * Posición del video en la playlist
+     */
+    position: number;
+    /**
+     * ID del recurso (video)
+     */
+    resourceId: ResourceId;
+    /**
+     * Videoownerchanneltitle
+     *
+     * Título del canal que subió el video
+     */
+    videoOwnerChannelTitle?: string | null;
+    /**
+     * Videoownerchannelid
+     *
+     * ID del canal que subió el video
+     */
+    videoOwnerChannelId?: string | null;
+};
+
+/**
+ * PlaylistItemVideo
+ *
+ * Item completo de un video en una playlist.
+ */
+export type PlaylistItemVideoInput = {
+    /**
+     * Kind
+     *
+     * Tipo de recurso
+     */
+    kind?: string;
+    /**
+     * Etag
+     *
+     * ETag del recurso
+     */
+    etag: string;
+    /**
+     * Id
+     *
+     * ID único del item en la playlist
+     */
+    id: string;
+    /**
+     * Información del snippet del video
+     */
+    snippet: PlaylistItemSnippetInput;
+    /**
+     * Detalles del contenido
+     */
+    contentDetails: ContentDetails;
+};
+
+/**
+ * PlaylistItemVideo
+ *
+ * Item completo de un video en una playlist.
+ */
+export type PlaylistItemVideoOutput = {
+    /**
+     * Kind
+     *
+     * Tipo de recurso
+     */
+    kind?: string;
+    /**
+     * Etag
+     *
+     * ETag del recurso
+     */
+    etag: string;
+    /**
+     * Id
+     *
+     * ID único del item en la playlist
+     */
+    id: string;
+    /**
+     * Información del snippet del video
+     */
+    snippet: PlaylistItemSnippetOutput;
+    /**
+     * Detalles del contenido
+     */
+    contentDetails: ContentDetails;
+};
+
+/**
  * PlaylistSnippet
  */
 export type PlaylistSnippet = {
@@ -113,33 +335,90 @@ export type PlaylistSnippet = {
 /**
  * PlaylistVideoResponse
  *
- * Respuesta paginada de videos de playlist.
+ * Respuesta paginada de videos de playlist con schemas completos.
  */
 export type PlaylistVideoResponse = {
     /**
      * Items
+     *
+     * Lista de items de la playlist
      */
-    items: Array<{
-        [key: string]: unknown;
-    }>;
+    items: Array<PlaylistItemVideoOutput>;
     /**
      * Total Results
+     *
+     * Total de resultados
      */
     total_results: number;
     /**
      * Next Page Token
+     *
+     * Token de la siguiente página
      */
     next_page_token?: string | null;
     /**
      * Prev Page Token
+     *
+     * Token de la página anterior
      */
     prev_page_token?: string | null;
     /**
-     * Page Info
+     * Información de la página
      */
-    page_info: {
-        [key: string]: unknown;
-    };
+    page_info: PageInfo;
+};
+
+/**
+ * ResourceId
+ *
+ * Resource ID que identifica el video.
+ */
+export type ResourceId = {
+    /**
+     * Kind
+     *
+     * Tipo de recurso, generalmente 'youtube#video'
+     */
+    kind: string;
+    /**
+     * Videoid
+     *
+     * ID del video de YouTube
+     */
+    videoId: string;
+};
+
+/**
+ * Thumbnail
+ *
+ * Thumbnail individual con tamaño específico.
+ */
+export type Thumbnail = {
+    /**
+     * Url
+     */
+    url: string;
+    /**
+     * Width
+     */
+    width: number;
+    /**
+     * Height
+     */
+    height: number;
+};
+
+/**
+ * Thumbnails
+ *
+ * Todos los thumbnails disponibles para un video.
+ */
+export type Thumbnails = {
+    default?: Thumbnail | null;
+    medium?: Thumbnail | null;
+    high?: Thumbnail | null;
+    standard?: Thumbnail | null;
+    maxres?: Thumbnail | null;
 };
 
 /**
@@ -190,19 +469,30 @@ export type ValidationError = {
 export type YoutubePlaylistListResponse = {
     /**
      * Kind
+     *
+     * Tipo de respuesta
      */
-    kind: string;
+    kind?: string;
     /**
      * Etag
+     *
+     * Etag de la respuesta
      */
     etag: string;
     /**
      * Nextpagetoken
+     *
+     * Token de la siguiente página
      */
     nextPageToken?: string | null;
+    /**
+     * Información de la página
+     */
     pageInfo: PageInfo;
     /**
      * Items
+     *
+     * Lista de items de la playlist
      */
     items: Array<PlaylistItem>;
 };
@@ -362,9 +652,14 @@ export type GetUserPlaylistsApiYoutubePlaylistsGetResponses = {
 
 export type GetUserPlaylistsApiYoutubePlaylistsGetResponse = GetUserPlaylistsApiYoutubePlaylistsGetResponses[keyof GetUserPlaylistsApiYoutubePlaylistsGetResponses];
 
-export type GetWatchLaterPlaylistApiYoutubeWatchLaterGetData = {
+export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData = {
     body?: never;
-    path?: never;
+    path: {
+        /**
+         * Playlist Id
+         */
+        playlist_id: string;
+    };
     query?: {
         /**
          * Max Results
@@ -379,111 +674,23 @@ export type GetWatchLaterPlaylistApiYoutubeWatchLaterGetData = {
          */
         page_token?: string | null;
     };
-    url: '/api/youtube/watch-later';
+    url: '/api/youtube/playlists/{playlist_id}/videos';
 };
 
-export type GetWatchLaterPlaylistApiYoutubeWatchLaterGetErrors = {
+export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetWatchLaterPlaylistApiYoutubeWatchLaterGetError = GetWatchLaterPlaylistApiYoutubeWatchLaterGetErrors[keyof GetWatchLaterPlaylistApiYoutubeWatchLaterGetErrors];
+export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError = GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors[keyof GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors];
 
-export type GetWatchLaterPlaylistApiYoutubeWatchLaterGetResponses = {
+export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses = {
     /**
      * Successful Response
      */
     200: PlaylistVideoResponse;
 };
 
-export type GetWatchLaterPlaylistApiYoutubeWatchLaterGetResponse = GetWatchLaterPlaylistApiYoutubeWatchLaterGetResponses[keyof GetWatchLaterPlaylistApiYoutubeWatchLaterGetResponses];
-
-export type GetWatchLaterInfoApiYoutubeWatchLaterInfoGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/youtube/watch-later/info';
-};
-
-export type GetWatchLaterInfoApiYoutubeWatchLaterInfoGetResponses = {
-    /**
-     * Response Get Watch Later Info Api Youtube Watch Later Info Get
-     *
-     * Successful Response
-     */
-    200: {
-        [key: string]: unknown;
-    };
-};
-
-export type GetWatchLaterInfoApiYoutubeWatchLaterInfoGetResponse = GetWatchLaterInfoApiYoutubeWatchLaterInfoGetResponses[keyof GetWatchLaterInfoApiYoutubeWatchLaterInfoGetResponses];
-
-export type AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostData = {
-    body?: never;
-    path: {
-        /**
-         * Video Id
-         */
-        video_id: string;
-    };
-    query?: never;
-    url: '/api/youtube/watch-later/add/{video_id}';
-};
-
-export type AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostError = AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostErrors[keyof AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostErrors];
-
-export type AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostResponses = {
-    /**
-     * Response Add To Watch Later Api Youtube Watch Later Add  Video Id  Post
-     *
-     * Successful Response
-     */
-    201: {
-        [key: string]: unknown;
-    };
-};
-
-export type AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostResponse = AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostResponses[keyof AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostResponses];
-
-export type RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteData = {
-    body?: never;
-    path: {
-        /**
-         * Playlist Item Id
-         */
-        playlist_item_id: string;
-    };
-    query?: never;
-    url: '/api/youtube/watch-later/remove/{playlist_item_id}';
-};
-
-export type RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteError = RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteErrors[keyof RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteErrors];
-
-export type RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteResponses = {
-    /**
-     * Response Remove From Watch Later Api Youtube Watch Later Remove  Playlist Item Id  Delete
-     *
-     * Successful Response
-     */
-    200: {
-        [key: string]: unknown;
-    };
-};
-
-export type RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteResponse = RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteResponses[keyof RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteResponses];
+export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponse = GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses[keyof GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses];

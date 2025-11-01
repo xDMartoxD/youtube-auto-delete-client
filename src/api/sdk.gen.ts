@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostData, AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostErrors, AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostResponses, CodeLoginApiAuthExchangePostData, CodeLoginApiAuthExchangePostErrors, CodeLoginApiAuthExchangePostResponses, DetailedHealthCheckApiHealthHealthDetailedGetData, DetailedHealthCheckApiHealthHealthDetailedGetResponses, GetMetricsApiHealthMetricsGetData, GetMetricsApiHealthMetricsGetResponses, GetUserPlaylistsApiYoutubePlaylistsGetData, GetUserPlaylistsApiYoutubePlaylistsGetErrors, GetUserPlaylistsApiYoutubePlaylistsGetResponses, GetUserProfileApiAuthMeGetData, GetUserProfileApiAuthMeGetResponses, GetWatchLaterInfoApiYoutubeWatchLaterInfoGetData, GetWatchLaterInfoApiYoutubeWatchLaterInfoGetResponses, GetWatchLaterPlaylistApiYoutubeWatchLaterGetData, GetWatchLaterPlaylistApiYoutubeWatchLaterGetErrors, GetWatchLaterPlaylistApiYoutubeWatchLaterGetResponses, HealthCheckApiHealthHealthGetData, HealthCheckApiHealthHealthGetResponses, LogoutApiAuthLogoutPostData, LogoutApiAuthLogoutPostResponses, ReadinessCheckApiHealthReadyGetData, ReadinessCheckApiHealthReadyGetResponses, RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteData, RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteErrors, RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteResponses } from './types.gen';
+import type { CodeLoginApiAuthExchangePostData, CodeLoginApiAuthExchangePostErrors, CodeLoginApiAuthExchangePostResponses, DetailedHealthCheckApiHealthHealthDetailedGetData, DetailedHealthCheckApiHealthHealthDetailedGetResponses, GetMetricsApiHealthMetricsGetData, GetMetricsApiHealthMetricsGetResponses, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses, GetUserPlaylistsApiYoutubePlaylistsGetData, GetUserPlaylistsApiYoutubePlaylistsGetErrors, GetUserPlaylistsApiYoutubePlaylistsGetResponses, GetUserProfileApiAuthMeGetData, GetUserProfileApiAuthMeGetResponses, HealthCheckApiHealthHealthGetData, HealthCheckApiHealthHealthGetResponses, LogoutApiAuthLogoutPostData, LogoutApiAuthLogoutPostResponses, ReadinessCheckApiHealthReadyGetData, ReadinessCheckApiHealthReadyGetResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -144,80 +144,19 @@ export const getUserPlaylistsApiYoutubePlaylistsGet = <ThrowOnError extends bool
 };
 
 /**
- * Get Watch Later Playlist
+ * Get Playlist Videos
  *
- * Get user's Watch Later playlist with pagination.
- *
- * - **max_results**: Número máximo de resultados por página (1-50)
- * - **page_token**: Token de página para navegación
+ * Get videos from a YouTube playlist with pagination.
  */
-export const getWatchLaterPlaylistApiYoutubeWatchLaterGet = <ThrowOnError extends boolean = false>(options?: Options<GetWatchLaterPlaylistApiYoutubeWatchLaterGetData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetWatchLaterPlaylistApiYoutubeWatchLaterGetResponses, GetWatchLaterPlaylistApiYoutubeWatchLaterGetErrors, ThrowOnError>({
+export const getPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGet = <ThrowOnError extends boolean = false>(options: Options<GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/youtube/watch-later',
-        ...options
-    });
-};
-
-/**
- * Get Watch Later Info
- *
- * Get information about the user's Watch Later playlist.
- */
-export const getWatchLaterInfoApiYoutubeWatchLaterInfoGet = <ThrowOnError extends boolean = false>(options?: Options<GetWatchLaterInfoApiYoutubeWatchLaterInfoGetData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetWatchLaterInfoApiYoutubeWatchLaterInfoGetResponses, unknown, ThrowOnError>({
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/youtube/watch-later/info',
-        ...options
-    });
-};
-
-/**
- * Add To Watch Later
- *
- * Add a video to the user's Watch Later playlist.
- *
- * - **video_id**: ID del video de YouTube a agregar
- */
-export const addToWatchLaterApiYoutubeWatchLaterAddVideoIdPost = <ThrowOnError extends boolean = false>(options: Options<AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostData, ThrowOnError>) => {
-    return (options.client ?? client).post<AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostResponses, AddToWatchLaterApiYoutubeWatchLaterAddVideoIdPostErrors, ThrowOnError>({
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/youtube/watch-later/add/{video_id}',
-        ...options
-    });
-};
-
-/**
- * Remove From Watch Later
- *
- * Remove a video from the user's Watch Later playlist.
- *
- * - **playlist_item_id**: ID del item en la playlist (no el video_id)
- */
-export const removeFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDelete = <ThrowOnError extends boolean = false>(options: Options<RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteData, ThrowOnError>) => {
-    return (options.client ?? client).delete<RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteResponses, RemoveFromWatchLaterApiYoutubeWatchLaterRemovePlaylistItemIdDeleteErrors, ThrowOnError>({
-        security: [
-            {
-                scheme: 'bearer',
-                type: 'http'
-            }
-        ],
-        url: '/api/youtube/watch-later/remove/{playlist_item_id}',
+        url: '/api/youtube/playlists/{playlist_id}/videos',
         ...options
     });
 };

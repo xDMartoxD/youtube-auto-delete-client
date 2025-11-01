@@ -1,6 +1,6 @@
 import './App.css';
 import { ThemeProvider } from './components/theme-provider';
-
+import { ErrorBoundary } from './components/ErrorBoundary';
 import LandingPage from './pages/landing/index';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import NotFoundPage from './pages/not-found';
@@ -9,7 +9,6 @@ import useAuth from './stores/auth';
 
 const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
-
   { path: '*', element: <NotFoundPage /> },
 ]);
 
@@ -19,9 +18,11 @@ function App() {
     me();
   }, []);
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 
