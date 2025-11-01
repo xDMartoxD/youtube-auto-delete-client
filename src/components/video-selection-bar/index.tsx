@@ -48,7 +48,7 @@ export function VideoSelectionBar({
         'bg-card border border-border rounded-lg shadow-2xl',
         'px-6 py-4 min-w-[300px]',
         'animate-in slide-in-from-bottom-4 duration-300',
-        'backdrop-blur-sm bg-card/95'
+        'backdrop-blur-sm bg-card/25'
       )}
     >
       <div className="flex items-center justify-between gap-4">
@@ -116,4 +116,3 @@ export function VideoSelectionBar({
     </div>
   );
 }
-

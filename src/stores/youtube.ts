@@ -21,6 +21,7 @@ interface YoutubeState {
   toggleVideoSelection: (video: PlaylistItemVideoOutput) => void;
   clearSelectedVideos: () => void;
   selectAllVideos: () => void;
+  selectVideosByDateRange: (start: Date | null, end: Date | null) => void;
   // State
   playlists: YoutubePlaylistListResponse | null;
   videos: PlaylistVideoResponse | null;
@@ -71,6 +72,46 @@ const useYoutube = create<YoutubeState>((set) => ({
         selectedVideos: [...state.videos.items],
       };
     }),
+
+  selectVideosByDateRange: (start: Date | null, end: Date | null) => {
+    set((state) => {
+      if (!state.videos?.items) return state;
+
+      const videosInRange = state.videos.items.filter((video) => {
+        if (!video.snippet?.publishedAt) return false;
+        const videoDate = new Date(video.snippet.publishedAt);
+        videoDate.setHours(0, 0, 0, 0);
+
+        if (start && end) {
+          const startDate = new Date(start);
+          startDate.setHours(0, 0, 0, 0);
+          const endDate = new Date(end);
+          endDate.setHours(23, 59, 59, 999);
+          return videoDate >= startDate && videoDate <= endDate;
+        }
+        if (start) {
+          const startDate = new Date(start);
+          startDate.setHours(0, 0, 0, 0);
+          return videoDate >= startDate;
+        }
+        if (end) {
+          const endDate = new Date(end);
+          endDate.setHours(23, 59, 59, 999);
+          return videoDate <= endDate;
+        }
+        return false;
+      });
+
+      const newSelected = [...state.selectedVideos];
+      videosInRange.forEach((video) => {
+        if (!newSelected.some((v) => v.id === video.id)) {
+          newSelected.push(video);
+        }
+      });
+
+      return { selectedVideos: newSelected };
+    });
+  },
 
   getUserPlaylists: async () => {
     set({ isLoadingPlaylists: true, playlistsError: null });

@@ -30,7 +30,7 @@ export function useCarouselInfiniteScroll({
 
   const triggerLoad = useCallback(() => {
     const now = Date.now();
-    
+
     if (
       now - lastLoadTimeRef.current > debounceMs &&
       !isLoadingRef.current &&
@@ -56,12 +56,19 @@ export function useCarouselInfiniteScroll({
     let observer: IntersectionObserver | null = null;
     let handleScroll: (() => void) | null = null;
     let handleSelect: (() => void) | null = null;
+    let scrollDebounceTimeout: ReturnType<typeof setTimeout> | null = null;
+    let lastScrollPosition = 0;
 
     // Use a small delay to ensure DOM is updated
     const timeoutId = setTimeout(() => {
       const lastItem = lastItemRef.current;
       if (!lastItem || !hasNextPage || isLoading) {
         return;
+      }
+
+      // Initialize scroll position
+      if (api) {
+        lastScrollPosition = api.scrollProgress();
       }
 
       // Intersection Observer for detecting when last item is visible
@@ -74,30 +81,52 @@ export function useCarouselInfiniteScroll({
         },
         {
           root: null, // Use viewport
-          rootMargin: '400px 0px', // Start loading when 400px before last item
-          threshold: 0.01,
+          rootMargin: '200px 0px', // Start loading when 200px before last item (reduced to avoid false positives)
+          threshold: 0.1, // Increase threshold to avoid triggering on small movements
         }
       );
 
       observer.observe(lastItem);
 
-      // Also use Embla events as backup
+      // Also use Embla events as backup - only trigger on actual scroll
       handleScroll = () => {
         if (!api || isLoading || !hasNextPage) return;
 
-        const cannotScrollNext = !api.canScrollNext();
-        const currentIndex = api.selectedScrollSnap();
-        const totalSlides = api.slideNodes().length;
-        const isNearEnd = currentIndex >= totalSlides - 3; // Within last 3 items
+        const currentScrollPosition = api.scrollProgress();
+        const scrollDelta = Math.abs(
+          currentScrollPosition - lastScrollPosition
+        );
 
-        if (cannotScrollNext || isNearEnd) {
-          triggerLoad();
+        // Only trigger if there was actual scroll movement (more than 0.01)
+        if (scrollDelta < 0.01) {
+          lastScrollPosition = currentScrollPosition;
+          return;
         }
+
+        lastScrollPosition = currentScrollPosition;
+
+        // Clear any pending scroll debounce
+        if (scrollDebounceTimeout) {
+          clearTimeout(scrollDebounceTimeout);
+        }
+
+        // Debounce scroll events to avoid multiple triggers
+        scrollDebounceTimeout = setTimeout(() => {
+          const cannotScrollNext = !api.canScrollNext();
+          const currentIndex = api.selectedScrollSnap();
+          const totalSlides = api.slideNodes().length;
+          const isNearEnd = currentIndex >= totalSlides - 3; // Within last 3 items
+
+          if (cannotScrollNext || isNearEnd) {
+            triggerLoad();
+          }
+        }, 200);
       };
 
       handleSelect = () => {
-        if (!api || isLoading || !hasNextPage) return;
-        handleScroll?.();
+        // Don't trigger on select events - only on actual scroll
+        // This prevents pagination from triggering on checkbox clicks
+        return;
       };
 
       if (api) {
@@ -109,6 +138,9 @@ export function useCarouselInfiniteScroll({
 
     return () => {
       clearTimeout(timeoutId);
+      if (scrollDebounceTimeout) {
+        clearTimeout(scrollDebounceTimeout);
+      }
       if (observer) {
         observer.disconnect();
       }
@@ -123,4 +155,3 @@ export function useCarouselInfiniteScroll({
     };
   }, [api, lastItemRef, hasNextPage, isLoading, triggerLoad, itemsCount]);
 }
-

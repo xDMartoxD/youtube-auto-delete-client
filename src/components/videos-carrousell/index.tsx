@@ -140,7 +140,7 @@ export function VideosCarrousell() {
                 >
                   <Card
                     className={cn(
-                      'overflow-hidden transition-all hover:shadow-lg h-full flex flex-col',
+                      'overflow-hidden transition-all hover:shadow-lg h-full flex flex-col mx-1',
                       isSelected && 'ring-2 ring-primary'
                     )}
                     onClick={() => {
@@ -164,9 +164,17 @@ export function VideosCarrousell() {
                           </div>
                         )}
                         {/* Checkbox overlay */}
-                        <div className="absolute top-2 right-2">
+                        <div
+                          className="absolute top-2 right-2"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
                           <Checkbox
                             checked={isSelected}
+                            onChange={() => {
+                              toggleVideoSelection(video);
+                            }}
                             aria-label={`Select ${videoTitle}`}
                             className="border-primary"
                           />

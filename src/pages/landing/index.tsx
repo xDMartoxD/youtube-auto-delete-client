@@ -8,6 +8,8 @@ import { AvatarComponent } from '@/components/google-avatar';
 import { VideosCarrousell } from '@/components/videos-carrousell';
 import { VideoSelectionBar } from '@/components/video-selection-bar';
 import { DeleteVideosDialog } from '@/components/delete-videos-dialog';
+import { VideoDateFilterPanel } from '@/components/video-date-filter-panel';
+import { FeedbackDialog } from '@/components/feedback-dialog';
 import { useState } from 'react';
 import { LogOut, Youtube, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -70,6 +72,7 @@ export default function LandingPage() {
 
             {/* Actions */}
             <div className="flex items-center gap-3">
+              <FeedbackDialog />
               {isAuthenticated ? (
                 <>
                   <AvatarComponent />
@@ -170,6 +173,10 @@ export default function LandingPage() {
                   Elige la playlist de la que deseas eliminar videos
                 </p>
               </div>
+              {/* Playlist Combobox */}
+              <div>
+                <Combobox />
+              </div>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
@@ -196,23 +203,11 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Playlist Combobox */}
-            <div className="max-w-md">
-              <Combobox />
-            </div>
-
             {/* Videos Section */}
             {playlists && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-semibold">
-                      Videos de la playlist
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Selecciona los videos que deseas eliminar
-                    </p>
-                  </div>
+                  <VideoDateFilterPanel />
                 </div>
                 <VideosCarrousell />
               </div>
