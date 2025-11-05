@@ -9,8 +9,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Calendar, Filter, CheckSquare } from 'lucide-react';
-import { usePlaylistVideos } from '@/hooks';
-import useYoutube from '@/stores/youtube';
+import { usePlaylistVideos, useVideoSelection } from '@/hooks';
+import type { PlaylistItemVideoOutput } from '@/api';
 import { cn } from '@/lib/utils';
 import './index.css';
 import { RangeCalendar } from '../range-calendar';
@@ -27,7 +27,7 @@ export function VideoDateFilterPanel() {
     end: null,
   });
   const { videosItems } = usePlaylistVideos();
-  const { selectedVideos, selectVideosByDateRange } = useYoutube();
+  const { selectedVideos } = useVideoSelection();
 
   // Group videos by date (year-month)
   const videosByDate = useMemo(() => {
@@ -48,70 +48,7 @@ export function VideoDateFilterPanel() {
     return Object.entries(grouped).sort(([a], [b]) => b.localeCompare(a));
   }, [videosItems]);
 
-  // Helper to get videos in date range for display purposes
-  const getVideosInRange = useMemo(() => {
-    return (start: Date | null, end: Date | null) => {
-      if (!start && !end) return [];
-
-      return videosItems.filter((video) => {
-        if (!video.snippet?.publishedAt) return false;
-        const videoDate = new Date(video.snippet.publishedAt);
-        videoDate.setHours(0, 0, 0, 0);
-
-        if (start && end) {
-          const startDate = new Date(start);
-          startDate.setHours(0, 0, 0, 0);
-          const endDate = new Date(end);
-          endDate.setHours(23, 59, 59, 999);
-          return videoDate >= startDate && videoDate <= endDate;
-        }
-        if (start) {
-          const startDate = new Date(start);
-          startDate.setHours(0, 0, 0, 0);
-          return videoDate >= startDate;
-        }
-        if (end) {
-          const endDate = new Date(end);
-          endDate.setHours(23, 59, 59, 999);
-          return videoDate <= endDate;
-        }
-        return false;
-      });
-    };
-  }, [videosItems]);
-
-  const handleSelectByDateRange = () => {
-    selectVideosByDateRange(dateRange.start, dateRange.end);
-  };
-
-  const handleQuickSelect = (monthsAgo: number) => {
-    const end = new Date();
-    const start = new Date();
-    start.setMonth(start.getMonth() - monthsAgo);
-    start.setDate(1);
-    start.setHours(0, 0, 0, 0);
-    selectVideosByDateRange(start, end);
-  };
-
-  const handleSelectByMonth = (yearMonth: string) => {
-    const [year, month] = yearMonth.split('-').map(Number);
-    const start = new Date(year, month - 1, 1);
-    const end = new Date(year, month, 0, 23, 59, 59, 999);
-    selectVideosByDateRange(start, end);
-  };
-
-  const isMonthSelected = (yearMonth: string) => {
-    const [year, month] = yearMonth.split('-').map(Number);
-    const start = new Date(year, month - 1, 1);
-    const end = new Date(year, month, 0, 23, 59, 59, 999);
-    const videosInRange = getVideosInRange(start, end);
-    return (
-      videosInRange.length > 0 &&
-      videosInRange.every((video) =>
-        selectedVideos.some((v) => v.id === video.id)
-      )
-    );
-  };
+  const handleSelectByDateRange = () => {};
 
   const formatMonthYear = (yearMonth: string) => {
     const [year, month] = yearMonth.split('-').map(Number);
@@ -136,41 +73,26 @@ export function VideoDateFilterPanel() {
             Selección por Fecha
           </DialogTitle>
           <DialogDescription>
-            Selecciona videos por rango de fechas o por mes específico
+            Selecciona videos agregados a la lista por rango de fechas o por mes
+            específico
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Quick Select Buttons */}
           <div className="space-y-2">
-            <h3 className="text-sm font-semibold">Selección Rápida</h3>
+            <h3 className="text-sm font-semibold">Eliminar</h3>
             <div className="flex flex-wrap gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleQuickSelect(1)}
-              >
+              <Button variant="outline" size="sm">
                 Último mes
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleQuickSelect(3)}
-              >
+              <Button variant="outline" size="sm">
                 Últimos 3 meses
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleQuickSelect(6)}
-              >
+              <Button variant="outline" size="sm">
                 Últimos 6 meses
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleQuickSelect(12)}
-              >
+              <Button variant="outline" size="sm">
                 Último año
               </Button>
             </div>
@@ -216,17 +138,16 @@ export function VideoDateFilterPanel() {
             </h3>
             <div className="space-y-2 max-h-[300px] overflow-y-auto">
               {videosByDate.map(([yearMonth, videos]) => {
-                const isAllSelected = isMonthSelected(yearMonth);
-                const selectedCount = videos.filter((video) =>
-                  selectedVideos.some((v) => v.id === video.id)
+                const selectedCount = videos.filter(
+                  (video: PlaylistItemVideoOutput) =>
+                    selectedVideos.some((id: string) => id === video.id)
                 ).length;
 
                 return (
                   <div
                     key={yearMonth}
                     className={cn(
-                      'flex items-center justify-between p-3 rounded-lg border',
-                      isAllSelected && 'bg-primary/10 border-primary'
+                      'flex items-center justify-between p-3 rounded-lg border'
                     )}
                   >
                     <div className="flex-1">
@@ -238,13 +159,7 @@ export function VideoDateFilterPanel() {
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <Button
-                        variant={isAllSelected ? 'secondary' : 'outline'}
-                        size="sm"
-                        onClick={() => handleSelectByMonth(yearMonth)}
-                        disabled={isAllSelected}
-                        className="gap-2"
-                      >
+                      <Button size="sm" className="gap-2">
                         <CheckSquare className="h-4 w-4" />
                         Seleccionar
                       </Button>
@@ -254,8 +169,6 @@ export function VideoDateFilterPanel() {
               })}
             </div>
           </div>
-
-          {/* Actions */}
         </div>
       </DialogContent>
     </Dialog>

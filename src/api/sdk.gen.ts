@@ -146,7 +146,12 @@ export const getUserPlaylistsApiYoutubePlaylistsGet = <ThrowOnError extends bool
 /**
  * Get Playlist Videos
  *
- * Get videos from a YouTube playlist with pagination.
+ * Get videos from a YouTube playlist with pagination and optional date filtering.
+ *
+ * - **max_results**: Número máximo de resultados por página (1-50)
+ * - **page_token**: Token de página para paginación
+ * - **date_from**: Filtrar videos agregados a la playlist desde esta fecha (ISO 8601)
+ * - **date_to**: Filtrar videos agregados a la playlist hasta esta fecha (ISO 8601)
  */
 export const getPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGet = <ThrowOnError extends boolean = false>(options: Options<GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData, ThrowOnError>) => {
     return (options.client ?? client).get<GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors, ThrowOnError>({

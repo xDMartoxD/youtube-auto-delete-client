@@ -1,8 +1,17 @@
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/playlist-combobox';
 import { SCOPES } from '@/constants';
-import useAuth from '@/stores/auth';
-import useYoutube from '@/stores/youtube';
+import {
+  useAuthenticate,
+  useLogout,
+  useIsAuthenticated,
+  useIsAuthenticating,
+} from '@/stores/auth';
+import {
+  usePlaylists,
+  useIsLoadingPlaylists,
+  useYoutubeActions,
+} from '@/stores/youtube';
 import { useGoogleLogin } from '@react-oauth/google';
 import { AvatarComponent } from '@/components/google-avatar';
 import { VideosCarrousell } from '@/components/videos-carrousell';
@@ -11,14 +20,21 @@ import { DeleteVideosDialog } from '@/components/delete-videos-dialog';
 import { VideoDateFilterPanel } from '@/components/video-date-filter-panel';
 import { FeedbackDialog } from '@/components/feedback-dialog';
 import { useState } from 'react';
-import { LogOut, Youtube, Loader2 } from 'lucide-react';
+import { LogOut, PlayCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useVideoSelection } from '@/hooks';
+import { useVideoSelection, usePlaylistVideos } from '@/hooks';
 
 export default function LandingPage() {
-  const { authenticate, isAuthenticated, logout, isAuthenticating } = useAuth();
-  const { getUserPlaylists, isLoadingPlaylists, playlists } = useYoutube();
-  const { hasSelectedVideos, clearSelectedVideos } = useVideoSelection();
+  const authenticate = useAuthenticate();
+  const logout = useLogout();
+  const isAuthenticated = useIsAuthenticated();
+  const isAuthenticating = useIsAuthenticating();
+  const playlists = usePlaylists();
+  const isLoadingPlaylists = useIsLoadingPlaylists();
+  const { getUserPlaylists } = useYoutubeActions();
+  const { hasSelectedVideos } = useVideoSelection();
+  const { videosItems, hasNextPage, isLoadingVideos, loadNextPage } =
+    usePlaylistVideos();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -41,7 +57,6 @@ export default function LandingPage() {
       console.log('Deleting videos...');
       // Simular delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      clearSelectedVideos();
     } catch (error) {
       console.error('Error deleting videos:', error);
     } finally {
@@ -58,7 +73,7 @@ export default function LandingPage() {
             {/* Logo/Brand */}
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center rounded-lg bg-primary p-2">
-                <Youtube className="h-5 w-5 text-primary-foreground" />
+                <PlayCircle className="h-5 w-5 text-primary-foreground" />
               </div>
               <div className="flex flex-col">
                 <h1 className="text-lg font-semibold leading-tight">
@@ -192,7 +207,7 @@ export default function LandingPage() {
                     </>
                   ) : (
                     <>
-                      <Youtube className="h-4 w-4" />
+                      <PlayCircle className="h-4 w-4" />
                       <span className="hidden sm:inline">
                         Actualizar playlists
                       </span>
@@ -209,14 +224,19 @@ export default function LandingPage() {
                 <div className="flex items-center justify-between">
                   <VideoDateFilterPanel />
                 </div>
-                <VideosCarrousell />
+                <VideosCarrousell
+                  videos={videosItems}
+                  title="Videos"
+                  hasNextPage={hasNextPage}
+                  isLoading={isLoadingVideos}
+                  onLoadNext={loadNextPage}
+                />
               </div>
             )}
 
-            {/* Empty State */}
             {!playlists && !isLoadingPlaylists && (
               <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
-                <Youtube className="h-12 w-12 text-muted-foreground" />
+                <PlayCircle className="h-12 w-12 text-muted-foreground" />
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold">
                     No hay playlists disponibles
@@ -231,7 +251,7 @@ export default function LandingPage() {
                   onClick={getUserPlaylists}
                   className="gap-2"
                 >
-                  <Youtube className="h-4 w-4" />
+                  <PlayCircle className="h-4 w-4" />
                   Actualizar playlists
                 </Button>
               </div>

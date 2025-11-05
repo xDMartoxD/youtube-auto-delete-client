@@ -673,6 +673,18 @@ export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData = {
          * Token de página para paginación
          */
         page_token?: string | null;
+        /**
+         * Date From
+         *
+         * Fecha de inicio (ISO 8601). Filtra videos agregados desde esta fecha.
+         */
+        date_from?: string | null;
+        /**
+         * Date To
+         *
+         * Fecha de fin (ISO 8601). Filtra videos agregados hasta esta fecha.
+         */
+        date_to?: string | null;
     };
     url: '/api/youtube/playlists/{playlist_id}/videos';
 };

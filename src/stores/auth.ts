@@ -1,14 +1,11 @@
-import { REDIRECT_URI } from '@/constants';
 import type { CodeResponse } from '@react-oauth/google';
 import { create } from 'zustand';
+import { type UserInfo, type CodeLoginApiAuthExchangePostError } from '@/api';
 import {
-  codeLoginApiAuthExchangePost,
-  getUserProfileApiAuthMeGet,
-  type AuthSuccessResponse,
-  type UserInfo,
-  type CodeLoginApiAuthExchangePostError,
-} from '@/api';
-import { apiClient } from '@/configs/client-config';
+  exchangeCode as exchangeCodeService,
+  getUserProfile as getUserProfileService,
+  logout as logoutService,
+} from '@/services/auth';
 
 interface AuthState {
   // State
@@ -20,14 +17,14 @@ interface AuthState {
   isLoadingProfile: boolean;
   // Error states
   authError: CodeLoginApiAuthExchangePostError | null;
-  profileError: Error | null;
+  profileError: Error | CodeLoginApiAuthExchangePostError | null;
   // Actions
   authenticate: (codeResponse: CodeResponse) => Promise<void>;
   me: () => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
-const useAuth = create<AuthState>((set) => ({
+const authStore = create<AuthState>((set) => ({
   // Initial state
   isAuthenticated: false,
   user: null,
@@ -38,103 +35,94 @@ const useAuth = create<AuthState>((set) => ({
   profileError: null,
 
   authenticate: async (codeResponse) => {
-    const { code } = codeResponse;
-
-    if (!code) {
-      console.warn('No authorization code provided');
-      return;
-    }
-
     set({ isAuthenticating: true, authError: null });
 
-    try {
-      const result = await codeLoginApiAuthExchangePost({
-        client: apiClient,
-        body: {
-          code,
-          redirect_uri: REDIRECT_URI,
-        },
-      });
+    const result = await exchangeCodeService(codeResponse);
 
-      if (result.response.status === 200 && result.data) {
-        const authData = result.data as AuthSuccessResponse;
-        set({
-          isAuthenticated: true,
-          user: authData.user,
-          session: authData.user.sub,
-          authError: null,
-          isAuthenticating: false,
-        });
-      } else if (result.error) {
-        set({
-          authError: result.error,
-          isAuthenticating: false,
-        });
-        console.error('Authentication error:', result.error);
-      } else {
-        set({
-          authError: null,
-          isAuthenticating: false,
-        });
-      }
-    } catch (error) {
-      const typedError = error as CodeLoginApiAuthExchangePostError;
+    if (result.success && result.data) {
+      const authData = result.data;
       set({
-        authError: typedError,
+        isAuthenticated: true,
+        user: authData.user,
+        session: authData.user.sub,
+        authError: null,
         isAuthenticating: false,
       });
-      console.error('Unexpected authentication error:', error);
+    } else if (result.error) {
+      set({
+        authError: result.error as CodeLoginApiAuthExchangePostError,
+        isAuthenticating: false,
+      });
+      console.error('Authentication error:', result.error);
+    } else {
+      set({
+        authError: null,
+        isAuthenticating: false,
+      });
     }
   },
 
-  logout: () =>
+  logout: async () => {
+    // Llamar al servicio de logout (aunque no esperamos respuesta)
+    await logoutService();
+
+    // Actualizar estado local
     set({
       isAuthenticated: false,
       user: null,
       session: '',
       authError: null,
       profileError: null,
-    }),
+    });
+  },
 
   me: async () => {
     set({ isLoadingProfile: true, profileError: null });
 
-    try {
-      const result = await getUserProfileApiAuthMeGet({
-        client: apiClient,
-      });
+    const result = await getUserProfileService();
 
-      if (result.response.status === 200 && result.data) {
-        const userData = result.data as AuthSuccessResponse;
-        set({
-          isAuthenticated: true,
-          user: userData.user,
-          session: userData.user.sub,
-          profileError: null,
-          isLoadingProfile: false,
-        });
-      } else if (result.error) {
-        set({
-          profileError: new Error('Failed to get user profile'),
-          isLoadingProfile: false,
-        });
-        console.error('Get user profile error:', result.error);
-      } else {
-        set({
-          profileError: null,
-          isLoadingProfile: false,
-        });
-      }
-    } catch (error) {
-      const typedError =
-        error instanceof Error ? error : new Error('Unknown error');
+    if (result.success && result.data) {
+      const userData = result.data;
       set({
-        profileError: typedError,
+        isAuthenticated: true,
+        user: userData.user,
+        session: userData.user.sub,
+        profileError: null,
         isLoadingProfile: false,
       });
-      console.error('Unexpected error getting user profile:', error);
+    } else if (result.error) {
+      set({
+        profileError: result.error,
+        isLoadingProfile: false,
+      });
+      console.error('Get user profile error:', result.error);
+    } else {
+      set({
+        profileError: null,
+        isLoadingProfile: false,
+      });
     }
   },
 }));
+
+// Selectors - atomic values only
+export const useAuth = () => authStore();
+
+// Auth state - atomic values
+export const useIsAuthenticated = () =>
+  authStore((state) => state.isAuthenticated);
+export const useUser = () => authStore((state) => state.user);
+export const useSession = () => authStore((state) => state.session);
+export const useIsAuthenticating = () =>
+  authStore((state) => state.isAuthenticating);
+export const useIsLoadingProfile = () =>
+  authStore((state) => state.isLoadingProfile);
+export const useAuthError = () => authStore((state) => state.authError);
+export const useProfileError = () => authStore((state) => state.profileError);
+
+// Auth actions - atomic values
+export const useAuthenticate = () => authStore((state) => state.authenticate);
+export const useMe = () => authStore((state) => state.me);
+export const useLogout = () => authStore((state) => state.logout);
 
 export default useAuth;

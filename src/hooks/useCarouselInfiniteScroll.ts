@@ -57,10 +57,13 @@ export function useCarouselInfiniteScroll({
     let handleScroll: (() => void) | null = null;
     let handleSelect: (() => void) | null = null;
     let scrollDebounceTimeout: ReturnType<typeof setTimeout> | null = null;
+    let interactionTimeout: ReturnType<typeof setTimeout> | null = null;
     let lastScrollPosition = 0;
+    let isUserInteracting = false;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     // Use a small delay to ensure DOM is updated
-    const timeoutId = setTimeout(() => {
+    timeoutId = setTimeout(() => {
       const lastItem = lastItemRef.current;
       if (!lastItem || !hasNextPage || isLoading) {
         return;
@@ -72,16 +75,23 @@ export function useCarouselInfiniteScroll({
       }
 
       // Intersection Observer for detecting when last item is visible
+      // Only trigger on actual scroll, not on clicks
       observer = new IntersectionObserver(
         (entries) => {
           const entry = entries[0];
-          if (entry.isIntersecting && hasNextPage && !isLoading) {
+          // Only trigger if not a user interaction (click) and actually scrolling
+          if (
+            entry.isIntersecting &&
+            hasNextPage &&
+            !isLoading &&
+            !isUserInteracting
+          ) {
             triggerLoad();
           }
         },
         {
           root: null, // Use viewport
-          rootMargin: '200px 0px', // Start loading when 200px before last item (reduced to avoid false positives)
+          rootMargin: '200px 0px', // Start loading when 200px before last item
           threshold: 0.1, // Increase threshold to avoid triggering on small movements
         }
       );
@@ -124,9 +134,15 @@ export function useCarouselInfiniteScroll({
       };
 
       handleSelect = () => {
-        // Don't trigger on select events - only on actual scroll
-        // This prevents pagination from triggering on checkbox clicks
-        return;
+        // Mark as user interaction to prevent Intersection Observer from triggering
+        isUserInteracting = true;
+        if (interactionTimeout) {
+          clearTimeout(interactionTimeout);
+        }
+        // Reset after a short delay
+        interactionTimeout = setTimeout(() => {
+          isUserInteracting = false;
+        }, 300);
       };
 
       if (api) {
@@ -137,9 +153,14 @@ export function useCarouselInfiniteScroll({
     }, 100);
 
     return () => {
-      clearTimeout(timeoutId);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
       if (scrollDebounceTimeout) {
         clearTimeout(scrollDebounceTimeout);
+      }
+      if (interactionTimeout) {
+        clearTimeout(interactionTimeout);
       }
       if (observer) {
         observer.disconnect();

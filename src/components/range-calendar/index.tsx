@@ -43,6 +43,7 @@ export function RangeCalendar({
           numberOfMonths={1}
           className="rounded-lg border shadow-sm"
           style={{ maxWidth: '100%', width: '100%' }}
+          hidden={{ before: new Date('2005-01-01'), after: new Date() }}
         />
       </div>
     </div>

@@ -5,7 +5,7 @@ import LandingPage from './pages/landing/index';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import NotFoundPage from './pages/not-found';
 import { useEffect } from 'react';
-import useAuth from './stores/auth';
+import { useMe } from './stores/auth';
 
 const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
@@ -13,7 +13,7 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const { me } = useAuth();
+  const me = useMe();
   useEffect(() => {
     me();
   }, []);

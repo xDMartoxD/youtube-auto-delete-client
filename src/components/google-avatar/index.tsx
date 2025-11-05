@@ -1,8 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import useAuth from '@/stores/auth';
+import { useUser } from '@/stores/auth';
 
 export function AvatarComponent() {
-  const { user } = useAuth();
+  const user = useUser();
   return (
     <div className="flex flex-row flex-wrap items-center gap-12">
       <Avatar>

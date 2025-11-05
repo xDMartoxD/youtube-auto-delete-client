@@ -1,30 +1,34 @@
 import { useEffect, useCallback } from 'react';
-import useYoutube from '@/stores/youtube';
+import {
+  useSelectedPlaylistId,
+  useVideos,
+  useIsLoadingVideos,
+  useVideosError,
+  useYoutubeActions,
+} from '@/stores/youtube';
 
 /**
  * Hook para manejar la carga de videos de una playlist
  * Encapsula la lógica de carga y estados relacionados
  */
 export function usePlaylistVideos() {
-  const {
-    selectedPlaylistId,
-    videos,
-    getVideosFromPlaylist,
-    isLoadingVideos,
-    videosError,
-    selectedVideos,
-  } = useYoutube();
+  const selectedPlaylistId = useSelectedPlaylistId();
+  const videos = useVideos();
+  const isLoadingVideos = useIsLoadingVideos();
+  const videosError = useVideosError();
+  const { getVideosFromSelectedPlaylist } = useYoutubeActions();
 
-  // Load videos when playlist is selected
+  // Load all videos when playlist is selected
   useEffect(() => {
     if (selectedPlaylistId) {
-      void getVideosFromPlaylist(selectedPlaylistId);
+      void getVideosFromSelectedPlaylist({});
     }
-  }, [selectedPlaylistId, getVideosFromPlaylist]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedPlaylistId]); // getVideosFromSelectedPlaylist es estable, no necesita estar en deps
 
   const loadNextPage = useCallback(() => {
     if (selectedPlaylistId && videos?.next_page_token && !isLoadingVideos) {
-      void getVideosFromPlaylist(selectedPlaylistId, {
+      void getVideosFromSelectedPlaylist({
         pageToken: videos.next_page_token,
         append: true,
       });
@@ -33,7 +37,7 @@ export function usePlaylistVideos() {
     selectedPlaylistId,
     videos?.next_page_token,
     isLoadingVideos,
-    getVideosFromPlaylist,
+    getVideosFromSelectedPlaylist,
   ]);
 
   const hasNextPage = Boolean(videos?.next_page_token);
@@ -47,7 +51,5 @@ export function usePlaylistVideos() {
     hasNextPage,
     loadNextPage,
     selectedPlaylistId,
-    selectedVideos,
   };
 }
-
