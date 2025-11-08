@@ -17,7 +17,6 @@ import { AvatarComponent } from '@/components/google-avatar';
 import { VideosCarrousell } from '@/components/videos-carrousell';
 import { VideoSelectionBar } from '@/components/video-selection-bar';
 import { DeleteVideosDialog } from '@/components/delete-videos-dialog';
-import { VideoDateFilterPanel } from '@/components/video-date-filter-panel';
 import { FeedbackDialog } from '@/components/feedback-dialog';
 import { useState } from 'react';
 import { LogOut, PlayCircle, Loader2 } from 'lucide-react';
@@ -88,9 +87,9 @@ export default function LandingPage() {
 
             {/* Actions */}
             <div className="flex items-center gap-3">
-              <FeedbackDialog />
-              {isAuthenticated ? (
+              {isAuthenticated && (
                 <>
+                  <FeedbackDialog />
                   <AvatarComponent />
                   <Button
                     variant="ghost"
@@ -102,33 +101,6 @@ export default function LandingPage() {
                     <span className="hidden sm:inline">Cerrar sesión</span>
                   </Button>
                 </>
-              ) : (
-                <Button
-                  variant="outline"
-                  onClick={login}
-                  disabled={isAuthenticating}
-                  className={cn(
-                    'gap-2',
-                    '!border-[#e84133] !text-[#e84133]',
-                    'hover:!bg-[#e84133] hover:!text-white'
-                  )}
-                >
-                  {isAuthenticating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="hidden sm:inline">Conectando...</span>
-                    </>
-                  ) : (
-                    <>
-                      <img
-                        src="https://cdn.shadcnstudio.com/ss-assets/brand-logo/google-icon.png?width=20&height=20&format=auto"
-                        alt="Google Icon"
-                        className="size-4"
-                      />
-                      <span>Continuar con Google</span>
-                    </>
-                  )}
-                </Button>
               )}
             </div>
           </div>
@@ -153,11 +125,7 @@ export default function LandingPage() {
               size="lg"
               onClick={login}
               disabled={isAuthenticating}
-              className={cn(
-                'gap-2',
-                '!border-[#e84133] !text-[#e84133]',
-                'hover:!bg-[#e84133] hover:!text-white'
-              )}
+              className={cn('gap-2', '!border-[#e84133] !text-white')}
             >
               {isAuthenticating ? (
                 <>
