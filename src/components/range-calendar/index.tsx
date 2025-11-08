@@ -4,7 +4,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { useState } from 'react';
 
 interface RangeCalendarProps {
-  dateRange?: DateRange | undefined;
+  dateRange?: DateRange;
   onDateRangeChange?: (range: DateRange | undefined) => void;
 }
 

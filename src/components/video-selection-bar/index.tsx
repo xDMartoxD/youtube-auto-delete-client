@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { Trash2, X, CheckSquare, Square, Loader2 } from 'lucide-react';
-import { useVideoSelection, usePlaylistVideos } from '@/hooks';
+import { Trash2, X, Loader2 } from 'lucide-react';
+import { useVideoSelection } from '@/hooks';
 import { cn } from '@/lib/utils';
 
 interface VideoSelectionBarProps {
@@ -16,22 +16,8 @@ export function VideoSelectionBar({
   onDelete,
   isDeleting = false,
 }: VideoSelectionBarProps) {
-  const {
-    selectedVideosCount,
-    hasSelectedVideos,
-    clearSelectedVideos,
-    selectAllVideos,
-  } = useVideoSelection();
-  const { videosItems } = usePlaylistVideos();
-
-  const allVideosSelected =
-    hasSelectedVideos &&
-    videosItems.length > 0 &&
-    selectedVideosCount === videosItems.length;
-
-  const handleSelectAll = () => {
-    selectAllVideos();
-  };
+  const { selectedVideosCount, hasSelectedVideos, clearSelectedVideos } =
+    useVideoSelection();
 
   const handleDeselectAll = () => {
     clearSelectedVideos();
@@ -61,35 +47,15 @@ export function VideoSelectionBar({
         </div>
 
         <div className="flex items-center gap-2">
-          {allVideosSelected ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleDeselectAll}
-              className="h-8"
-            >
-              <Square className="h-4 w-4 mr-1.5" />
-              Deseleccionar todo
-            </Button>
-          ) : (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleSelectAll}
-              className="h-8"
-            >
-              <CheckSquare className="h-4 w-4 mr-1.5" />
-              Seleccionar todo
-            </Button>
-          )}
-
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
-            onClick={clearSelectedVideos}
-            className="h-8"
+            onClick={handleDeselectAll}
+            className="h-8 gap-1.5"
+            title="Deseleccionar todos los videos"
           >
             <X className="h-4 w-4" />
+            <span className="hidden sm:inline">Limpiar</span>
           </Button>
 
           <Button

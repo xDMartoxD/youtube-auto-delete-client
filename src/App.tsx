@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import NotFoundPage from './pages/not-found';
 import { useEffect } from 'react';
 import { useMe } from './stores/auth';
+import { Toaster } from 'sonner';
 
 const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
@@ -21,6 +22,7 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <RouterProvider router={router} />
+        <Toaster />
       </ThemeProvider>
     </ErrorBoundary>
   );

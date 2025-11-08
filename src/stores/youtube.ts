@@ -1,15 +1,17 @@
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+import { toast } from 'sonner';
 import {
   type YoutubePlaylistListResponse,
   type GetUserPlaylistsApiYoutubePlaylistsGetError,
   type PlaylistVideoResponse,
   type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError,
-  type PlaylistItemVideoOutput,
 } from '@/api';
 import {
   getUserPlaylists as getUserPlaylistsService,
   getPlaylistVideos as getPlaylistVideosService,
 } from '@/services/youtube';
+import { createDateRange } from '@/utils';
 
 export interface YoutubeActions {
   getUserPlaylists: () => Promise<void>;
@@ -18,26 +20,29 @@ export interface YoutubeActions {
     dateRange?: { start: Date | null; end: Date | null }
   ) => Promise<void>;
   setSelectedPlaylistId: (playlistId: string) => void;
-  toggleVideoSelection: (video: PlaylistItemVideoOutput) => void;
-  addIncludeVideosByDateRange: (
-    start: Date | null,
-    end: Date | null
-  ) => Promise<void>;
-  addIncludeVideosOutsideOfDateRanges: (videoIds: string[]) => void;
-  addExcludeVideosInsideDateRanges: (videoIds: string[]) => void;
-  removeIncludeVideosByDateRange: (start: Date | null) => void;
-  removeIncludeVideosOutsideOfDateRanges: (videoIds: string[]) => void;
-  removeExcludeVideosInsideDateRanges: (videoIds: string[]) => void;
+  addIncludedVideoOutsideDateRange: (videoId: string) => void;
+  addExcludedVideoInsideDateRange: (videoId: string) => void;
+  addDateRange: (start: Date | null, end: Date | null) => Promise<void>;
+  removeExcludedVideoInsideDateRange: (videoId: string) => void;
+  removeIncludedVideoOutsideDateRange: (videoId: string) => void;
+  removeDateRange: (start: Date | null) => void;
   clearAllSelections: () => void;
-  selectAllVideos: (videoIds: string[]) => void;
+  clearVideos: () => void;
+  selectAllVideos: () => void;
 }
 
-interface DateRangeSelection {
-  start: Date | null;
-  end: Date | null;
-  videoIds: string[];
+/**
+ * Estado base compartido para operaciones asíncronas que cargan videos
+ */
+interface BaseVideosLoadingState {
+  videos: PlaylistVideoResponse | null;
   isLoading: boolean;
   error: GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError | null;
+}
+
+interface DateRangeSelection extends BaseVideosLoadingState {
+  start: Date | null;
+  end: Date | null;
 }
 
 /**
@@ -46,18 +51,14 @@ interface DateRangeSelection {
  */
 interface VideoSelectionState {
   // IDs seleccionados manualmente (click directo en video)
-  manual: string[];
+  includedOutsideRanges: string[];
   // Rangos de fecha con sus videos seleccionados
   dateRanges: { [dateKey: string]: DateRangeSelection };
   // IDs de videos excluidos de los rangos de fecha
   excludedFromRanges: string[];
 }
 
-interface PlaylistVideosState {
-  videos: PlaylistVideoResponse | null;
-  isLoading: boolean;
-  error: GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError | null;
-}
+interface PlaylistVideosState extends BaseVideosLoadingState {}
 
 interface YoutubeState {
   // Actions
@@ -75,299 +76,354 @@ interface YoutubeState {
   videoSelection: VideoSelectionState;
 }
 
-const youtubeStore = create<YoutubeState>((set, get) => ({
-  // Initial state
-  playlists: null,
-  playlistVideos: {
-    videos: null,
-    isLoading: false,
-    error: null,
-  },
+const youtubeStore = create<YoutubeState>()(
+  devtools(
+    (set, get) => ({
+      // Initial state
+      playlists: null,
+      playlistVideos: {
+        videos: null,
+        isLoading: false,
+        error: null,
+      },
 
-  isLoadingPlaylists: false,
-  playlistsError: null,
-  selectedPlaylistId: null,
+      isLoadingPlaylists: false,
+      playlistsError: null,
+      selectedPlaylistId: null,
 
-  videoSelection: {
-    manual: [],
-    dateRanges: {},
-    excludedFromRanges: [],
-  },
-  // Actions nested in actions object
-  actions: {
-    setSelectedPlaylistId: (playlistId: string) =>
-      set({ selectedPlaylistId: playlistId }),
+      videoSelection: {
+        includedOutsideRanges: [],
+        dateRanges: {},
+        excludedFromRanges: [],
+      },
+      // Actions nested in actions object
+      actions: {
+        setSelectedPlaylistId: (playlistId: string) =>
+          set({
+            selectedPlaylistId:
+              playlistId === get().selectedPlaylistId ? null : playlistId,
+          }),
 
-    toggleVideoSelection: (video: PlaylistItemVideoOutput) => {
-      set((state) => {
-        const isSelected = state.videoSelection.manual.some(
-          (id) => id === video.id
-        );
-        if (isSelected) {
-          return {
-            videoSelection: {
-              ...state.videoSelection,
-              manual: state.videoSelection.manual.filter(
-                (id) => id !== video.id
-              ),
-            },
-          };
-        }
-        return {
-          videoSelection: {
-            ...state.videoSelection,
-            manual: [...state.videoSelection.manual, video.id],
-          },
-        };
-      });
-    },
+        getUserPlaylists: async () => {
+          set({ isLoadingPlaylists: true, playlistsError: null });
 
-    getUserPlaylists: async () => {
-      set({ isLoadingPlaylists: true, playlistsError: null });
+          const result = await getUserPlaylistsService();
 
-      const result = await getUserPlaylistsService();
-
-      if (result.success && result.data) {
-        set({
-          playlists: result.data,
-          playlistsError: null,
-          isLoadingPlaylists: false,
-        });
-      } else if (result.error) {
-        set({
-          playlistsError: result.error,
-          isLoadingPlaylists: false,
-        });
-        console.error('Get playlists error:', result.error);
-      } else {
-        set({
-          playlistsError: null,
-          isLoadingPlaylists: false,
-        });
-      }
-    },
-
-    getVideosFromSelectedPlaylist: async (
-      options?: { pageToken?: string | null; append?: boolean },
-      dateRange?: { start: Date | null; end: Date | null }
-    ) => {
-      if (!get().selectedPlaylistId) {
-        return;
-      }
-      set((state) => ({
-        playlistVideos: {
-          ...state.playlistVideos,
-          isLoading: true,
-          error: null,
+          if (result.success && result.data) {
+            set({
+              playlists: result.data,
+              playlistsError: null,
+              isLoadingPlaylists: false,
+            });
+          } else if (result.error) {
+            set({
+              playlistsError: result.error,
+              isLoadingPlaylists: false,
+            });
+            console.error('Get playlists error:', result.error);
+          } else {
+            set({
+              playlistsError: null,
+              isLoadingPlaylists: false,
+            });
+          }
         },
-      }));
 
-      const result = await getPlaylistVideosService(get().selectedPlaylistId!, {
-        pageToken: options?.pageToken,
-        dateFrom: dateRange?.start,
-        dateTo: dateRange?.end,
-        maxResults: 50,
-      });
-
-      if (result.success && result.data) {
-        const newVideos = result.data;
-        set((state) => ({
-          playlistVideos: {
-            videos:
-              options?.append && state.playlistVideos.videos
-                ? {
-                    ...newVideos,
-                    items: [
-                      ...state.playlistVideos.videos.items,
-                      ...newVideos.items,
-                    ],
-                  }
-                : newVideos,
-            isLoading: false,
-            error: null,
-          },
-        }));
-      } else if (result.error) {
-        set((state) => ({
-          playlistVideos: {
-            videos: state.playlistVideos.videos,
-            error: result.error ?? null,
-            isLoading: false,
-          },
-        }));
-        console.error('Get playlist videos error:', result.error);
-      } else {
-        set((state) => ({
-          playlistVideos: {
-            videos: state.playlistVideos.videos,
-            error: null,
-            isLoading: false,
-          },
-        }));
-      }
-    },
-    addIncludeVideosByDateRange: async (
-      start: Date | null,
-      end: Date | null
-    ) => {
-      if (!get().selectedPlaylistId) {
-        return;
-      }
-      const dateKey = start?.toISOString() || '';
-
-      // Set loading state
-      set((state) => ({
-        videoSelection: {
-          ...state.videoSelection,
-          dateRanges: {
-            ...state.videoSelection.dateRanges,
-            [dateKey]: {
-              start,
-              end,
-              videoIds: [],
+        getVideosFromSelectedPlaylist: async (
+          options?: { pageToken?: string | null; append?: boolean },
+          dateRange?: { start: Date | null; end: Date | null }
+        ) => {
+          if (!get().selectedPlaylistId) {
+            return;
+          }
+          set((state) => ({
+            playlistVideos: {
+              ...state.playlistVideos,
               isLoading: true,
               error: null,
             },
-          },
-        },
-      }));
+          }));
 
-      // Fetch videos from API
-      const result = await getPlaylistVideosService(get().selectedPlaylistId!, {
-        dateFrom: start,
-        dateTo: end,
-      });
+          const result = await getPlaylistVideosService(
+            get().selectedPlaylistId!,
+            {
+              pageToken: options?.pageToken,
+              dateFrom: dateRange?.start,
+              dateTo: dateRange?.end,
+              maxResults: 50,
+            }
+          );
 
-      // Update with results
-      if (result.success && result.data) {
-        const videoIds = result.data?.items?.map((item) => item.id) || [];
-        set((state) => ({
-          videoSelection: {
-            ...state.videoSelection,
-            dateRanges: {
-              ...state.videoSelection.dateRanges,
-              [dateKey]: {
-                start,
-                end,
-                videoIds,
+          if (result.success && result.data) {
+            const newVideos = result.data;
+            set((state) => ({
+              playlistVideos: {
+                videos:
+                  options?.append && state.playlistVideos.videos
+                    ? {
+                        ...newVideos,
+                        items: [
+                          ...state.playlistVideos.videos.items,
+                          ...newVideos.items,
+                        ],
+                      }
+                    : newVideos,
                 isLoading: false,
                 error: null,
               },
-            },
-          },
-        }));
-      } else if (result.error) {
-        set((state) => ({
-          videoSelection: {
-            ...state.videoSelection,
-            dateRanges: {
-              ...state.videoSelection.dateRanges,
-              [dateKey]: {
-                start,
-                end,
-                videoIds: [],
-                isLoading: false,
+            }));
+          } else if (result.error) {
+            set((state) => ({
+              playlistVideos: {
+                videos: state.playlistVideos.videos,
                 error: result.error ?? null,
-              },
-            },
-          },
-        }));
-        console.error('Get videos by date range error:', result.error);
-      } else {
-        set((state) => ({
-          videoSelection: {
-            ...state.videoSelection,
-            dateRanges: {
-              ...state.videoSelection.dateRanges,
-              [dateKey]: {
-                start,
-                end,
-                videoIds: [],
                 isLoading: false,
+              },
+            }));
+            console.error('Get playlist videos error:', result.error);
+          } else {
+            set((state) => ({
+              playlistVideos: {
+                videos: state.playlistVideos.videos,
                 error: null,
+                isLoading: false,
+              },
+            }));
+          }
+        },
+        addDateRange: async (start: Date | null, end: Date | null) => {
+          const playlistId = get().selectedPlaylistId;
+          if (!playlistId) return;
+
+          // Verificar si hay intersección con rangos existentes
+          const state = get();
+          const existingRanges = Object.values(state.videoSelection.dateRanges);
+
+          const hasIntersection = existingRanges.some((range) => {
+            if (!start || !end || !range.start || !range.end) return false;
+
+            // Normalizar fechas para comparación (solo fecha, sin hora)
+            const newStart = new Date(start);
+            newStart.setHours(0, 0, 0, 0);
+            const newEnd = new Date(end);
+            newEnd.setHours(23, 59, 59, 999);
+
+            const existingStart = new Date(range.start);
+            existingStart.setHours(0, 0, 0, 0);
+            const existingEnd = new Date(range.end);
+            existingEnd.setHours(23, 59, 59, 999);
+
+            // Verificar intersección: dos rangos se intersectan si:
+            // newStart <= existingEnd && newEnd >= existingStart
+            return newStart <= existingEnd && newEnd >= existingStart;
+          });
+
+          if (hasIntersection) {
+            toast.warning(
+              'El rango de fechas se intersecta con otro rango existente'
+            );
+            return;
+          }
+
+          const dateKey = start?.toISOString() || '';
+          const dateRange = createDateRange(
+            start,
+            end,
+            null,
+            true,
+            null
+          ) as DateRangeSelection;
+
+          // Set loading state
+          set((state) => ({
+            videoSelection: {
+              ...state.videoSelection,
+              dateRanges: {
+                ...state.videoSelection.dateRanges,
+                [dateKey]: dateRange,
               },
             },
-          },
-        }));
-      }
-    },
+          }));
 
-    addIncludeVideosOutsideOfDateRanges: (videoIds: string[]) => {
-      set((state) => ({
-        videoSelection: {
-          ...state.videoSelection,
-          manual: [...state.videoSelection.manual, ...videoIds],
-        },
-      }));
-    },
+          // Fetch videos from API
+          const result = await getPlaylistVideosService(playlistId, {
+            dateFrom: start,
+            dateTo: end,
+          });
 
-    addExcludeVideosInsideDateRanges: (videoIds: string[]) => {
-      set((state) => ({
-        videoSelection: {
-          ...state.videoSelection,
-          excludedFromRanges: [
-            ...state.videoSelection.excludedFromRanges,
-            ...videoIds,
-          ],
-        },
-      }));
-    },
+          // Determine final state
+          const finalDateRange =
+            result.success && result.data
+              ? (createDateRange(
+                  start,
+                  end,
+                  result.data,
+                  false,
+                  null
+                ) as DateRangeSelection)
+              : (createDateRange(
+                  start,
+                  end,
+                  null,
+                  false,
+                  result.error ?? null
+                ) as DateRangeSelection);
 
-    removeIncludeVideosByDateRange: (start: Date | null) => {
-      set((state) => {
-        const dateKey = start?.toISOString() || '';
-        const newDateRanges = { ...state.videoSelection.dateRanges };
-        delete newDateRanges[dateKey];
-        return {
-          videoSelection: {
-            ...state.videoSelection,
-            dateRanges: newDateRanges,
-          },
-        };
-      });
-    },
+          // Update with results
+          set((state) => {
+            const newState = {
+              videoSelection: {
+                ...state.videoSelection,
+                dateRanges: {
+                  ...state.videoSelection.dateRanges,
+                  [dateKey]: finalDateRange,
+                },
+              },
+            };
 
-    removeIncludeVideosOutsideOfDateRanges: (videoIds: string[]) => {
-      set((state) => ({
-        videoSelection: {
-          ...state.videoSelection,
-          manual: state.videoSelection.manual.filter(
-            (videoId) => !videoIds.includes(videoId)
-          ),
-        },
-      }));
-    },
-    removeExcludeVideosInsideDateRanges: (videoIds: string[]) => {
-      set((state) => ({
-        videoSelection: {
-          ...state.videoSelection,
-          excludedFromRanges: state.videoSelection.excludedFromRanges.filter(
-            (id) => !videoIds.includes(id)
-          ),
-        },
-      }));
-    },
+            // Si hay datos, filtrar includedOutsideRanges
+            if (result.success && result.data) {
+              newState.videoSelection.includedOutsideRanges =
+                state.videoSelection.includedOutsideRanges.filter(
+                  (id) => !result.data?.items?.some((video) => video.id === id)
+                );
+            }
 
-    clearAllSelections: () => {
-      set({
-        videoSelection: {
-          manual: [],
-          dateRanges: {},
-          excludedFromRanges: [],
-        },
-      });
-    },
+            return newState;
+          });
 
-    selectAllVideos: (videoIds: string[]) => {
-      set((state) => ({
-        videoSelection: {
-          ...state.videoSelection,
-          manual: [...new Set([...state.videoSelection.manual, ...videoIds])],
+          if (result.error) {
+            console.error('Get videos by date range error:', result.error);
+          }
         },
-      }));
-    },
-  },
-}));
+
+        addIncludedVideoOutsideDateRange: (videoId: string) => {
+          set((state) => ({
+            videoSelection: {
+              ...state.videoSelection,
+              includedOutsideRanges: [
+                ...state.videoSelection.includedOutsideRanges,
+                videoId,
+              ].filter((id, index, arr) => arr.indexOf(id) === index), // Remove duplicates
+            },
+          }));
+        },
+
+        addExcludedVideoInsideDateRange: (videoId: string) => {
+          set((state) => ({
+            videoSelection: {
+              ...state.videoSelection,
+              excludedFromRanges: [
+                ...state.videoSelection.excludedFromRanges,
+                videoId,
+              ].filter((id, index, arr) => arr.indexOf(id) === index), // Remove duplicates
+            },
+          }));
+        },
+
+        removeDateRange: (start: Date | null) => {
+          set((state) => {
+            const dateKey = start?.toISOString() || '';
+            const dateRangeToRemove = state.videoSelection.dateRanges[dateKey];
+            const newDateRanges = { ...state.videoSelection.dateRanges };
+            delete newDateRanges[dateKey];
+
+            // Obtener IDs de videos del rango eliminado
+            const videoIdsInRange =
+              dateRangeToRemove?.videos?.items?.map((video) => video.id) || [];
+
+            return {
+              videoSelection: {
+                ...state.videoSelection,
+                dateRanges: newDateRanges,
+                // Eliminar de excludedFromRanges los videos que estaban en este rango
+                excludedFromRanges:
+                  state.videoSelection.excludedFromRanges.filter(
+                    (id) => !videoIdsInRange.includes(id)
+                  ),
+              },
+            };
+          });
+        },
+
+        removeIncludedVideoOutsideDateRange: (videoId: string) => {
+          set((state) => ({
+            videoSelection: {
+              ...state.videoSelection,
+              includedOutsideRanges:
+                state.videoSelection.includedOutsideRanges.filter(
+                  (id) => id !== videoId
+                ),
+            },
+          }));
+        },
+
+        removeExcludedVideoInsideDateRange: (videoId: string) => {
+          set((state) => ({
+            videoSelection: {
+              ...state.videoSelection,
+              excludedFromRanges:
+                state.videoSelection.excludedFromRanges.filter(
+                  (id) => id !== videoId
+                ),
+            },
+          }));
+        },
+
+        clearAllSelections: () => {
+          set({
+            videoSelection: {
+              includedOutsideRanges: [],
+              dateRanges: {},
+              excludedFromRanges: [],
+            },
+          });
+        },
+        clearVideos: () => {
+          set({
+            playlistVideos: {
+              videos: null,
+              isLoading: false,
+              error: null,
+            },
+          });
+        },
+
+        selectAllVideos: () => {
+          const state = get();
+          const allVideoIds = new Set<string>();
+
+          // Add videos from all date ranges
+          Object.values(state.videoSelection.dateRanges).forEach((range) => {
+            if (range.videos?.items) {
+              range.videos.items.forEach((video) => allVideoIds.add(video.id));
+            }
+          });
+
+          // Add videos from playlist
+          if (state.playlistVideos.videos?.items) {
+            state.playlistVideos.videos.items.forEach((video) =>
+              allVideoIds.add(video.id)
+            );
+          }
+
+          set({
+            videoSelection: {
+              ...state.videoSelection,
+              includedOutsideRanges: [
+                ...new Set([
+                  ...state.videoSelection.includedOutsideRanges,
+                  ...Array.from(allVideoIds),
+                ]),
+              ],
+            },
+          });
+        },
+      } satisfies YoutubeActions,
+    }),
+    { name: 'YoutubeStore' } // nombre para Redux DevTools
+  )
+);
 
 // Playlist selectors - atomic values
 export const usePlaylists = () => youtubeStore((state) => state.playlists);
@@ -392,19 +448,13 @@ export const useVideoSelectionState = () =>
   youtubeStore((state) => state.videoSelection);
 
 // Atomic selectors for individual parts of selection state
-export const useManualSelection = () =>
-  youtubeStore((state) => state.videoSelection.manual);
+export const useIncludedOutsideRanges = () =>
+  youtubeStore((state) => state.videoSelection.includedOutsideRanges);
 export const useDateRangesSelection = () =>
   youtubeStore((state) => state.videoSelection.dateRanges);
 export const useExcludedFromRanges = () =>
   youtubeStore((state) => state.videoSelection.excludedFromRanges);
 
-// Note: useSelectedVideoIds se movió a useVideoSelection hook
-// para evitar loops infinitos con useMemo
-
-// Legacy selector for backward compatibility
-export const useIncludedVideos = () =>
-  youtubeStore((state) => state.videoSelection.manual);
-
 // Actions - single export for all actions
+// The actions object is stable as it's defined once in the store
 export const useYoutubeActions = () => youtubeStore((state) => state.actions);

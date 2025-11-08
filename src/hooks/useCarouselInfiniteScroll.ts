@@ -28,13 +28,31 @@ export function useCarouselInfiniteScroll({
   const loadTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isLoadingRef = useRef(false);
 
+  // Use refs for values that need to persist and be accessible in closures
+  const hasNextPageRef = useRef(hasNextPage);
+  const isLoadingRefValue = useRef(isLoading);
+  const isUserInteractingRef = useRef(false);
+  const lastScrollPositionRef = useRef(0);
+  const scrollDebounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
+  const interactionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
+
+  // Update refs when values change
+  useEffect(() => {
+    hasNextPageRef.current = hasNextPage;
+    isLoadingRefValue.current = isLoading;
+  }, [hasNextPage, isLoading]);
+
   const triggerLoad = useCallback(() => {
     const now = Date.now();
 
     if (
       now - lastLoadTimeRef.current > debounceMs &&
       !isLoadingRef.current &&
-      !isLoading
+      !isLoadingRefValue.current
     ) {
       if (loadTimeoutRef.current) {
         clearTimeout(loadTimeoutRef.current);
@@ -50,28 +68,24 @@ export function useCarouselInfiniteScroll({
         }
       }, 150);
     }
-  }, [onLoadNext, debounceMs, isLoading]);
+  }, [onLoadNext, debounceMs]);
 
   useEffect(() => {
     let observer: IntersectionObserver | null = null;
     let handleScroll: (() => void) | null = null;
     let handleSelect: (() => void) | null = null;
-    let scrollDebounceTimeout: ReturnType<typeof setTimeout> | null = null;
-    let interactionTimeout: ReturnType<typeof setTimeout> | null = null;
-    let lastScrollPosition = 0;
-    let isUserInteracting = false;
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     // Use a small delay to ensure DOM is updated
     timeoutId = setTimeout(() => {
       const lastItem = lastItemRef.current;
-      if (!lastItem || !hasNextPage || isLoading) {
+      if (!lastItem || !hasNextPageRef.current || isLoadingRefValue.current) {
         return;
       }
 
       // Initialize scroll position
       if (api) {
-        lastScrollPosition = api.scrollProgress();
+        lastScrollPositionRef.current = api.scrollProgress();
       }
 
       // Intersection Observer for detecting when last item is visible
@@ -82,9 +96,9 @@ export function useCarouselInfiniteScroll({
           // Only trigger if not a user interaction (click) and actually scrolling
           if (
             entry.isIntersecting &&
-            hasNextPage &&
-            !isLoading &&
-            !isUserInteracting
+            hasNextPageRef.current &&
+            !isLoadingRefValue.current &&
+            !isUserInteractingRef.current
           ) {
             triggerLoad();
           }
@@ -100,28 +114,29 @@ export function useCarouselInfiniteScroll({
 
       // Also use Embla events as backup - only trigger on actual scroll
       handleScroll = () => {
-        if (!api || isLoading || !hasNextPage) return;
+        if (!api || isLoadingRefValue.current || !hasNextPageRef.current)
+          return;
 
         const currentScrollPosition = api.scrollProgress();
         const scrollDelta = Math.abs(
-          currentScrollPosition - lastScrollPosition
+          currentScrollPosition - lastScrollPositionRef.current
         );
 
         // Only trigger if there was actual scroll movement (more than 0.01)
         if (scrollDelta < 0.01) {
-          lastScrollPosition = currentScrollPosition;
+          lastScrollPositionRef.current = currentScrollPosition;
           return;
         }
 
-        lastScrollPosition = currentScrollPosition;
+        lastScrollPositionRef.current = currentScrollPosition;
 
         // Clear any pending scroll debounce
-        if (scrollDebounceTimeout) {
-          clearTimeout(scrollDebounceTimeout);
+        if (scrollDebounceTimeoutRef.current) {
+          clearTimeout(scrollDebounceTimeoutRef.current);
         }
 
         // Debounce scroll events to avoid multiple triggers
-        scrollDebounceTimeout = setTimeout(() => {
+        scrollDebounceTimeoutRef.current = setTimeout(() => {
           const cannotScrollNext = !api.canScrollNext();
           const currentIndex = api.selectedScrollSnap();
           const totalSlides = api.slideNodes().length;
@@ -135,13 +150,13 @@ export function useCarouselInfiniteScroll({
 
       handleSelect = () => {
         // Mark as user interaction to prevent Intersection Observer from triggering
-        isUserInteracting = true;
-        if (interactionTimeout) {
-          clearTimeout(interactionTimeout);
+        isUserInteractingRef.current = true;
+        if (interactionTimeoutRef.current) {
+          clearTimeout(interactionTimeoutRef.current);
         }
         // Reset after a short delay
-        interactionTimeout = setTimeout(() => {
-          isUserInteracting = false;
+        interactionTimeoutRef.current = setTimeout(() => {
+          isUserInteractingRef.current = false;
         }, 300);
       };
 
@@ -156,11 +171,11 @@ export function useCarouselInfiniteScroll({
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
-      if (scrollDebounceTimeout) {
-        clearTimeout(scrollDebounceTimeout);
+      if (scrollDebounceTimeoutRef.current) {
+        clearTimeout(scrollDebounceTimeoutRef.current);
       }
-      if (interactionTimeout) {
-        clearTimeout(interactionTimeout);
+      if (interactionTimeoutRef.current) {
+        clearTimeout(interactionTimeoutRef.current);
       }
       if (observer) {
         observer.disconnect();
@@ -174,5 +189,5 @@ export function useCarouselInfiniteScroll({
         clearTimeout(loadTimeoutRef.current);
       }
     };
-  }, [api, lastItemRef, hasNextPage, isLoading, triggerLoad, itemsCount]);
+  }, [api, lastItemRef, triggerLoad, itemsCount]);
 }

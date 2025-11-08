@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import {
   useSelectedPlaylistId,
   useVideos,
@@ -17,14 +17,24 @@ export function usePlaylistVideos() {
   const isLoadingVideos = useIsLoadingVideos();
   const videosError = useVideosError();
   const { getVideosFromSelectedPlaylist } = useYoutubeActions();
+  const { clearAllSelections, clearVideos } = useYoutubeActions();
+
+  // Track previous selectedPlaylistId to only load when it actually changes
 
   // Load all videos when playlist is selected
+  // Only run when selectedPlaylistId actually changes, not when selection state changes
   useEffect(() => {
+    // Only call if selectedPlaylistId actually changed
     if (selectedPlaylistId) {
-      void getVideosFromSelectedPlaylist({});
+      void getVideosFromSelectedPlaylist();
+    } else if (!selectedPlaylistId) {
+      clearAllSelections();
+      clearVideos();
     }
+    // getVideosFromSelectedPlaylist is stable (defined once in store), so we can safely
+    // ignore it in dependencies. The ref check prevents unnecessary calls.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPlaylistId]); // getVideosFromSelectedPlaylist es estable, no necesita estar en deps
+  }, [selectedPlaylistId]); // Only depend on selectedPlaylistId
 
   const loadNextPage = useCallback(() => {
     if (selectedPlaylistId && videos?.next_page_token && !isLoadingVideos) {

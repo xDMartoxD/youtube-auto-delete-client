@@ -14,6 +14,7 @@ import { Loader2 } from 'lucide-react';
 import { useVideoSelection, useCarouselInfiniteScroll } from '@/hooks';
 import { getVideoThumbnailUrl } from '@/types/video';
 import { type PlaylistItemVideoOutput } from '@/api';
+import { VideoDateFilterPanel } from '../video-date-filter-panel';
 
 interface VideosCarrousellProps {
   videos: PlaylistItemVideoOutput[];
@@ -21,6 +22,7 @@ interface VideosCarrousellProps {
   hasNextPage: boolean;
   isLoading: boolean;
   onLoadNext?: () => void;
+  showAdvanceFilterButton?: boolean;
 }
 
 export function VideosCarrousell(
@@ -113,17 +115,27 @@ export function VideosCarrousell(
 
   if (videosItems.length === 0) {
     return (
-      <div className="flex items-center justify-center w-full py-12">
-        <p className="text-muted-foreground">No videos found</p>
+      <div className="flex flex-col items-center justify-center w-full py-12 space-y-4">
+        {props.isLoading ? (
+          <>
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <p className="text-muted-foreground">Loading videos...</p>
+          </>
+        ) : (
+          <p className="text-muted-foreground">No videos found</p>
+        )}
       </div>
     );
   }
 
   return (
     <>
-      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance text-left">
-        {props.title}
-      </h1>
+      <div className="flex items-center justify-between w-full">
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight text-balance text-left">
+          {props.title}
+        </h1>
+        {props.showAdvanceFilterButton && <VideoDateFilterPanel />}
+      </div>
       <Carousel
         className="w-full max-w-7xl"
         setApi={handleSetApi}
@@ -148,6 +160,10 @@ export function VideosCarrousell(
                 <CarouselItem
                   key={video.id}
                   className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 mv-2 py-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleVideoSelection(video.id);
+                  }}
                 >
                   <div
                     ref={isLastItem ? lastItemRef : undefined}
@@ -158,14 +174,6 @@ export function VideosCarrousell(
                         'overflow-hidden transition-all hover:shadow-lg h-full flex flex-col mx-1',
                         isSelected && 'ring-2 ring-primary'
                       )}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleVideoSelection(video);
-                      }}
-                      onMouseDown={(e) => {
-                        // Prevent carousel from treating this as a drag
-                        e.stopPropagation();
-                      }}
                     >
                       <CardContent className="p-0 flex flex-col h-full">
                         {/* Thumbnail */}
@@ -188,10 +196,6 @@ export function VideosCarrousell(
                             className="absolute top-2 right-2"
                             onMouseDown={(e) => {
                               e.stopPropagation();
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleVideoSelection(video);
                             }}
                           >
                             <Checkbox

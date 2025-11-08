@@ -23,6 +23,7 @@ import { useState } from 'react';
 import { LogOut, PlayCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useVideoSelection, usePlaylistVideos } from '@/hooks';
+import { formatDate } from '@/utils';
 
 export default function LandingPage() {
   const authenticate = useAuthenticate();
@@ -32,7 +33,7 @@ export default function LandingPage() {
   const playlists = usePlaylists();
   const isLoadingPlaylists = useIsLoadingPlaylists();
   const { getUserPlaylists } = useYoutubeActions();
-  const { hasSelectedVideos } = useVideoSelection();
+  const { hasSelectedVideos, getDateRangesSelection } = useVideoSelection();
   const { videosItems, hasNextPage, isLoadingVideos, loadNextPage } =
     usePlaylistVideos();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -221,16 +222,38 @@ export default function LandingPage() {
             {/* Videos Section */}
             {playlists && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <VideoDateFilterPanel />
-                </div>
                 <VideosCarrousell
                   videos={videosItems}
                   title="Videos"
                   hasNextPage={hasNextPage}
                   isLoading={isLoadingVideos}
                   onLoadNext={loadNextPage}
+                  showAdvanceFilterButton={true}
                 />
+              </div>
+            )}
+
+            {/* Videos Section - Date Ranges */}
+            {playlists && Object.entries(getDateRangesSelection).length > 0 && (
+              <div className="space-y-6">
+                {Object.entries(getDateRangesSelection).map(
+                  ([dateKey, range]) => {
+                    // Use videos from the range response directly
+                    const rangeVideos = range.videos?.items || [];
+
+                    return (
+                      <div key={dateKey} className="space-y-2">
+                        <VideosCarrousell
+                          videos={rangeVideos}
+                          title={`${formatDate(range.start)} - ${formatDate(range.end)}`}
+                          hasNextPage={false}
+                          isLoading={range.isLoading}
+                          onLoadNext={() => {}}
+                        />
+                      </div>
+                    );
+                  }
+                )}
               </div>
             )}
 

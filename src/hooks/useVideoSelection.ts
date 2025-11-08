@@ -1,10 +1,9 @@
 import { useCallback, useMemo } from 'react';
 import {
-  useManualSelection,
   useDateRangesSelection,
   useExcludedFromRanges,
   useYoutubeActions,
-  useVideos,
+  useIncludedOutsideRanges,
 } from '@/stores/youtube';
 
 /**
@@ -14,12 +13,17 @@ import {
  */
 export function useVideoSelection() {
   // Usar selectores atómicos para evitar re-renders innecesarios
-  const manual = useManualSelection();
+  const includedOutsideRanges = useIncludedOutsideRanges();
   const dateRanges = useDateRangesSelection();
   const excludedFromRanges = useExcludedFromRanges();
-  const { toggleVideoSelection } = useYoutubeActions();
-  const videos = useVideos();
-  const videosItems = videos?.items || [];
+  const {
+    addIncludedVideoOutsideDateRange,
+    addExcludedVideoInsideDateRange,
+    addDateRange,
+    removeDateRange,
+    removeExcludedVideoInsideDateRange,
+    removeIncludedVideoOutsideDateRange,
+  } = useYoutubeActions();
 
   // Computed: get all selected video IDs (manual + date ranges - excluded)
   // Usa selectores atómicos para dependencias estables
@@ -27,18 +31,20 @@ export function useVideoSelection() {
     const allIds = new Set<string>();
 
     // Add manual selections
-    manual.forEach((id) => allIds.add(id));
+    includedOutsideRanges.forEach((id) => allIds.add(id));
 
     // Add date range selections
     Object.values(dateRanges).forEach((range) => {
-      range.videoIds.forEach((id) => allIds.add(id));
+      if (range.videos?.items) {
+        range.videos.items.forEach((video) => allIds.add(video.id));
+      }
     });
 
     // Remove excluded videos
     excludedFromRanges.forEach((id) => allIds.delete(id));
 
     return Array.from(allIds).sort(); // Sort para estabilidad
-  }, [manual, dateRanges, excludedFromRanges]);
+  }, [includedOutsideRanges, dateRanges, excludedFromRanges]);
 
   const isVideoSelected = useCallback(
     (videoId: string): boolean => {
@@ -62,6 +68,8 @@ export function useVideoSelection() {
     [selectedVideoIds]
   );
 
+  const getDateRangesSelection = useMemo(() => dateRanges, [dateRanges]);
+
   const { clearAllSelections, selectAllVideos: selectAllVideosAction } =
     useYoutubeActions();
 
@@ -70,12 +78,58 @@ export function useVideoSelection() {
   }, [clearAllSelections]);
 
   const selectAllVideos = useCallback(() => {
-    const allVideoIds = videosItems.map((video) => video.id);
-    selectAllVideosAction(allVideoIds);
-  }, [videosItems, selectAllVideosAction]);
+    selectAllVideosAction();
+  }, [selectAllVideosAction]);
+
+  const isInVideoInDateRanges = useCallback(
+    (videoId: string) => {
+      return Object.values(dateRanges).some((range) =>
+        range.videos?.items?.some((video) => video.id === videoId)
+      );
+    },
+    [dateRanges]
+  );
+  const isInIncludedOutsideRange = useCallback(
+    (videoId: string) => {
+      return includedOutsideRanges.some((id) => id === videoId);
+    },
+    [includedOutsideRanges]
+  );
+
+  const toggleVideoSelection = useCallback(
+    (videoId: string) => {
+      console.log('toggleVideoSelection', videoId);
+      const isInDateRange = isInVideoInDateRanges(videoId);
+      const isInIncludedOutside = isInIncludedOutsideRange(videoId);
+
+      if (isInDateRange) {
+        // Si está en un dateRange, toggle en excludedFromRanges
+        if (excludedFromRanges.includes(videoId)) {
+          removeExcludedVideoInsideDateRange(videoId);
+        } else {
+          addExcludedVideoInsideDateRange(videoId);
+        }
+      } else if (isInIncludedOutside) {
+        // Si está en includedOutsideRanges, removerlo
+        removeIncludedVideoOutsideDateRange(videoId);
+      } else {
+        // Si no está en ningún lado, agregarlo a includedOutsideRanges
+        addIncludedVideoOutsideDateRange(videoId);
+      }
+    },
+    [
+      isInVideoInDateRanges,
+      isInIncludedOutsideRange,
+      excludedFromRanges,
+      addExcludedVideoInsideDateRange,
+      removeExcludedVideoInsideDateRange,
+      addIncludedVideoOutsideDateRange,
+      removeIncludedVideoOutsideDateRange,
+    ]
+  );
 
   return {
-    selectedVideos: selectedVideoIds,
+    selectedVideoIds,
     isVideoSelected,
     toggleVideoSelection,
     selectedVideosCount,
@@ -83,5 +137,8 @@ export function useVideoSelection() {
     getSelectedVideoIds,
     clearSelectedVideos,
     selectAllVideos,
+    getDateRangesSelection,
+    addDateRange,
+    removeDateRange,
   };
 }
