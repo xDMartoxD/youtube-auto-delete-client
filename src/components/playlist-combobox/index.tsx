@@ -21,9 +21,13 @@ import { type PlaylistItem } from '@/api';
 
 export function Combobox() {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<string>('');
-  const { playlists, isLoading: isLoadingPlaylists, error: playlistsError, getUserPlaylists } = usePlaylists();
-  const { setSelectedPlaylistId } = useSelectedPlaylist();
+  const {
+    playlists,
+    isLoading: isLoadingPlaylists,
+    error: playlistsError,
+    getUserPlaylists,
+  } = usePlaylists();
+  const { selectedPlaylistId, setSelectedPlaylistId } = useSelectedPlaylist();
 
   // Load playlists on mount
   useEffect(() => {
@@ -40,14 +44,15 @@ export function Combobox() {
 
   // Find selected playlist for display
   const selectedPlaylist = useMemo(
-    () => playlistsItems.find((playlist) => playlist.id === value),
-    [playlistsItems, value]
+    () => playlistsItems.find((playlist) => playlist.id === selectedPlaylistId),
+    [playlistsItems, selectedPlaylistId]
   );
 
   const handleSelect = (currentValue: string): void => {
-    setValue(currentValue === value ? '' : currentValue);
+    setSelectedPlaylistId(
+      currentValue === selectedPlaylistId ? '' : currentValue
+    );
     setOpen(false);
-    setSelectedPlaylistId(currentValue);
   };
 
   return (
@@ -103,7 +108,9 @@ export function Combobox() {
                         <Check
                           className={cn(
                             'mr-2 h-4 w-4',
-                            value === playlist.id ? 'opacity-100' : 'opacity-0'
+                            selectedPlaylistId === playlist.id
+                              ? 'opacity-100'
+                              : 'opacity-0'
                           )}
                         />
                         {title}

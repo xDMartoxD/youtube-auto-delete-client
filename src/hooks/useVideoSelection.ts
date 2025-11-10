@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   useDateRangesSelection,
   useExcludedFromRanges,
@@ -9,11 +9,21 @@ import {
 } from '@/stores/youtube';
 import type { PlaylistItemVideoOutput } from '@/api';
 import { PRIVATE_VIDEO_DESCRIPTION, PRIVATE_VIDEO_TITLE } from '@/constants';
+import { handleApiError } from '@/utils';
 
 /**
  * Hook para manejar la selección de videos
  * Encapsula la lógica de selección y proporciona utilidades
  * Usa la estructura normalizada de selección
+ *
+ * @returns {Object} Video selection state and actions
+ * @returns {string[]} selectedVideoIds - Array of selected video IDs
+ * @returns {Function} isVideoSelected - Function to check if a video is selected
+ * @returns {Function} toggleVideoSelection - Function to toggle video selection
+ * @returns {number} selectedVideosCount - Number of selected videos
+ * @returns {boolean} hasSelectedVideos - Whether there are any selected videos
+ * @returns {Function} deleteSelectedVideos - Function to delete selected videos
+ * @returns {boolean} isDeleting - Whether deletion is in progress
  */
 export function useVideoSelection() {
   // Usar selectores atómicos para evitar re-renders innecesarios
@@ -30,6 +40,7 @@ export function useVideoSelection() {
     removeExcludedVideoInsideDateRange,
     removeIncludedVideoOutsideDateRange,
     setShouldRemovePrivateVideos,
+    deleteVideos,
   } = useYoutubeActions();
 
   // Computed: get all selected video IDs (manual + date ranges - excluded + private videos if enabled)
@@ -50,9 +61,6 @@ export function useVideoSelection() {
     // Add private videos if shouldRemovePrivateVideos is enabled
     if (shouldRemovePrivateVideos && videos?.items) {
       videos.items.forEach((video) => {
-        if (video.snippet.position == 66) {
-          debugger;
-        }
         if (
           video.snippet?.title === PRIVATE_VIDEO_TITLE &&
           video.snippet?.description === PRIVATE_VIDEO_DESCRIPTION &&
@@ -110,6 +118,24 @@ export function useVideoSelection() {
     selectAllVideosAction();
   }, [selectAllVideosAction]);
 
+  // Delete videos functionality
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const deleteSelectedVideos = useCallback(async () => {
+    if (selectedVideoIds.length === 0) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await deleteVideos(selectedVideoIds);
+    } catch (error) {
+      handleApiError(error, 'Failed to delete videos');
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [selectedVideoIds, deleteVideos]);
+
   const isInVideoInDateRanges = useCallback(
     (videoId: string) => {
       return Object.values(dateRanges).some((range) =>
@@ -127,7 +153,6 @@ export function useVideoSelection() {
 
   const toggleVideoSelection = useCallback(
     (videoId: string) => {
-      console.log('toggleVideoSelection', videoId);
       const isInDateRange = isInVideoInDateRanges(videoId);
       const isInIncludedOutside = isInIncludedOutsideRange(videoId);
 
@@ -193,5 +218,7 @@ export function useVideoSelection() {
     setShouldRemovePrivateVideos,
     addDateRange,
     removeDateRange,
+    deleteSelectedVideos,
+    isDeleting,
   };
 }

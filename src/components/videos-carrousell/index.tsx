@@ -214,23 +214,35 @@ export function VideosCarrousell(
 
                         {/* Video Info */}
                         <div className="p-4 space-y-2 flex-1 flex flex-col">
-                          <h3 className="font-semibold text-sm line-clamp-2">
+                          <h3
+                            className="font-semibold text-sm line-clamp-2"
+                            title={videoTitle}
+                          >
                             {videoTitle}
                           </h3>
                           <p className="text-xs text-muted-foreground line-clamp-1">
                             {channelTitle}
                           </p>
-                          <div className="mt-auto space-y-1">
+                          <div className="mt-auto space-y-1.5">
                             {video.snippet?.publishedAt && (
-                              <p className="text-xs text-muted-foreground">
+                              <p className="text-sm font-medium text-foreground/80">
                                 Added:{' '}
-                                {new Date(
-                                  video.snippet.publishedAt
-                                ).toLocaleDateString()}
+                                <span className="font-normal">
+                                  {new Date(
+                                    video.snippet.publishedAt
+                                  ).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                  })}
+                                </span>
                               </p>
                             )}
                             {video.snippet?.description && (
-                              <p className="text-xs text-muted-foreground line-clamp-2">
+                              <p
+                                className="text-xs text-muted-foreground line-clamp-2"
+                                title={video.snippet.description}
+                              >
                                 {video.snippet.description}
                               </p>
                             )}

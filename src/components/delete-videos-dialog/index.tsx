@@ -13,8 +13,6 @@ import { useVideoSelection } from '@/hooks';
 interface DeleteVideosDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: () => void | Promise<void>;
-  isDeleting?: boolean;
 }
 
 /**
@@ -23,13 +21,12 @@ interface DeleteVideosDialogProps {
 export function DeleteVideosDialog({
   open,
   onOpenChange,
-  onConfirm,
-  isDeleting = false,
 }: DeleteVideosDialogProps) {
-  const { selectedVideosCount } = useVideoSelection();
+  const { selectedVideosCount, deleteSelectedVideos, isDeleting } =
+    useVideoSelection();
 
   const handleConfirm = async () => {
-    await onConfirm();
+    await deleteSelectedVideos();
     onOpenChange(false);
   };
 
@@ -78,4 +75,3 @@ export function DeleteVideosDialog({
     </Dialog>
   );
 }
-

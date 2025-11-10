@@ -5,7 +5,7 @@ import LandingPage from './pages/landing/index';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import NotFoundPage from './pages/not-found';
 import { useEffect } from 'react';
-import { useMe } from './stores/auth';
+import { useAuth } from './hooks';
 import { Toaster } from 'sonner';
 
 const router = createBrowserRouter([
@@ -14,10 +14,10 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const me = useMe();
+  const { me } = useAuth();
   useEffect(() => {
     me();
-  }, []);
+  }, [me]);
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">

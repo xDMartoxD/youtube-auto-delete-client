@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import type { CarouselApi } from '@/components/ui/carousel';
+import { handleApiError } from '@/utils';
 
 interface UseCarouselInfiniteScrollOptions {
   api: CarouselApi | null;
@@ -55,7 +56,7 @@ export function useCarouselInfiniteScroll({
     try {
       await onLoadNextRef.current();
     } catch (error) {
-      console.error('Error loading next page:', error);
+      handleApiError(error, 'Failed to load more videos');
     } finally {
       // Reset flag después de un delay para permitir actualizaciones de estado
       setTimeout(() => {

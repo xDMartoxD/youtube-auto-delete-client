@@ -42,6 +42,24 @@ export type ContentDetails = {
 };
 
 /**
+ * DeletePlaylistVideosRequest
+ */
+export type DeletePlaylistVideosRequest = {
+    /**
+     * Include Private Videos
+     *
+     * Incluir videos privados
+     */
+    include_private_videos: boolean;
+    /**
+     * Video Ids
+     *
+     * IDs de los videos a eliminar
+     */
+    video_ids?: Array<string> | null;
+};
+
+/**
  * GoogleCodeLogin
  */
 export type GoogleCodeLogin = {
@@ -633,7 +651,7 @@ export type LogoutApiAuthLogoutPostResponses = {
      *
      * Successful Response
      */
-    200: {
+    202: {
         [key: string]: unknown;
     };
 };
@@ -805,78 +823,100 @@ export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses = {
 
 export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponse = GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses[keyof GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses];
 
-export type GetAllSuggestionsApiSuggestionsGetData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/suggestions';
-};
-
-export type GetAllSuggestionsApiSuggestionsGetResponses = {
-    /**
-     * Successful Response
-     */
-    200: SuggestionListResponse;
-};
-
-export type GetAllSuggestionsApiSuggestionsGetResponse = GetAllSuggestionsApiSuggestionsGetResponses[keyof GetAllSuggestionsApiSuggestionsGetResponses];
-
-export type CreateSuggestionApiSuggestionsPostData = {
-    body: SuggestionCreate;
-    path?: never;
-    query?: never;
-    url: '/api/suggestions';
-};
-
-export type CreateSuggestionApiSuggestionsPostErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type CreateSuggestionApiSuggestionsPostError = CreateSuggestionApiSuggestionsPostErrors[keyof CreateSuggestionApiSuggestionsPostErrors];
-
-export type CreateSuggestionApiSuggestionsPostResponses = {
-    /**
-     * Successful Response
-     */
-    201: SuggestionResponse;
-};
-
-export type CreateSuggestionApiSuggestionsPostResponse = CreateSuggestionApiSuggestionsPostResponses[keyof CreateSuggestionApiSuggestionsPostResponses];
-
-export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteData = {
-    body?: never;
+export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostData = {
+    body: DeletePlaylistVideosRequest;
     path: {
         /**
-         * Suggestion Id
+         * Playlist Id
          */
-        suggestion_id: string;
+        playlist_id: string;
     };
     query?: never;
-    url: '/api/suggestions/{suggestion_id}';
+    url: '/api/youtube/playlists/{playlist_id}/delete';
 };
 
-export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors = {
+export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteError = DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors[keyof DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors];
+export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostError = DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostErrors[keyof DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostErrors];
 
-export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses = {
+export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponses = {
     /**
      * Successful Response
      */
     204: void;
 };
 
-export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponse = DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses[keyof DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses];
+export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponse = DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponses[keyof DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponses];
 
-export type GetSuggestionApiSuggestionsSuggestionIdGetData = {
+export type GetAllSuggestionsApiSuggestionsSuggestionsGetData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Max Results
+         *
+         * Número máximo de resultados por página
+         */
+        max_results?: number;
+        /**
+         * Page Token
+         *
+         * Token de página para paginación
+         */
+        page_token?: string | null;
+    };
+    url: '/api/suggestions/suggestions';
+};
+
+export type GetAllSuggestionsApiSuggestionsSuggestionsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetAllSuggestionsApiSuggestionsSuggestionsGetError = GetAllSuggestionsApiSuggestionsSuggestionsGetErrors[keyof GetAllSuggestionsApiSuggestionsSuggestionsGetErrors];
+
+export type GetAllSuggestionsApiSuggestionsSuggestionsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: SuggestionListResponse;
+};
+
+export type GetAllSuggestionsApiSuggestionsSuggestionsGetResponse = GetAllSuggestionsApiSuggestionsSuggestionsGetResponses[keyof GetAllSuggestionsApiSuggestionsSuggestionsGetResponses];
+
+export type CreateSuggestionApiSuggestionsSuggestionsPostData = {
+    body: SuggestionCreate;
+    path?: never;
+    query?: never;
+    url: '/api/suggestions/suggestions';
+};
+
+export type CreateSuggestionApiSuggestionsSuggestionsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreateSuggestionApiSuggestionsSuggestionsPostError = CreateSuggestionApiSuggestionsSuggestionsPostErrors[keyof CreateSuggestionApiSuggestionsSuggestionsPostErrors];
+
+export type CreateSuggestionApiSuggestionsSuggestionsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: SuggestionResponse;
+};
+
+export type CreateSuggestionApiSuggestionsSuggestionsPostResponse = CreateSuggestionApiSuggestionsSuggestionsPostResponses[keyof CreateSuggestionApiSuggestionsSuggestionsPostResponses];
+
+export type DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteData = {
     body?: never;
     path: {
         /**
@@ -885,28 +925,58 @@ export type GetSuggestionApiSuggestionsSuggestionIdGetData = {
         suggestion_id: string;
     };
     query?: never;
-    url: '/api/suggestions/{suggestion_id}';
+    url: '/api/suggestions/suggestions/{suggestion_id}';
 };
 
-export type GetSuggestionApiSuggestionsSuggestionIdGetErrors = {
+export type DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetSuggestionApiSuggestionsSuggestionIdGetError = GetSuggestionApiSuggestionsSuggestionIdGetErrors[keyof GetSuggestionApiSuggestionsSuggestionIdGetErrors];
+export type DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteError = DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteErrors[keyof DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteErrors];
 
-export type GetSuggestionApiSuggestionsSuggestionIdGetResponses = {
+export type DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteResponse = DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteResponses[keyof DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteResponses];
+
+export type GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetData = {
+    body?: never;
+    path: {
+        /**
+         * Suggestion Id
+         */
+        suggestion_id: string;
+    };
+    query?: never;
+    url: '/api/suggestions/suggestions/{suggestion_id}';
+};
+
+export type GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetError = GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetErrors[keyof GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetErrors];
+
+export type GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetResponses = {
     /**
      * Successful Response
      */
     200: SuggestionResponse;
 };
 
-export type GetSuggestionApiSuggestionsSuggestionIdGetResponse = GetSuggestionApiSuggestionsSuggestionIdGetResponses[keyof GetSuggestionApiSuggestionsSuggestionIdGetResponses];
+export type GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetResponse = GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetResponses[keyof GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetResponses];
 
-export type UpdateSuggestionApiSuggestionsSuggestionIdPutData = {
+export type UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutData = {
     body: SuggestionUpdate;
     path: {
         /**
@@ -915,23 +985,23 @@ export type UpdateSuggestionApiSuggestionsSuggestionIdPutData = {
         suggestion_id: string;
     };
     query?: never;
-    url: '/api/suggestions/{suggestion_id}';
+    url: '/api/suggestions/suggestions/{suggestion_id}';
 };
 
-export type UpdateSuggestionApiSuggestionsSuggestionIdPutErrors = {
+export type UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type UpdateSuggestionApiSuggestionsSuggestionIdPutError = UpdateSuggestionApiSuggestionsSuggestionIdPutErrors[keyof UpdateSuggestionApiSuggestionsSuggestionIdPutErrors];
+export type UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutError = UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutErrors[keyof UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutErrors];
 
-export type UpdateSuggestionApiSuggestionsSuggestionIdPutResponses = {
+export type UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutResponses = {
     /**
      * Successful Response
      */
     200: SuggestionResponse;
 };
 
-export type UpdateSuggestionApiSuggestionsSuggestionIdPutResponse = UpdateSuggestionApiSuggestionsSuggestionIdPutResponses[keyof UpdateSuggestionApiSuggestionsSuggestionIdPutResponses];
+export type UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutResponse = UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutResponses[keyof UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutResponses];

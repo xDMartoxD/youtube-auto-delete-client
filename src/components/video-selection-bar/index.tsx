@@ -30,30 +30,30 @@ export function VideoSelectionBar({
   return (
     <div
       className={cn(
-        'fixed bottom-6 left-1/2 -translate-x-1/2 z-50',
+        'fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50',
         'bg-card border border-border rounded-lg shadow-2xl',
-        'px-6 py-4 min-w-[300px]',
+        'px-3 sm:px-6 py-3 sm:py-4 w-[calc(100%-2rem)] sm:min-w-[300px] max-w-md',
         'animate-in slide-in-from-bottom-4 duration-300',
-        'backdrop-blur-sm bg-card/25'
+        'backdrop-blur-sm bg-card/95'
       )}
     >
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-medium">
+      <div className="flex items-center justify-between gap-2 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <span className="text-xs sm:text-sm font-medium truncate">
             {selectedVideosCount}{' '}
             {selectedVideosCount === 1 ? 'video' : 'videos'} selected
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
           <Button
             variant="outline"
             size="sm"
             onClick={handleDeselectAll}
-            className="h-8 gap-1.5"
+            className="h-7 sm:h-8 gap-1 px-2 sm:px-3"
             title="Deselect all videos"
           >
-            <X className="h-4 w-4" />
+            <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">Clear</span>
           </Button>
 
@@ -62,17 +62,18 @@ export function VideoSelectionBar({
             size="sm"
             onClick={onDelete}
             disabled={isDeleting || !hasSelectedVideos}
-            className="h-8"
+            className="h-7 sm:h-8 px-2 sm:px-3"
           >
             {isDeleting ? (
               <>
-                <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
-                Deleting...
+                <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-1.5 animate-spin" />
+                <span className="hidden sm:inline">Deleting...</span>
               </>
             ) : (
               <>
-                <Trash2 className="h-4 w-4 mr-1.5" />
-                Delete ({selectedVideosCount})
+                <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-1.5" />
+                <span className="hidden sm:inline">Delete</span>
+                <span className="sm:hidden">({selectedVideosCount})</span>
               </>
             )}
           </Button>

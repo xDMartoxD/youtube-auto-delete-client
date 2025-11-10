@@ -12,7 +12,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { MessageSquare, Loader2, CheckCircle2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { handleApiError } from '@/utils';
 
 interface FeedbackDialogProps {
   trigger?: React.ReactNode;
@@ -51,10 +51,7 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
         throw new Error(result.error ? 'Failed to submit suggestion' : 'Unknown error');
       }
     } catch (error) {
-      console.error('Error submitting suggestion:', error);
-      toast.error('Error sending suggestion', {
-        description: 'Please try again later.',
-      });
+      handleApiError(error, 'Failed to send suggestion');
     } finally {
       setIsSubmitting(false);
     }

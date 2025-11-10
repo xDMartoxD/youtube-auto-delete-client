@@ -10,8 +10,9 @@ import {
 import {
   getUserPlaylists as getUserPlaylistsService,
   getPlaylistVideos as getPlaylistVideosService,
+  deletePlaylistVideos,
 } from '@/services/youtube';
-import { createDateRange } from '@/utils';
+import { createDateRange, handleServiceError } from '@/utils';
 
 export interface YoutubeActions {
   getUserPlaylists: () => Promise<void>;
@@ -30,6 +31,7 @@ export interface YoutubeActions {
   clearVideos: () => void;
   selectAllVideos: () => void;
   setShouldRemovePrivateVideos: (value: boolean) => void;
+  deleteVideos: (videos: string[]) => Promise<void>;
 }
 
 /**
@@ -123,7 +125,7 @@ const youtubeStore = create<YoutubeState>()(
               playlistsError: result.error,
               isLoadingPlaylists: false,
             });
-            console.error('Get playlists error:', result.error);
+            handleServiceError(result, 'Failed to load playlists');
           } else {
             set({
               playlistsError: null,
@@ -183,7 +185,7 @@ const youtubeStore = create<YoutubeState>()(
                 isLoading: false,
               },
             }));
-            console.error('Get playlist videos error:', result.error);
+            handleServiceError(result, 'Failed to load videos');
           } else {
             set((state) => ({
               playlistVideos: {
@@ -294,7 +296,7 @@ const youtubeStore = create<YoutubeState>()(
           });
 
           if (result.error) {
-            console.error('Get videos by date range error:', result.error);
+            handleServiceError(result, 'Failed to load videos by date range');
           }
         },
 
@@ -423,6 +425,27 @@ const youtubeStore = create<YoutubeState>()(
         },
         setShouldRemovePrivateVideos: (value: boolean) => {
           set({ shouldRemovePrivateVideos: value });
+        },
+        deleteVideos: async (videos: string[]) => {
+          if (!get().selectedPlaylistId) {
+            return;
+          }
+          const result = await deletePlaylistVideos(
+            get().selectedPlaylistId!,
+            videos,
+            get().shouldRemovePrivateVideos
+          );
+
+          if (result.success) {
+            toast.success('Videos deleted successfully');
+            get().actions.clearAllSelections();
+            get().actions.clearVideos();
+            set({
+              selectedPlaylistId: null,
+            });
+          } else if (result.error) {
+            handleServiceError(result, 'Failed to delete videos');
+          }
         },
       } satisfies YoutubeActions,
     }),

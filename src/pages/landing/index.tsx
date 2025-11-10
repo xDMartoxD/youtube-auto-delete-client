@@ -1,13 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/playlist-combobox';
 import { SCOPES } from '@/constants';
-import {
-  useAuthenticate,
-  useLogout,
-  useIsAuthenticated,
-  useIsAuthenticating,
-} from '@/stores/auth';
-import { usePlaylists } from '@/hooks';
 import { useGoogleLogin } from '@react-oauth/google';
 import { AvatarComponent } from '@/components/google-avatar';
 import { VideosCarrousell } from '@/components/videos-carrousell';
@@ -17,24 +10,31 @@ import { FeedbackDialog } from '@/components/feedback-dialog';
 import { useState } from 'react';
 import { LogOut, PlayCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useVideoSelection, usePlaylistVideos } from '@/hooks';
-import { formatDate } from '@/utils';
+import {
+  useVideoSelection,
+  usePlaylistVideos,
+  useSelectedPlaylist,
+  useAuth,
+  usePlaylists,
+} from '@/hooks';
+import { formatDate, handleApiError } from '@/utils';
 
 export default function LandingPage() {
-  const authenticate = useAuthenticate();
-  const logout = useLogout();
-  const isAuthenticated = useIsAuthenticated();
-  const isAuthenticating = useIsAuthenticating();
+  const { authenticate, logout, isAuthenticated, isAuthenticating } = useAuth();
   const {
     playlists,
     isLoading: isLoadingPlaylists,
     getUserPlaylists,
   } = usePlaylists();
-  const { hasSelectedVideos, getDateRangesSelection } = useVideoSelection();
+  const {
+    hasSelectedVideos,
+    getDateRangesSelection,
+    isDeleting,
+  } = useVideoSelection();
   const { videosItems, hasNextPage, isLoadingVideos, loadNextPage } =
     usePlaylistVideos();
+  const { selectedPlaylistId } = useSelectedPlaylist();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
 
   const login = useGoogleLogin({
     flow: 'auth-code',
@@ -43,24 +43,9 @@ export default function LandingPage() {
       await authenticate(codeResponse);
     },
     onError: (err) => {
-      console.error('Login error', err);
+      handleApiError(err, 'Failed to login with Google');
     },
   });
-
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      // TODO: Implement API call to delete videos
-      // await deleteVideos(selectedVideoIds);
-      console.log('Deleting videos...');
-      // Simular delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error('Error deleting videos:', error);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -84,20 +69,23 @@ export default function LandingPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {isAuthenticated && (
                 <>
                   <FeedbackDialog />
-                  <AvatarComponent />
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={logout}
-                    className="gap-2"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span className="hidden sm:inline">Sign out</span>
-                  </Button>
+                  {/* Group user actions together */}
+                  <div className="flex items-center gap-2 pl-2 border-l">
+                    <AvatarComponent />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={logout}
+                      className="gap-2"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span className="hidden sm:inline">Sign out</span>
+                    </Button>
+                  </div>
                 </>
               )}
             </div>
@@ -146,20 +134,19 @@ export default function LandingPage() {
           /* Authenticated Content */
           <div className="space-y-6">
             {/* Playlist Selection Section */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <h2 className="text-2xl font-semibold tracking-tight">
-                  Select a playlist
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  Choose the playlist from which you want to delete videos
-                </p>
-              </div>
-              {/* Playlist Combobox */}
-              <div>
-                <Combobox />
-              </div>
-              <div className="flex items-center gap-2">
+            <div className="space-y-4">
+              {!selectedPlaylistId && (
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-semibold tracking-tight">
+                    Select a playlist
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Choose the playlist from which you want to delete videos
+                  </p>
+                </div>
+              )}
+              {/* Group playlist controls together */}
+              <div className="flex items-center gap-2 flex-wrap">
                 <Button
                   variant="outline"
                   size="sm"
@@ -182,6 +169,7 @@ export default function LandingPage() {
                     </>
                   )}
                 </Button>
+                <Combobox />
               </div>
             </div>
 
@@ -260,8 +248,6 @@ export default function LandingPage() {
       <DeleteVideosDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        onConfirm={handleDelete}
-        isDeleting={isDeleting}
       />
     </div>
   );

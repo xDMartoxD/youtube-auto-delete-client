@@ -6,6 +6,7 @@ import {
   getUserProfile as getUserProfileService,
   logout as logoutService,
 } from '@/services/auth';
+import { handleServiceError } from '@/utils';
 
 interface AuthState {
   // State
@@ -53,7 +54,7 @@ const authStore = create<AuthState>((set) => ({
         authError: result.error as CodeLoginApiAuthExchangePostError,
         isAuthenticating: false,
       });
-      console.error('Authentication error:', result.error);
+      handleServiceError(result, 'Failed to authenticate');
     } else {
       set({
         authError: null,
@@ -95,7 +96,7 @@ const authStore = create<AuthState>((set) => ({
         profileError: result.error,
         isLoadingProfile: false,
       });
-      console.error('Get user profile error:', result.error);
+      handleServiceError(result, 'Failed to load user profile');
     } else {
       set({
         profileError: null,
