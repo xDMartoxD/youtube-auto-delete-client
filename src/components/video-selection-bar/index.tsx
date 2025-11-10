@@ -9,8 +9,8 @@ interface VideoSelectionBarProps {
 }
 
 /**
- * Barra de acciones flotante para videos seleccionados
- * Aparece cuando hay videos seleccionados
+ * Floating action bar for selected videos
+ * Appears when there are selected videos
  */
 export function VideoSelectionBar({
   onDelete,
@@ -41,8 +41,7 @@ export function VideoSelectionBar({
         <div className="flex items-center gap-3">
           <span className="text-sm font-medium">
             {selectedVideosCount}{' '}
-            {selectedVideosCount === 1 ? 'video' : 'videos'} seleccionado
-            {selectedVideosCount !== 1 ? 's' : ''}
+            {selectedVideosCount === 1 ? 'video' : 'videos'} selected
           </span>
         </div>
 
@@ -52,10 +51,10 @@ export function VideoSelectionBar({
             size="sm"
             onClick={handleDeselectAll}
             className="h-8 gap-1.5"
-            title="Deseleccionar todos los videos"
+            title="Deselect all videos"
           >
             <X className="h-4 w-4" />
-            <span className="hidden sm:inline">Limpiar</span>
+            <span className="hidden sm:inline">Clear</span>
           </Button>
 
           <Button
@@ -68,12 +67,12 @@ export function VideoSelectionBar({
             {isDeleting ? (
               <>
                 <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
-                Eliminando...
+                Deleting...
               </>
             ) : (
               <>
                 <Trash2 className="h-4 w-4 mr-1.5" />
-                Eliminar ({selectedVideosCount})
+                Delete ({selectedVideosCount})
               </>
             )}
           </Button>

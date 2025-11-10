@@ -12,6 +12,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { MessageSquare, Loader2, CheckCircle2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface FeedbackDialogProps {
   trigger?: React.ReactNode;
@@ -34,22 +35,10 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
     setIsSubmitting(true);
 
     try {
-      // TODO: Replace with actual API endpoint when available
-      // For now, using a generic feedback endpoint pattern
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/api/feedback`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          title: title.trim(),
-          message: message.trim(),
-          timestamp: new Date().toISOString(),
-        }),
-      });
+      const { postSuggestion } = await import('@/services/suggestions');
+      const result = await postSuggestion(title, message);
 
-      if (response.ok) {
+      if (result.success && result.data) {
         setIsSuccess(true);
         setTitle('');
         setMessage('');
@@ -59,19 +48,13 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
           setIsSuccess(false);
         }, 2000);
       } else {
-        throw new Error('Failed to submit feedback');
+        throw new Error(result.error ? 'Failed to submit suggestion' : 'Unknown error');
       }
     } catch (error) {
-      console.error('Error submitting feedback:', error);
-      // For now, show success even if API call fails (since endpoint might not exist)
-      // In production, you'd want to show an error message
-      setIsSuccess(true);
-      setTitle('');
-      setMessage('');
-      setTimeout(() => {
-        setIsOpen(false);
-        setIsSuccess(false);
-      }, 2000);
+      console.error('Error submitting suggestion:', error);
+      toast.error('Error sending suggestion', {
+        description: 'Please try again later.',
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -97,8 +80,8 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
         {trigger || (
           <Button variant="outline" size="sm" className="gap-2">
             <MessageSquare className="h-4 w-4" />
-            <span className="hidden sm:inline">Enviar sugerencia</span>
-            <span className="sm:hidden">Sugerencia</span>
+            <span className="hidden sm:inline">Send suggestion</span>
+            <span className="sm:hidden">Suggestion</span>
           </Button>
         )}
       </DialogTrigger>
@@ -106,10 +89,10 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5" />
-            Enviar Sugerencia
+            Send Suggestion
           </DialogTitle>
           <DialogDescription>
-            Comparte tus ideas, comentarios o reporta problemas. Tu feedback nos ayuda a mejorar.
+            Share your ideas, comments, or report issues. Your feedback helps us improve.
           </DialogDescription>
         </DialogHeader>
 
@@ -117,18 +100,18 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
           <div className="flex flex-col items-center justify-center py-8 space-y-4">
             <CheckCircle2 className="h-12 w-12 text-green-500" />
             <p className="text-center text-sm font-medium">
-              ¡Gracias! Tu sugerencia ha sido enviada.
+              Thank you! Your suggestion has been sent.
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="feedback-title" className="text-sm font-medium">
-                Título
+                Title
               </label>
               <Input
                 id="feedback-title"
-                placeholder="Ej: Mejorar la selección de videos"
+                placeholder="e.g., Improve video selection"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 disabled={isSubmitting}
@@ -138,11 +121,11 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
 
             <div className="space-y-2">
               <label htmlFor="feedback-message" className="text-sm font-medium">
-                Mensaje
+                Message
               </label>
               <Textarea
                 id="feedback-message"
-                placeholder="Describe tu sugerencia, comentario o problema en detalle..."
+                placeholder="Describe your suggestion, comment, or issue in detail..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 disabled={isSubmitting}
@@ -158,18 +141,18 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
                 onClick={() => setIsOpen(false)}
                 disabled={isSubmitting}
               >
-                Cancelar
+                Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting || !title.trim() || !message.trim()}>
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Enviando...
+                    Sending...
                   </>
                 ) : (
                   <>
                     <MessageSquare className="h-4 w-4 mr-2" />
-                    Enviar
+                    Send
                   </>
                 )}
               </Button>

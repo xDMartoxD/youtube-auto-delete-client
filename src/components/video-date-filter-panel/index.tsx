@@ -8,8 +8,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { Calendar, Filter, Plus, X } from 'lucide-react';
 import { useVideoSelection } from '@/hooks';
+
 import './index.css';
 import { RangeCalendar } from '../range-calendar';
 import { Badge } from '../ui/badge';
@@ -26,8 +29,14 @@ export function VideoDateFilterPanel() {
     start: null,
     end: null,
   });
-  const { getDateRangesSelection, addDateRange, removeDateRange } =
-    useVideoSelection();
+  const {
+    getDateRangesSelection,
+    addDateRange,
+    removeDateRange,
+    shouldRemovePrivateVideos,
+    setShouldRemovePrivateVideos,
+  } = useVideoSelection();
+
   const handleSelectByDateRange = () => {
     addDateRange(dateRange.start, dateRange.end);
     setDateRange({ start: null, end: null });
@@ -38,25 +47,47 @@ export function VideoDateFilterPanel() {
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <Filter className="h-4 w-4" />
-          <span className="hidden sm:inline">Filtros avanzados</span>
-          <span className="sm:hidden">Filtros</span>
+          <span className="hidden sm:inline">Advanced filters</span>
+          <span className="sm:hidden">Filters</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
-            Selección por Fecha
+            Date Range Selection
           </DialogTitle>
           <DialogDescription>
-            Selecciona videos agregados a la lista por rango de fechas
+            Select videos added to the playlist by date range
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
+          {/* Remove Private Videos Checkbox */}
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="remove-private-videos"
+                checked={shouldRemovePrivateVideos}
+                onCheckedChange={(checked) =>
+                  setShouldRemovePrivateVideos(checked === true)
+                }
+              />
+              <Label
+                htmlFor="remove-private-videos"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+              >
+                Remove private videos
+              </Label>
+            </div>
+            <p className="text-xs text-muted-foreground ml-6">
+              If enabled, private videos will also be deleted
+            </p>
+          </div>
+
           {/* Quick Select Buttons */}
           <div className="space-y-2">
-            <h3 className="text-sm font-semibold">Eliminar</h3>
+            <h3 className="text-sm font-semibold">Selected date ranges</h3>
             <div className="flex flex-wrap gap-2">
               {Object.entries(getDateRangesSelection).map(
                 ([dateKey, range]) => (
@@ -71,7 +102,7 @@ export function VideoDateFilterPanel() {
                     <button
                       onClick={() => removeDateRange(range.start)}
                       className="ml-1 rounded-full hover:bg-secondary/80 p-0.5 transition-colors"
-                      aria-label="Eliminar rango de fecha"
+                      aria-label="Remove date range"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -83,7 +114,7 @@ export function VideoDateFilterPanel() {
 
           {/* Custom Date Range */}
           <div className="space-y-2">
-            <h3 className="text-sm font-semibold">Rango Personalizado</h3>
+            <h3 className="text-sm font-semibold">Custom Range</h3>
             <div className="w-full max-w-full overflow-x-hidden">
               <RangeCalendar
                 dateRange={
@@ -110,7 +141,7 @@ export function VideoDateFilterPanel() {
               className="gap-2"
             >
               <Plus className="h-4 w-4" />
-              Agregar rango
+              Add range
             </Button>
           </div>
         </div>

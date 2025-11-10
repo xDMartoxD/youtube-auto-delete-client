@@ -7,13 +7,13 @@ interface UseCarouselInfiniteScrollOptions {
   hasNextPage: boolean;
   isLoading: boolean;
   onLoadNext: () => void | Promise<void>;
-  debounceMs?: number;
   itemsCount?: number;
 }
 
 /**
  * Hook para implementar scroll infinito en un carousel
- * Combina Intersection Observer con eventos de Embla para detección confiable
+ * Usa el evento 'select' de Embla para detectar cuando canScrollNext es false
+ * y Intersection Observer como método principal
  */
 export function useCarouselInfiniteScroll({
   api,
@@ -21,173 +21,152 @@ export function useCarouselInfiniteScroll({
   hasNextPage,
   isLoading,
   onLoadNext,
-  debounceMs = 800,
   itemsCount = 0,
 }: UseCarouselInfiniteScrollOptions): void {
-  const lastLoadTimeRef = useRef(0);
-  const loadTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isLoadingRef = useRef(false);
-
-  // Use refs for values that need to persist and be accessible in closures
+  // Refs para mantener valores actualizados en closures
+  const onLoadNextRef = useRef(onLoadNext);
   const hasNextPageRef = useRef(hasNextPage);
-  const isLoadingRefValue = useRef(isLoading);
-  const isUserInteractingRef = useRef(false);
-  const lastScrollPositionRef = useRef(0);
-  const scrollDebounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null
-  );
-  const interactionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null
-  );
+  const isLoadingRef = useRef(isLoading);
+  const isLoadingMoreRef = useRef(false);
 
-  // Update refs when values change
+  // Actualizar refs cuando cambian los valores
+  useEffect(() => {
+    onLoadNextRef.current = onLoadNext;
+  }, [onLoadNext]);
+
   useEffect(() => {
     hasNextPageRef.current = hasNextPage;
-    isLoadingRefValue.current = isLoading;
+    isLoadingRef.current = isLoading;
   }, [hasNextPage, isLoading]);
 
-  const triggerLoad = useCallback(() => {
-    const now = Date.now();
-
+  // Función para cargar la siguiente página
+  const loadNextPage = useCallback(async () => {
+    // Verificar condiciones antes de cargar
     if (
-      now - lastLoadTimeRef.current > debounceMs &&
-      !isLoadingRef.current &&
-      !isLoadingRefValue.current
+      isLoadingMoreRef.current ||
+      isLoadingRef.current ||
+      !hasNextPageRef.current
     ) {
-      if (loadTimeoutRef.current) {
-        clearTimeout(loadTimeoutRef.current);
-      }
-
-      isLoadingRef.current = true;
-      loadTimeoutRef.current = setTimeout(async () => {
-        lastLoadTimeRef.current = Date.now();
-        try {
-          await onLoadNext();
-        } finally {
-          isLoadingRef.current = false;
-        }
-      }, 150);
+      return;
     }
-  }, [onLoadNext, debounceMs]);
 
+    isLoadingMoreRef.current = true;
+
+    try {
+      await onLoadNextRef.current();
+    } catch (error) {
+      console.error('Error loading next page:', error);
+    } finally {
+      // Reset flag después de un delay para permitir actualizaciones de estado
+      setTimeout(() => {
+        isLoadingMoreRef.current = false;
+      }, 300);
+    }
+  }, []);
+
+  // Método principal: Escuchar el evento 'select' para detectar cuando canScrollNext es false
   useEffect(() => {
-    let observer: IntersectionObserver | null = null;
-    let handleScroll: (() => void) | null = null;
-    let handleSelect: (() => void) | null = null;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    if (!api || !hasNextPage) {
+      return;
+    }
 
-    // Use a small delay to ensure DOM is updated
-    timeoutId = setTimeout(() => {
-      const lastItem = lastItemRef.current;
-      if (!lastItem || !hasNextPageRef.current || isLoadingRefValue.current) {
+    const handleSelect = () => {
+      if (
+        !api ||
+        isLoadingRef.current ||
+        !hasNextPageRef.current ||
+        isLoadingMoreRef.current
+      ) {
         return;
       }
 
-      // Initialize scroll position
-      if (api) {
-        lastScrollPositionRef.current = api.scrollProgress();
+      // Verificar si canScrollNext es false (llegamos al final)
+      const cannotScrollNext = !api.canScrollNext();
+
+      if (cannotScrollNext) {
+        console.log(
+          '[InfiniteScroll] canScrollNext is false, loading next page'
+        );
+        void loadNextPage();
+      }
+    };
+
+    // Verificar inmediatamente al montar
+    handleSelect();
+
+    // Escuchar eventos de selección
+    api.on('select', handleSelect);
+    api.on('reInit', handleSelect);
+
+    return () => {
+      api.off('select', handleSelect);
+      api.off('reInit', handleSelect);
+    };
+  }, [api, hasNextPage, loadNextPage]);
+
+  // Intersection Observer como método secundario: detecta cuando el último item entra en el viewport
+  useEffect(() => {
+    if (!api || itemsCount === 0 || !hasNextPage) {
+      return;
+    }
+
+    let observer: IntersectionObserver | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let retryCount = 0;
+    const MAX_RETRIES = 10;
+    let isCleanedUp = false;
+
+    const setupObserver = () => {
+      if (isCleanedUp) return;
+
+      const lastItem = lastItemRef.current;
+      if (!lastItem) {
+        // Retry si el ref no está disponible aún
+        if (retryCount < MAX_RETRIES) {
+          retryCount++;
+          timeoutId = setTimeout(setupObserver, 100);
+        }
+        return;
       }
 
-      // Intersection Observer for detecting when last item is visible
-      // Only trigger on actual scroll, not on clicks
       observer = new IntersectionObserver(
         (entries) => {
+          if (isCleanedUp) return;
+
           const entry = entries[0];
-          // Only trigger if not a user interaction (click) and actually scrolling
           if (
             entry.isIntersecting &&
             hasNextPageRef.current &&
-            !isLoadingRefValue.current &&
-            !isUserInteractingRef.current
+            !isLoadingRef.current &&
+            !isLoadingMoreRef.current
           ) {
-            triggerLoad();
+            console.log(
+              '[InfiniteScroll] Last item is visible, loading next page'
+            );
+            void loadNextPage();
           }
         },
         {
-          root: null, // Use viewport
-          rootMargin: '200px 0px', // Start loading when 200px before last item
-          threshold: 0.1, // Increase threshold to avoid triggering on small movements
+          root: null,
+          rootMargin: '600px 0px', // Cargar cuando está a 600px del viewport
+          threshold: 0.1,
         }
       );
 
       observer.observe(lastItem);
+    };
 
-      // Also use Embla events as backup - only trigger on actual scroll
-      handleScroll = () => {
-        if (!api || isLoadingRefValue.current || !hasNextPageRef.current)
-          return;
-
-        const currentScrollPosition = api.scrollProgress();
-        const scrollDelta = Math.abs(
-          currentScrollPosition - lastScrollPositionRef.current
-        );
-
-        // Only trigger if there was actual scroll movement (more than 0.01)
-        if (scrollDelta < 0.01) {
-          lastScrollPositionRef.current = currentScrollPosition;
-          return;
-        }
-
-        lastScrollPositionRef.current = currentScrollPosition;
-
-        // Clear any pending scroll debounce
-        if (scrollDebounceTimeoutRef.current) {
-          clearTimeout(scrollDebounceTimeoutRef.current);
-        }
-
-        // Debounce scroll events to avoid multiple triggers
-        scrollDebounceTimeoutRef.current = setTimeout(() => {
-          const cannotScrollNext = !api.canScrollNext();
-          const currentIndex = api.selectedScrollSnap();
-          const totalSlides = api.slideNodes().length;
-          const isNearEnd = currentIndex >= totalSlides - 3; // Within last 3 items
-
-          if (cannotScrollNext || isNearEnd) {
-            triggerLoad();
-          }
-        }, 200);
-      };
-
-      handleSelect = () => {
-        // Mark as user interaction to prevent Intersection Observer from triggering
-        isUserInteractingRef.current = true;
-        if (interactionTimeoutRef.current) {
-          clearTimeout(interactionTimeoutRef.current);
-        }
-        // Reset after a short delay
-        interactionTimeoutRef.current = setTimeout(() => {
-          isUserInteractingRef.current = false;
-        }, 300);
-      };
-
-      if (api) {
-        api.on('scroll', handleScroll);
-        api.on('select', handleSelect);
-        api.on('settle', handleScroll);
-      }
-    }, 100);
+    // Delay inicial para asegurar que el DOM esté listo
+    timeoutId = setTimeout(setupObserver, 200);
 
     return () => {
+      isCleanedUp = true;
       if (timeoutId) {
         clearTimeout(timeoutId);
-      }
-      if (scrollDebounceTimeoutRef.current) {
-        clearTimeout(scrollDebounceTimeoutRef.current);
-      }
-      if (interactionTimeoutRef.current) {
-        clearTimeout(interactionTimeoutRef.current);
       }
       if (observer) {
         observer.disconnect();
       }
-      if (api && handleScroll && handleSelect) {
-        api.off('scroll', handleScroll);
-        api.off('select', handleSelect);
-        api.off('settle', handleScroll);
-      }
-      if (loadTimeoutRef.current) {
-        clearTimeout(loadTimeoutRef.current);
-      }
     };
-  }, [api, lastItemRef, triggerLoad, itemsCount]);
+  }, [api, lastItemRef, itemsCount, hasNextPage, loadNextPage]);
 }

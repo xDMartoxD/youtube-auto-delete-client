@@ -8,7 +8,7 @@ import {
   type CarouselApi,
 } from '@/components/ui/carousel';
 import { Checkbox } from '@/components/ui/checkbox';
-import React, { useRef, useCallback, useEffect } from 'react';
+import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { useVideoSelection, useCarouselInfiniteScroll } from '@/hooks';
@@ -32,14 +32,16 @@ export function VideosCarrousell(
   const carouselContainerRef = useRef<HTMLDivElement>(null);
   const lastItemRef = useRef<HTMLDivElement>(null);
   const scrollPositionRef = useRef<number | null>(null);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
 
-  const { isVideoSelected, toggleVideoSelection } = useVideoSelection();
+  const { toggleVideoSelection, selectedVideoIds } = useVideoSelection();
 
   const videosItems = props.videos;
 
   const handleSetApi = useCallback((api: CarouselApi | undefined) => {
     if (api) {
       carouselApiRef.current = api;
+      setCarouselApi(api);
     }
   }, []);
 
@@ -69,9 +71,9 @@ export function VideosCarrousell(
   }, [videosItems.length]); // Only run when videos count changes
 
   // Auto-load next page when reaching the end
-  // Pass videosItems.length to trigger re-setup when videos change
+  // Use carouselApi state instead of ref to trigger re-renders when API is available
   useCarouselInfiniteScroll({
-    api: carouselApiRef.current,
+    api: carouselApi,
     lastItemRef,
     hasNextPage: props.hasNextPage ?? false,
     isLoading: props.isLoading ?? false,
@@ -148,7 +150,8 @@ export function VideosCarrousell(
           <CarouselContent className="-ml-2 md:-ml-4">
             {videosItems.map((video, index) => {
               const thumbnailUrl = getVideoThumbnailUrl(video);
-              const isSelected = isVideoSelected(video.id);
+              // Use selectedVideoIds directly to ensure re-render when it changes
+              const isSelected = selectedVideoIds.includes(video.id);
               const isLastItem = index === videosItems.length - 1;
               const videoTitle = video.snippet?.title ?? 'Untitled Video';
               const channelTitle =

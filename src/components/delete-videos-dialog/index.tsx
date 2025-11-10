@@ -18,7 +18,7 @@ interface DeleteVideosDialogProps {
 }
 
 /**
- * Diálogo de confirmación para eliminar videos seleccionados
+ * Confirmation dialog for deleting selected videos
  */
 export function DeleteVideosDialog({
   open,
@@ -39,13 +39,13 @@ export function DeleteVideosDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            Confirmar eliminación
+            Confirm deletion
           </DialogTitle>
           <DialogDescription>
-            ¿Estás seguro de que deseas eliminar{' '}
+            Are you sure you want to delete{' '}
             <strong>{selectedVideosCount}</strong>{' '}
-            {selectedVideosCount === 1 ? 'video' : 'videos'} de la playlist?
-            Esta acción no se puede deshacer.
+            {selectedVideosCount === 1 ? 'video' : 'videos'} from the playlist?
+            This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -54,7 +54,7 @@ export function DeleteVideosDialog({
             onClick={() => onOpenChange(false)}
             disabled={isDeleting}
           >
-            Cancelar
+            Cancel
           </Button>
           <Button
             variant="destructive"
@@ -64,12 +64,12 @@ export function DeleteVideosDialog({
             {isDeleting ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Eliminando...
+                Deleting...
               </>
             ) : (
               <>
                 <Trash2 className="h-4 w-4 mr-2" />
-                Eliminar videos
+                Delete videos
               </>
             )}
           </Button>

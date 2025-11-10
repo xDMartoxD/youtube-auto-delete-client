@@ -7,11 +7,7 @@ import {
   useIsAuthenticated,
   useIsAuthenticating,
 } from '@/stores/auth';
-import {
-  usePlaylists,
-  useIsLoadingPlaylists,
-  useYoutubeActions,
-} from '@/stores/youtube';
+import { usePlaylists } from '@/hooks';
 import { useGoogleLogin } from '@react-oauth/google';
 import { AvatarComponent } from '@/components/google-avatar';
 import { VideosCarrousell } from '@/components/videos-carrousell';
@@ -29,9 +25,11 @@ export default function LandingPage() {
   const logout = useLogout();
   const isAuthenticated = useIsAuthenticated();
   const isAuthenticating = useIsAuthenticating();
-  const playlists = usePlaylists();
-  const isLoadingPlaylists = useIsLoadingPlaylists();
-  const { getUserPlaylists } = useYoutubeActions();
+  const {
+    playlists,
+    isLoading: isLoadingPlaylists,
+    getUserPlaylists,
+  } = usePlaylists();
   const { hasSelectedVideos, getDateRangesSelection } = useVideoSelection();
   const { videosItems, hasNextPage, isLoadingVideos, loadNextPage } =
     usePlaylistVideos();
@@ -52,7 +50,7 @@ export default function LandingPage() {
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      // TODO: Implementar llamada al API para eliminar videos
+      // TODO: Implement API call to delete videos
       // await deleteVideos(selectedVideoIds);
       console.log('Deleting videos...');
       // Simular delay
@@ -80,7 +78,7 @@ export default function LandingPage() {
                   YouTube Playlist Manager
                 </h1>
                 <p className="text-xs text-muted-foreground">
-                  Elimina videos de manera eficiente
+                  Delete videos efficiently
                 </p>
               </div>
             </div>
@@ -98,7 +96,7 @@ export default function LandingPage() {
                     className="gap-2"
                   >
                     <LogOut className="h-4 w-4" />
-                    <span className="hidden sm:inline">Cerrar sesión</span>
+                    <span className="hidden sm:inline">Sign out</span>
                   </Button>
                 </>
               )}
@@ -114,11 +112,11 @@ export default function LandingPage() {
           <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
             <div className="space-y-2">
               <h2 className="text-3xl font-bold tracking-tight">
-                Gestiona tus playlists de YouTube
+                Manage your YouTube playlists
               </h2>
               <p className="text-muted-foreground max-w-md">
-                Elimina videos de tus playlists de manera rápida y eficiente.
-                Selecciona múltiples videos y elimínalos en un solo clic.
+                Delete videos from your playlists quickly and efficiently.
+                Select multiple videos and delete them with a single click.
               </p>
             </div>
             <Button
@@ -130,7 +128,7 @@ export default function LandingPage() {
               {isAuthenticating ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Conectando...
+                  Connecting...
                 </>
               ) : (
                 <>
@@ -139,7 +137,7 @@ export default function LandingPage() {
                     alt="Google Icon"
                     className="size-5"
                   />
-                  Continuar con Google
+                  Continue with Google
                 </>
               )}
             </Button>
@@ -151,10 +149,10 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <h2 className="text-2xl font-semibold tracking-tight">
-                  Selecciona una playlist
+                  Select a playlist
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Elige la playlist de la que deseas eliminar videos
+                  Choose the playlist from which you want to delete videos
                 </p>
               </div>
               {/* Playlist Combobox */}
@@ -172,15 +170,15 @@ export default function LandingPage() {
                   {isLoadingPlaylists ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="hidden sm:inline">Cargando...</span>
+                      <span className="hidden sm:inline">Loading...</span>
                     </>
                   ) : (
                     <>
                       <PlayCircle className="h-4 w-4" />
                       <span className="hidden sm:inline">
-                        Actualizar playlists
+                        Refresh playlists
                       </span>
-                      <span className="sm:hidden">Actualizar</span>
+                      <span className="sm:hidden">Refresh</span>
                     </>
                   )}
                 </Button>
@@ -230,11 +228,10 @@ export default function LandingPage() {
                 <PlayCircle className="h-12 w-12 text-muted-foreground" />
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold">
-                    No hay playlists disponibles
+                    No playlists available
                   </h3>
                   <p className="text-sm text-muted-foreground max-w-sm">
-                    Haz clic en "Actualizar playlists" para cargar tus playlists
-                    de YouTube.
+                    Click "Refresh playlists" to load your YouTube playlists.
                   </p>
                 </div>
                 <Button
@@ -243,7 +240,7 @@ export default function LandingPage() {
                   className="gap-2"
                 >
                   <PlayCircle className="h-4 w-4" />
-                  Actualizar playlists
+                  Refresh playlists
                 </Button>
               </div>
             )}

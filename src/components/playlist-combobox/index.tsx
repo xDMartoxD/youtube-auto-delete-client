@@ -16,21 +16,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import {
-  usePlaylists,
-  useIsLoadingPlaylists,
-  usePlaylistsError,
-  useYoutubeActions,
-} from '@/stores/youtube';
+import { usePlaylists, useSelectedPlaylist } from '@/hooks';
 import { type PlaylistItem } from '@/api';
 
 export function Combobox() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState<string>('');
-  const playlists = usePlaylists();
-  const isLoadingPlaylists = useIsLoadingPlaylists();
-  const playlistsError = usePlaylistsError();
-  const { getUserPlaylists, setSelectedPlaylistId } = useYoutubeActions();
+  const { playlists, isLoading: isLoadingPlaylists, error: playlistsError, getUserPlaylists } = usePlaylists();
+  const { setSelectedPlaylistId } = useSelectedPlaylist();
 
   // Load playlists on mount
   useEffect(() => {

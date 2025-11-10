@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CodeLoginApiAuthExchangePostData, CodeLoginApiAuthExchangePostErrors, CodeLoginApiAuthExchangePostResponses, DetailedHealthCheckApiHealthHealthDetailedGetData, DetailedHealthCheckApiHealthHealthDetailedGetResponses, GetMetricsApiHealthMetricsGetData, GetMetricsApiHealthMetricsGetResponses, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses, GetUserPlaylistsApiYoutubePlaylistsGetData, GetUserPlaylistsApiYoutubePlaylistsGetErrors, GetUserPlaylistsApiYoutubePlaylistsGetResponses, GetUserProfileApiAuthMeGetData, GetUserProfileApiAuthMeGetResponses, HealthCheckApiHealthHealthGetData, HealthCheckApiHealthHealthGetResponses, LogoutApiAuthLogoutPostData, LogoutApiAuthLogoutPostResponses, ReadinessCheckApiHealthReadyGetData, ReadinessCheckApiHealthReadyGetResponses } from './types.gen';
+import type { CodeLoginApiAuthExchangePostData, CodeLoginApiAuthExchangePostErrors, CodeLoginApiAuthExchangePostResponses, CreateSuggestionApiSuggestionsPostData, CreateSuggestionApiSuggestionsPostErrors, CreateSuggestionApiSuggestionsPostResponses, DeleteSuggestionApiSuggestionsSuggestionIdDeleteData, DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors, DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses, DetailedHealthCheckApiHealthHealthDetailedGetData, DetailedHealthCheckApiHealthHealthDetailedGetResponses, GetAllSuggestionsApiSuggestionsGetData, GetAllSuggestionsApiSuggestionsGetResponses, GetMetricsApiHealthMetricsGetData, GetMetricsApiHealthMetricsGetResponses, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses, GetSuggestionApiSuggestionsSuggestionIdGetData, GetSuggestionApiSuggestionsSuggestionIdGetErrors, GetSuggestionApiSuggestionsSuggestionIdGetResponses, GetUserPlaylistsApiYoutubePlaylistsGetData, GetUserPlaylistsApiYoutubePlaylistsGetErrors, GetUserPlaylistsApiYoutubePlaylistsGetResponses, GetUserProfileApiAuthMeGetData, GetUserProfileApiAuthMeGetResponses, HealthCheckApiHealthHealthGetData, HealthCheckApiHealthHealthGetResponses, LogoutApiAuthLogoutPostData, LogoutApiAuthLogoutPostResponses, ReadinessCheckApiHealthReadyGetData, ReadinessCheckApiHealthReadyGetResponses, UpdateSuggestionApiSuggestionsSuggestionIdPutData, UpdateSuggestionApiSuggestionsSuggestionIdPutErrors, UpdateSuggestionApiSuggestionsSuggestionIdPutResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -163,5 +163,79 @@ export const getPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGet = <ThrowOnE
         ],
         url: '/api/youtube/playlists/{playlist_id}/videos',
         ...options
+    });
+};
+
+/**
+ * Get All Suggestions
+ *
+ * Obtiene todas las sugerencias.
+ */
+export const getAllSuggestionsApiSuggestionsGet = <ThrowOnError extends boolean = false>(options?: Options<GetAllSuggestionsApiSuggestionsGetData, ThrowOnError>) => {
+    return (options?.client ?? client).get<GetAllSuggestionsApiSuggestionsGetResponses, unknown, ThrowOnError>({
+        url: '/api/suggestions',
+        ...options
+    });
+};
+
+/**
+ * Create Suggestion
+ *
+ * Crea una nueva sugerencia.
+ *
+ * - **title**: Título de la sugerencia (1-200 caracteres)
+ * - **description**: Descripción de la sugerencia (1-1000 caracteres)
+ */
+export const createSuggestionApiSuggestionsPost = <ThrowOnError extends boolean = false>(options: Options<CreateSuggestionApiSuggestionsPostData, ThrowOnError>) => {
+    return (options.client ?? client).post<CreateSuggestionApiSuggestionsPostResponses, CreateSuggestionApiSuggestionsPostErrors, ThrowOnError>({
+        url: '/api/suggestions',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
+ * Delete Suggestion
+ *
+ * Elimina una sugerencia por su ID.
+ */
+export const deleteSuggestionApiSuggestionsSuggestionIdDelete = <ThrowOnError extends boolean = false>(options: Options<DeleteSuggestionApiSuggestionsSuggestionIdDeleteData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses, DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors, ThrowOnError>({
+        url: '/api/suggestions/{suggestion_id}',
+        ...options
+    });
+};
+
+/**
+ * Get Suggestion
+ *
+ * Obtiene una sugerencia por su ID.
+ */
+export const getSuggestionApiSuggestionsSuggestionIdGet = <ThrowOnError extends boolean = false>(options: Options<GetSuggestionApiSuggestionsSuggestionIdGetData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetSuggestionApiSuggestionsSuggestionIdGetResponses, GetSuggestionApiSuggestionsSuggestionIdGetErrors, ThrowOnError>({
+        url: '/api/suggestions/{suggestion_id}',
+        ...options
+    });
+};
+
+/**
+ * Update Suggestion
+ *
+ * Actualiza una sugerencia.
+ *
+ * - **title**: Título de la sugerencia (opcional, 1-200 caracteres)
+ * - **description**: Descripción de la sugerencia (opcional, 1-1000 caracteres)
+ */
+export const updateSuggestionApiSuggestionsSuggestionIdPut = <ThrowOnError extends boolean = false>(options: Options<UpdateSuggestionApiSuggestionsSuggestionIdPutData, ThrowOnError>) => {
+    return (options.client ?? client).put<UpdateSuggestionApiSuggestionsSuggestionIdPutResponses, UpdateSuggestionApiSuggestionsSuggestionIdPutErrors, ThrowOnError>({
+        url: '/api/suggestions/{suggestion_id}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
     });
 };

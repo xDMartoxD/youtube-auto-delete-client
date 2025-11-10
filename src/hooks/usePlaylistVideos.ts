@@ -1,23 +1,23 @@
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback } from 'react';
 import {
-  useSelectedPlaylistId,
   useVideos,
   useIsLoadingVideos,
   useVideosError,
   useYoutubeActions,
 } from '@/stores/youtube';
+import { useSelectedPlaylist } from './useSelectedPlaylist';
 
 /**
  * Hook para manejar la carga de videos de una playlist
  * Encapsula la lógica de carga y estados relacionados
  */
 export function usePlaylistVideos() {
-  const selectedPlaylistId = useSelectedPlaylistId();
+  const { selectedPlaylistId } = useSelectedPlaylist();
   const videos = useVideos();
   const isLoadingVideos = useIsLoadingVideos();
   const videosError = useVideosError();
-  const { getVideosFromSelectedPlaylist } = useYoutubeActions();
-  const { clearAllSelections, clearVideos } = useYoutubeActions();
+  const { getVideosFromSelectedPlaylist, clearAllSelections, clearVideos } =
+    useYoutubeActions();
 
   // Track previous selectedPlaylistId to only load when it actually changes
 

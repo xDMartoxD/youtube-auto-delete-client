@@ -5,13 +5,14 @@ import type {
 
 const formatDate = (date: Date | null): string => {
   if (!date) return '';
-  const monthName = date.toLocaleDateString('es-ES', { month: 'long' });
+  const day = date.getDate();
+  const monthName = date.toLocaleDateString('en-US', { month: 'long' });
   const year = date.getFullYear();
-  return `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} ${year}`;
+  return `${monthName.charAt(0).toUpperCase() + monthName.slice(1)} ${day}, ${year}`;
 };
 
 /**
- * Crea un objeto de rango de fecha con estado de carga
+ * Creates a date range object with loading state
  */
 export interface DateRangeState {
   start: Date | null;

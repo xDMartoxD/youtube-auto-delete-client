@@ -29,10 +29,11 @@ export interface YoutubeActions {
   clearAllSelections: () => void;
   clearVideos: () => void;
   selectAllVideos: () => void;
+  setShouldRemovePrivateVideos: (value: boolean) => void;
 }
 
 /**
- * Estado base compartido para operaciones asíncronas que cargan videos
+ * Base state shared for async operations that load videos
  */
 interface BaseVideosLoadingState {
   videos: PlaylistVideoResponse | null;
@@ -46,15 +47,15 @@ interface DateRangeSelection extends BaseVideosLoadingState {
 }
 
 /**
- * Estado normalizado de selección de videos
- * Unifica todas las formas de selección en una sola estructura
+ * Normalized video selection state
+ * Unifies all selection forms into a single structure
  */
 interface VideoSelectionState {
-  // IDs seleccionados manualmente (click directo en video)
+  // IDs selected manually (direct click on video)
   includedOutsideRanges: string[];
-  // Rangos de fecha con sus videos seleccionados
+  // Date ranges with their selected videos
   dateRanges: { [dateKey: string]: DateRangeSelection };
-  // IDs de videos excluidos de los rangos de fecha
+  // IDs of videos excluded from date ranges
   excludedFromRanges: string[];
 }
 
@@ -74,6 +75,7 @@ interface YoutubeState {
   selectedPlaylistId: string | null;
   // Estado normalizado de selección
   videoSelection: VideoSelectionState;
+  shouldRemovePrivateVideos: boolean;
 }
 
 const youtubeStore = create<YoutubeState>()(
@@ -96,6 +98,7 @@ const youtubeStore = create<YoutubeState>()(
         dateRanges: {},
         excludedFromRanges: [],
       },
+      shouldRemovePrivateVideos: false,
       // Actions nested in actions object
       actions: {
         setSelectedPlaylistId: (playlistId: string) =>
@@ -195,14 +198,14 @@ const youtubeStore = create<YoutubeState>()(
           const playlistId = get().selectedPlaylistId;
           if (!playlistId) return;
 
-          // Verificar si hay intersección con rangos existentes
+          // Check if there's an intersection with existing ranges
           const state = get();
           const existingRanges = Object.values(state.videoSelection.dateRanges);
 
           const hasIntersection = existingRanges.some((range) => {
             if (!start || !end || !range.start || !range.end) return false;
 
-            // Normalizar fechas para comparación (solo fecha, sin hora)
+            // Normalize dates for comparison (date only, without time)
             const newStart = new Date(start);
             newStart.setHours(0, 0, 0, 0);
             const newEnd = new Date(end);
@@ -213,15 +216,13 @@ const youtubeStore = create<YoutubeState>()(
             const existingEnd = new Date(range.end);
             existingEnd.setHours(23, 59, 59, 999);
 
-            // Verificar intersección: dos rangos se intersectan si:
+            // Check intersection: two ranges intersect if:
             // newStart <= existingEnd && newEnd >= existingStart
             return newStart <= existingEnd && newEnd >= existingStart;
           });
 
           if (hasIntersection) {
-            toast.warning(
-              'El rango de fechas se intersecta con otro rango existente'
-            );
+            toast.warning('The date range intersects with an existing range');
             return;
           }
 
@@ -281,7 +282,7 @@ const youtubeStore = create<YoutubeState>()(
               },
             };
 
-            // Si hay datos, filtrar includedOutsideRanges
+            // If there's data, filter includedOutsideRanges
             if (result.success && result.data) {
               newState.videoSelection.includedOutsideRanges =
                 state.videoSelection.includedOutsideRanges.filter(
@@ -328,7 +329,7 @@ const youtubeStore = create<YoutubeState>()(
             const newDateRanges = { ...state.videoSelection.dateRanges };
             delete newDateRanges[dateKey];
 
-            // Obtener IDs de videos del rango eliminado
+            // Get video IDs from the removed range
             const videoIdsInRange =
               dateRangeToRemove?.videos?.items?.map((video) => video.id) || [];
 
@@ -336,7 +337,7 @@ const youtubeStore = create<YoutubeState>()(
               videoSelection: {
                 ...state.videoSelection,
                 dateRanges: newDateRanges,
-                // Eliminar de excludedFromRanges los videos que estaban en este rango
+                // Remove from excludedFromRanges the videos that were in this range
                 excludedFromRanges:
                   state.videoSelection.excludedFromRanges.filter(
                     (id) => !videoIdsInRange.includes(id)
@@ -377,6 +378,7 @@ const youtubeStore = create<YoutubeState>()(
               dateRanges: {},
               excludedFromRanges: [],
             },
+            shouldRemovePrivateVideos: false,
           });
         },
         clearVideos: () => {
@@ -419,9 +421,12 @@ const youtubeStore = create<YoutubeState>()(
             },
           });
         },
+        setShouldRemovePrivateVideos: (value: boolean) => {
+          set({ shouldRemovePrivateVideos: value });
+        },
       } satisfies YoutubeActions,
     }),
-    { name: 'YoutubeStore' } // nombre para Redux DevTools
+    { name: 'YoutubeStore' } // name for Redux DevTools
   )
 );
 
@@ -454,6 +459,9 @@ export const useDateRangesSelection = () =>
   youtubeStore((state) => state.videoSelection.dateRanges);
 export const useExcludedFromRanges = () =>
   youtubeStore((state) => state.videoSelection.excludedFromRanges);
+
+export const useShouldRemovePrivateVideos = () =>
+  youtubeStore((state) => state.shouldRemovePrivateVideos);
 
 // Actions - single export for all actions
 // The actions object is stable as it's defined once in the store
