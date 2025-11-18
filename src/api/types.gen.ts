@@ -7,7 +7,7 @@ export type ClientOptions = {
 /**
  * AuthSuccessResponse
  *
- * Respuesta exitosa de autenticación.
+ * Successful authentication response.
  */
 export type AuthSuccessResponse = {
     /**
@@ -24,19 +24,19 @@ export type AuthSuccessResponse = {
 /**
  * ContentDetails
  *
- * Detalles del contenido del video.
+ * Video content details.
  */
 export type ContentDetails = {
     /**
      * Videoid
      *
-     * ID del video
+     * Video ID
      */
     videoId: string;
     /**
      * Videopublishedat
      *
-     * Fecha de publicación del video original
+     * Original video publication date
      */
     videoPublishedAt?: string | null;
 };
@@ -46,17 +46,29 @@ export type ContentDetails = {
  */
 export type DeletePlaylistVideosRequest = {
     /**
+     * Playlist Id
+     *
+     * Playlist ID
+     */
+    playlist_id: string;
+    /**
      * Include Private Videos
      *
-     * Incluir videos privados
+     * Include private videos
      */
     include_private_videos: boolean;
     /**
+     * Include Delete Videos
+     *
+     * Include deleted videos
+     */
+    include_delete_videos: boolean;
+    /**
      * Video Ids
      *
-     * IDs de los videos a eliminar
+     * IDs of videos to delete
      */
-    video_ids?: Array<string> | null;
+    video_ids?: Array<string>;
 };
 
 /**
@@ -119,66 +131,66 @@ export type PlaylistItem = {
 /**
  * PlaylistItemSnippet
  *
- * Snippet completo de un item en una playlist.
+ * Complete snippet of a playlist item.
  */
 export type PlaylistItemSnippetInput = {
     /**
      * Publishedat
      *
-     * Fecha de publicación del item en la playlist
+     * Publication date of the item in the playlist
      */
     publishedAt: string;
     /**
      * Channelid
      *
-     * ID del canal que agregó el video a la playlist
+     * Channel ID that added the video to the playlist
      */
     channelId: string;
     /**
      * Title
      *
-     * Título del video
+     * Video title
      */
     title: string;
     /**
      * Description
      *
-     * Descripción del video
+     * Video description
      */
     description?: string;
     thumbnails?: Thumbnails | null;
     /**
      * Channeltitle
      *
-     * Nombre del canal que agregó el video
+     * Name of the channel that added the video
      */
     channelTitle: string;
     /**
      * Playlistid
      *
-     * ID de la playlist
+     * Playlist ID
      */
     playlistId: string;
     /**
      * Position
      *
-     * Posición del video en la playlist
+     * Video position in the playlist
      */
     position: number;
     /**
-     * ID del recurso (video)
+     * Resource ID (video)
      */
     resourceId: ResourceId;
     /**
      * Videoownerchanneltitle
      *
-     * Título del canal que subió el video
+     * Title of the channel that uploaded the video
      */
     videoOwnerChannelTitle?: string | null;
     /**
      * Videoownerchannelid
      *
-     * ID del canal que subió el video
+     * ID of the channel that uploaded the video
      */
     videoOwnerChannelId?: string | null;
 };
@@ -186,66 +198,66 @@ export type PlaylistItemSnippetInput = {
 /**
  * PlaylistItemSnippet
  *
- * Snippet completo de un item en una playlist.
+ * Complete snippet of a playlist item.
  */
 export type PlaylistItemSnippetOutput = {
     /**
      * Publishedat
      *
-     * Fecha de publicación del item en la playlist
+     * Publication date of the item in the playlist
      */
     publishedAt: string;
     /**
      * Channelid
      *
-     * ID del canal que agregó el video a la playlist
+     * Channel ID that added the video to the playlist
      */
     channelId: string;
     /**
      * Title
      *
-     * Título del video
+     * Video title
      */
     title: string;
     /**
      * Description
      *
-     * Descripción del video
+     * Video description
      */
     description?: string;
     thumbnails?: Thumbnails | null;
     /**
      * Channeltitle
      *
-     * Nombre del canal que agregó el video
+     * Name of the channel that added the video
      */
     channelTitle: string;
     /**
      * Playlistid
      *
-     * ID de la playlist
+     * Playlist ID
      */
     playlistId: string;
     /**
      * Position
      *
-     * Posición del video en la playlist
+     * Video position in the playlist
      */
     position: number;
     /**
-     * ID del recurso (video)
+     * Resource ID (video)
      */
     resourceId: ResourceId;
     /**
      * Videoownerchanneltitle
      *
-     * Título del canal que subió el video
+     * Title of the channel that uploaded the video
      */
     videoOwnerChannelTitle?: string | null;
     /**
      * Videoownerchannelid
      *
-     * ID del canal que subió el video
+     * ID of the channel that uploaded the video
      */
     videoOwnerChannelId?: string | null;
 };
@@ -253,33 +265,33 @@ export type PlaylistItemSnippetOutput = {
 /**
  * PlaylistItemVideo
  *
- * Item completo de un video en una playlist.
+ * Complete item of a video in a playlist.
  */
 export type PlaylistItemVideoInput = {
     /**
      * Kind
      *
-     * Tipo de recurso
+     * Resource type
      */
     kind?: string;
     /**
      * Etag
      *
-     * ETag del recurso
+     * Resource ETag
      */
     etag: string;
     /**
      * Id
      *
-     * ID único del item en la playlist
+     * Unique item ID in the playlist
      */
     id: string;
     /**
-     * Información del snippet del video
+     * Video snippet information
      */
     snippet: PlaylistItemSnippetInput;
     /**
-     * Detalles del contenido
+     * Content details
      */
     contentDetails: ContentDetails;
 };
@@ -287,33 +299,33 @@ export type PlaylistItemVideoInput = {
 /**
  * PlaylistItemVideo
  *
- * Item completo de un video en una playlist.
+ * Complete item of a video in a playlist.
  */
 export type PlaylistItemVideoOutput = {
     /**
      * Kind
      *
-     * Tipo de recurso
+     * Resource type
      */
     kind?: string;
     /**
      * Etag
      *
-     * ETag del recurso
+     * Resource ETag
      */
     etag: string;
     /**
      * Id
      *
-     * ID único del item en la playlist
+     * Unique item ID in the playlist
      */
     id: string;
     /**
-     * Información del snippet del video
+     * Video snippet information
      */
     snippet: PlaylistItemSnippetOutput;
     /**
-     * Detalles del contenido
+     * Content details
      */
     contentDetails: ContentDetails;
 };
@@ -353,35 +365,35 @@ export type PlaylistSnippet = {
 /**
  * PlaylistVideoResponse
  *
- * Respuesta paginada de videos de playlist con schemas completos.
+ * Paginated response of playlist videos with complete schemas.
  */
 export type PlaylistVideoResponse = {
     /**
      * Items
      *
-     * Lista de items de la playlist
+     * List of playlist items
      */
     items: Array<PlaylistItemVideoOutput>;
     /**
      * Total Results
      *
-     * Total de resultados
+     * Total results
      */
     total_results: number;
     /**
      * Next Page Token
      *
-     * Token de la siguiente página
+     * Next page token
      */
     next_page_token?: string | null;
     /**
      * Prev Page Token
      *
-     * Token de la página anterior
+     * Previous page token
      */
     prev_page_token?: string | null;
     /**
-     * Información de la página
+     * Page information
      */
     page_info: PageInfo;
 };
@@ -389,19 +401,19 @@ export type PlaylistVideoResponse = {
 /**
  * ResourceId
  *
- * Resource ID que identifica el video.
+ * Resource ID that identifies the video.
  */
 export type ResourceId = {
     /**
      * Kind
      *
-     * Tipo de recurso, generalmente 'youtube#video'
+     * Resource type, usually 'youtube#video'
      */
     kind: string;
     /**
      * Videoid
      *
-     * ID del video de YouTube
+     * YouTube video ID
      */
     videoId: string;
 };
@@ -409,19 +421,19 @@ export type ResourceId = {
 /**
  * SuggestionCreate
  *
- * Schema para crear una sugerencia.
+ * Schema for creating a suggestion.
  */
 export type SuggestionCreate = {
     /**
      * Title
      *
-     * Título de la sugerencia
+     * Suggestion title
      */
     title: string;
     /**
      * Description
      *
-     * Descripción de la sugerencia
+     * Suggestion description
      */
     description: string;
 };
@@ -429,19 +441,19 @@ export type SuggestionCreate = {
 /**
  * SuggestionListResponse
  *
- * Schema de respuesta para una lista de sugerencias.
+ * Response schema for a list of suggestions.
  */
 export type SuggestionListResponse = {
     /**
      * Items
      *
-     * Lista de sugerencias
+     * List of suggestions
      */
     items: Array<SuggestionResponse>;
     /**
      * Total
      *
-     * Total de sugerencias
+     * Total suggestions
      */
     total: number;
 };
@@ -449,37 +461,37 @@ export type SuggestionListResponse = {
 /**
  * SuggestionResponse
  *
- * Schema de respuesta para una sugerencia.
+ * Response schema for a suggestion.
  */
 export type SuggestionResponse = {
     /**
      * Id
      *
-     * ID único de la sugerencia
+     * Unique suggestion ID
      */
     id: string;
     /**
      * Title
      *
-     * Título de la sugerencia
+     * Suggestion title
      */
     title: string;
     /**
      * Description
      *
-     * Descripción de la sugerencia
+     * Suggestion description
      */
     description: string;
     /**
      * Created At
      *
-     * Fecha de creación
+     * Creation date
      */
     created_at: string;
     /**
      * Updated At
      *
-     * Fecha de última actualización
+     * Last update date
      */
     updated_at: string;
 };
@@ -487,19 +499,19 @@ export type SuggestionResponse = {
 /**
  * SuggestionUpdate
  *
- * Schema para actualizar una sugerencia.
+ * Schema for updating a suggestion.
  */
 export type SuggestionUpdate = {
     /**
      * Title
      *
-     * Título de la sugerencia
+     * Suggestion title
      */
     title?: string | null;
     /**
      * Description
      *
-     * Descripción de la sugerencia
+     * Suggestion description
      */
     description?: string | null;
 };
@@ -507,7 +519,7 @@ export type SuggestionUpdate = {
 /**
  * Thumbnail
  *
- * Thumbnail individual con tamaño específico.
+ * Individual thumbnail with specific size.
  */
 export type Thumbnail = {
     /**
@@ -527,7 +539,7 @@ export type Thumbnail = {
 /**
  * Thumbnails
  *
- * Todos los thumbnails disponibles para un video.
+ * All available thumbnails for a video.
  */
 export type Thumbnails = {
     default?: Thumbnail | null;
@@ -540,7 +552,7 @@ export type Thumbnails = {
 /**
  * UserInfo
  *
- * Información del usuario autenticado.
+ * Authenticated user information.
  */
 export type UserInfo = {
     /**
@@ -586,29 +598,29 @@ export type YoutubePlaylistListResponse = {
     /**
      * Kind
      *
-     * Tipo de respuesta
+     * Response type
      */
     kind?: string;
     /**
      * Etag
      *
-     * Etag de la respuesta
+     * Response etag
      */
     etag: string;
     /**
      * Nextpagetoken
      *
-     * Token de la siguiente página
+     * Next page token
      */
     nextPageToken?: string | null;
     /**
-     * Información de la página
+     * Page information
      */
     pageInfo: PageInfo;
     /**
      * Items
      *
-     * Lista de items de la playlist
+     * List of playlist items
      */
     items: Array<PlaylistItem>;
 };
@@ -853,70 +865,48 @@ export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponses
 
 export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponse = DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponses[keyof DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponses];
 
-export type GetAllSuggestionsApiSuggestionsSuggestionsGetData = {
+export type GetAllSuggestionsApiSuggestionsGetData = {
     body?: never;
     path?: never;
-    query?: {
-        /**
-         * Max Results
-         *
-         * Número máximo de resultados por página
-         */
-        max_results?: number;
-        /**
-         * Page Token
-         *
-         * Token de página para paginación
-         */
-        page_token?: string | null;
-    };
-    url: '/api/suggestions/suggestions';
+    query?: never;
+    url: '/api/suggestions';
 };
 
-export type GetAllSuggestionsApiSuggestionsSuggestionsGetErrors = {
-    /**
-     * Validation Error
-     */
-    422: HttpValidationError;
-};
-
-export type GetAllSuggestionsApiSuggestionsSuggestionsGetError = GetAllSuggestionsApiSuggestionsSuggestionsGetErrors[keyof GetAllSuggestionsApiSuggestionsSuggestionsGetErrors];
-
-export type GetAllSuggestionsApiSuggestionsSuggestionsGetResponses = {
+export type GetAllSuggestionsApiSuggestionsGetResponses = {
     /**
      * Successful Response
      */
     200: SuggestionListResponse;
 };
 
-export type GetAllSuggestionsApiSuggestionsSuggestionsGetResponse = GetAllSuggestionsApiSuggestionsSuggestionsGetResponses[keyof GetAllSuggestionsApiSuggestionsSuggestionsGetResponses];
+export type GetAllSuggestionsApiSuggestionsGetResponse = GetAllSuggestionsApiSuggestionsGetResponses[keyof GetAllSuggestionsApiSuggestionsGetResponses];
 
-export type CreateSuggestionApiSuggestionsSuggestionsPostData = {
+export type CreateSuggestionApiSuggestionsPostData = {
     body: SuggestionCreate;
     path?: never;
     query?: never;
-    url: '/api/suggestions/suggestions';
+    url: '/api/suggestions';
 };
 
-export type CreateSuggestionApiSuggestionsSuggestionsPostErrors = {
+export type CreateSuggestionApiSuggestionsPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CreateSuggestionApiSuggestionsSuggestionsPostError = CreateSuggestionApiSuggestionsSuggestionsPostErrors[keyof CreateSuggestionApiSuggestionsSuggestionsPostErrors];
+export type CreateSuggestionApiSuggestionsPostError = CreateSuggestionApiSuggestionsPostErrors[keyof CreateSuggestionApiSuggestionsPostErrors];
 
-export type CreateSuggestionApiSuggestionsSuggestionsPostResponses = {
+export type CreateSuggestionApiSuggestionsPostResponses = {
     /**
      * Successful Response
      */
     201: SuggestionResponse;
 };
 
-export type CreateSuggestionApiSuggestionsSuggestionsPostResponse = CreateSuggestionApiSuggestionsSuggestionsPostResponses[keyof CreateSuggestionApiSuggestionsSuggestionsPostResponses];
+export type CreateSuggestionApiSuggestionsPostResponse = CreateSuggestionApiSuggestionsPostResponses[keyof CreateSuggestionApiSuggestionsPostResponses];
 
-export type DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteData = {
+export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteData = {
     body?: never;
     path: {
         /**
@@ -925,28 +915,28 @@ export type DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteData = {
         suggestion_id: string;
     };
     query?: never;
-    url: '/api/suggestions/suggestions/{suggestion_id}';
+    url: '/api/suggestions/{suggestion_id}';
 };
 
-export type DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteErrors = {
+export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteError = DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteErrors[keyof DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteErrors];
+export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteError = DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors[keyof DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors];
 
-export type DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteResponses = {
+export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses = {
     /**
      * Successful Response
      */
     204: void;
 };
 
-export type DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteResponse = DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteResponses[keyof DeleteSuggestionApiSuggestionsSuggestionsSuggestionIdDeleteResponses];
+export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponse = DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses[keyof DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses];
 
-export type GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetData = {
+export type GetSuggestionApiSuggestionsSuggestionIdGetData = {
     body?: never;
     path: {
         /**
@@ -955,28 +945,28 @@ export type GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetData = {
         suggestion_id: string;
     };
     query?: never;
-    url: '/api/suggestions/suggestions/{suggestion_id}';
+    url: '/api/suggestions/{suggestion_id}';
 };
 
-export type GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetErrors = {
+export type GetSuggestionApiSuggestionsSuggestionIdGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetError = GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetErrors[keyof GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetErrors];
+export type GetSuggestionApiSuggestionsSuggestionIdGetError = GetSuggestionApiSuggestionsSuggestionIdGetErrors[keyof GetSuggestionApiSuggestionsSuggestionIdGetErrors];
 
-export type GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetResponses = {
+export type GetSuggestionApiSuggestionsSuggestionIdGetResponses = {
     /**
      * Successful Response
      */
     200: SuggestionResponse;
 };
 
-export type GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetResponse = GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetResponses[keyof GetSuggestionApiSuggestionsSuggestionsSuggestionIdGetResponses];
+export type GetSuggestionApiSuggestionsSuggestionIdGetResponse = GetSuggestionApiSuggestionsSuggestionIdGetResponses[keyof GetSuggestionApiSuggestionsSuggestionIdGetResponses];
 
-export type UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutData = {
+export type UpdateSuggestionApiSuggestionsSuggestionIdPutData = {
     body: SuggestionUpdate;
     path: {
         /**
@@ -985,23 +975,23 @@ export type UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutData = {
         suggestion_id: string;
     };
     query?: never;
-    url: '/api/suggestions/suggestions/{suggestion_id}';
+    url: '/api/suggestions/{suggestion_id}';
 };
 
-export type UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutErrors = {
+export type UpdateSuggestionApiSuggestionsSuggestionIdPutErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutError = UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutErrors[keyof UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutErrors];
+export type UpdateSuggestionApiSuggestionsSuggestionIdPutError = UpdateSuggestionApiSuggestionsSuggestionIdPutErrors[keyof UpdateSuggestionApiSuggestionsSuggestionIdPutErrors];
 
-export type UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutResponses = {
+export type UpdateSuggestionApiSuggestionsSuggestionIdPutResponses = {
     /**
      * Successful Response
      */
     200: SuggestionResponse;
 };
 
-export type UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutResponse = UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutResponses[keyof UpdateSuggestionApiSuggestionsSuggestionsSuggestionIdPutResponses];
+export type UpdateSuggestionApiSuggestionsSuggestionIdPutResponse = UpdateSuggestionApiSuggestionsSuggestionIdPutResponses[keyof UpdateSuggestionApiSuggestionsSuggestionIdPutResponses];

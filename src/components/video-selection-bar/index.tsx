@@ -16,14 +16,23 @@ export function VideoSelectionBar({
   onDelete,
   isDeleting = false,
 }: VideoSelectionBarProps) {
-  const { selectedVideosCount, hasSelectedVideos, clearSelectedVideos } =
-    useVideoSelection();
+  const {
+    selectedVideosCount,
+    hasSelectedVideos,
+    clearSelectedVideos,
+    shouldRemovePrivateVideos,
+    shouldRemoveDeletedVideos,
+  } = useVideoSelection();
 
   const handleDeselectAll = () => {
     clearSelectedVideos();
   };
 
-  if (!hasSelectedVideos) {
+  // Show bar if there are selected videos OR if auto-remove flags are enabled
+  const shouldShow =
+    hasSelectedVideos || shouldRemovePrivateVideos || shouldRemoveDeletedVideos;
+
+  if (!shouldShow) {
     return null;
   }
 
@@ -31,10 +40,10 @@ export function VideoSelectionBar({
     <div
       className={cn(
         'fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50',
-        'bg-card border border-border rounded-lg shadow-2xl',
+        'bg-card/70 border border-border/50 rounded-lg shadow-2xl',
         'px-3 sm:px-6 py-3 sm:py-4 w-[calc(100%-2rem)] sm:min-w-[300px] max-w-md',
         'animate-in slide-in-from-bottom-4 duration-300',
-        'backdrop-blur-sm bg-card/95'
+        'backdrop-blur-md'
       )}
     >
       <div className="flex items-center justify-between gap-2 sm:gap-4">
@@ -61,7 +70,7 @@ export function VideoSelectionBar({
             variant="destructive"
             size="sm"
             onClick={onDelete}
-            disabled={isDeleting || !hasSelectedVideos}
+            disabled={isDeleting || !shouldShow}
             className="h-7 sm:h-8 px-2 sm:px-3"
           >
             {isDeleting ? (

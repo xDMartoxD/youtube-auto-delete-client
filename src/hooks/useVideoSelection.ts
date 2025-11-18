@@ -3,12 +3,18 @@ import {
   useDateRangesSelection,
   useExcludedFromRanges,
   useIncludedOutsideRanges,
+  useShouldRemoveDeletedVideos,
   useShouldRemovePrivateVideos,
   useVideos,
   useYoutubeActions,
 } from '@/stores/youtube';
 import type { PlaylistItemVideoOutput } from '@/api';
-import { PRIVATE_VIDEO_DESCRIPTION, PRIVATE_VIDEO_TITLE } from '@/constants';
+import {
+  DELETED_VIDEO_DESCRIPTION,
+  DELETED_VIDEO_TITLE,
+  PRIVATE_VIDEO_DESCRIPTION,
+  PRIVATE_VIDEO_TITLE,
+} from '@/constants';
 import { handleApiError } from '@/utils';
 
 /**
@@ -31,6 +37,7 @@ export function useVideoSelection() {
   const dateRanges = useDateRangesSelection();
   const excludedFromRanges = useExcludedFromRanges();
   const shouldRemovePrivateVideos = useShouldRemovePrivateVideos();
+  const shouldRemoveDeletedVideos = useShouldRemoveDeletedVideos();
   const videos = useVideos();
   const {
     addIncludedVideoOutsideDateRange,
@@ -40,6 +47,7 @@ export function useVideoSelection() {
     removeExcludedVideoInsideDateRange,
     removeIncludedVideoOutsideDateRange,
     setShouldRemovePrivateVideos,
+    setShouldRemoveDeletedVideos,
     deleteVideos,
   } = useYoutubeActions();
 
@@ -71,6 +79,18 @@ export function useVideoSelection() {
       });
     }
 
+    if (shouldRemoveDeletedVideos && videos?.items) {
+      videos.items.forEach((video) => {
+        if (
+          video.snippet?.title === DELETED_VIDEO_TITLE &&
+          video.snippet?.description === DELETED_VIDEO_DESCRIPTION &&
+          !excludedFromRanges.includes(video.id)
+        ) {
+          allIds.add(video.id);
+        }
+      });
+    }
+
     // Remove excluded videos
     excludedFromRanges.forEach((id) => allIds.delete(id));
 
@@ -80,6 +100,7 @@ export function useVideoSelection() {
     dateRanges,
     excludedFromRanges,
     shouldRemovePrivateVideos,
+    shouldRemoveDeletedVideos,
     videos,
   ]);
 
@@ -216,6 +237,8 @@ export function useVideoSelection() {
     getDateRangesSelection,
     shouldRemovePrivateVideos,
     setShouldRemovePrivateVideos,
+    shouldRemoveDeletedVideos,
+    setShouldRemoveDeletedVideos,
     addDateRange,
     removeDateRange,
     deleteSelectedVideos,

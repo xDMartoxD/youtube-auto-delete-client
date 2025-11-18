@@ -13,6 +13,12 @@ import {
   deletePlaylistVideos,
 } from '@/services/youtube';
 import { createDateRange, handleServiceError } from '@/utils';
+import {
+  PRIVATE_VIDEO_TITLE,
+  PRIVATE_VIDEO_DESCRIPTION,
+  DELETED_VIDEO_TITLE,
+  DELETED_VIDEO_DESCRIPTION,
+} from '@/constants';
 
 export interface YoutubeActions {
   getUserPlaylists: () => Promise<void>;
@@ -31,6 +37,7 @@ export interface YoutubeActions {
   clearVideos: () => void;
   selectAllVideos: () => void;
   setShouldRemovePrivateVideos: (value: boolean) => void;
+  setShouldRemoveDeletedVideos: (value: boolean) => void;
   deleteVideos: (videos: string[]) => Promise<void>;
 }
 
@@ -78,6 +85,7 @@ interface YoutubeState {
   // Estado normalizado de selección
   videoSelection: VideoSelectionState;
   shouldRemovePrivateVideos: boolean;
+  shouldRemoveDeletedVideos: boolean;
 }
 
 const youtubeStore = create<YoutubeState>()(
@@ -101,6 +109,7 @@ const youtubeStore = create<YoutubeState>()(
         excludedFromRanges: [],
       },
       shouldRemovePrivateVideos: false,
+      shouldRemoveDeletedVideos: false,
       // Actions nested in actions object
       actions: {
         setSelectedPlaylistId: (playlistId: string) =>
@@ -426,6 +435,9 @@ const youtubeStore = create<YoutubeState>()(
         setShouldRemovePrivateVideos: (value: boolean) => {
           set({ shouldRemovePrivateVideos: value });
         },
+        setShouldRemoveDeletedVideos: (value: boolean) => {
+          set({ shouldRemoveDeletedVideos: value });
+        },
         deleteVideos: async (videos: string[]) => {
           if (!get().selectedPlaylistId) {
             return;
@@ -433,16 +445,70 @@ const youtubeStore = create<YoutubeState>()(
           const result = await deletePlaylistVideos(
             get().selectedPlaylistId!,
             videos,
-            get().shouldRemovePrivateVideos
+            get().shouldRemovePrivateVideos,
+            get().shouldRemoveDeletedVideos
           );
 
           if (result.success) {
-            toast.success('Videos deleted successfully');
-            get().actions.clearAllSelections();
-            get().actions.clearVideos();
-            set({
-              selectedPlaylistId: null,
+            const state = get();
+            const videosToRemove = new Set(videos);
+            const shouldRemovePrivate = state.shouldRemovePrivateVideos;
+            const shouldRemoveDeleted = state.shouldRemoveDeletedVideos;
+
+            // Filtrar videos a eliminar: seleccionados + privados/eliminados si están habilitados
+            const remainingVideos =
+              state.playlistVideos.videos?.items?.filter((video) => {
+                // Eliminar videos seleccionados
+                if (videosToRemove.has(video.id)) {
+                  return false;
+                }
+
+                // Eliminar videos privados si está habilitado
+                if (
+                  shouldRemovePrivate &&
+                  video.snippet?.title === PRIVATE_VIDEO_TITLE &&
+                  video.snippet?.description === PRIVATE_VIDEO_DESCRIPTION
+                ) {
+                  return false;
+                }
+
+                // Eliminar videos eliminados si está habilitado
+                if (
+                  shouldRemoveDeleted &&
+                  video.snippet?.title === DELETED_VIDEO_TITLE &&
+                  video.snippet?.description === DELETED_VIDEO_DESCRIPTION
+                ) {
+                  return false;
+                }
+
+                return true;
+              }) || [];
+
+            // Actualizar el estado con los videos restantes
+            set((currentState) => {
+              if (!currentState.playlistVideos.videos) {
+                return currentState;
+              }
+
+              return {
+                playlistVideos: {
+                  ...currentState.playlistVideos,
+                  videos: {
+                    ...currentState.playlistVideos.videos,
+                    items: remainingVideos,
+                    // Actualizar el total si existe
+                    total_results: remainingVideos.length,
+                  },
+                },
+              };
             });
+
+            // Pequeño delay para permitir animación antes de limpiar selecciones
+            setTimeout(() => {
+              get().actions.clearAllSelections();
+            }, 300);
+
+            toast.success('Videos deleted successfully');
           } else if (result.error) {
             handleServiceError(result, 'Failed to delete videos');
           }
@@ -485,6 +551,16 @@ export const useExcludedFromRanges = () =>
 
 export const useShouldRemovePrivateVideos = () =>
   youtubeStore((state) => state.shouldRemovePrivateVideos);
+export const useShouldRemoveDeletedVideos = () =>
+  youtubeStore((state) => state.shouldRemoveDeletedVideos);
+// Combined selector for playlist videos with actions
+export const usePlaylistVideosStore = () =>
+  youtubeStore((state) => ({
+    playlistVideos: state.playlistVideos,
+    selectedPlaylistId: state.selectedPlaylistId,
+    getVideosFromSelectedPlaylist: state.actions.getVideosFromSelectedPlaylist,
+    clearVideos: state.actions.clearVideos,
+  }));
 
 // Actions - single export for all actions
 // The actions object is stable as it's defined once in the store

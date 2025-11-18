@@ -162,7 +162,8 @@ export async function getPlaylistVideos(
 export async function deletePlaylistVideos(
   playlistId: string,
   videoIds: string[],
-  includePrivateVideos: boolean
+  includePrivateVideos: boolean,
+  includeDeleteVideos: boolean
 ): Promise<ServiceResult<void>> {
   try {
     const result =
@@ -172,6 +173,8 @@ export async function deletePlaylistVideos(
         body: {
           video_ids: videoIds,
           include_private_videos: includePrivateVideos,
+          include_delete_videos: includeDeleteVideos,
+          playlist_id: playlistId,
         },
       });
 

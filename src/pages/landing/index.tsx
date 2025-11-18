@@ -26,11 +26,7 @@ export default function LandingPage() {
     isLoading: isLoadingPlaylists,
     getUserPlaylists,
   } = usePlaylists();
-  const {
-    hasSelectedVideos,
-    getDateRangesSelection,
-    isDeleting,
-  } = useVideoSelection();
+  const { getDateRangesSelection, isDeleting } = useVideoSelection();
   const { videosItems, hasNextPage, isLoadingVideos, loadNextPage } =
     usePlaylistVideos();
   const { selectedPlaylistId } = useSelectedPlaylist();
@@ -237,12 +233,10 @@ export default function LandingPage() {
       </main>
 
       {/* Video Selection Bar */}
-      {hasSelectedVideos && (
-        <VideoSelectionBar
-          onDelete={() => setShowDeleteDialog(true)}
-          isDeleting={isDeleting}
-        />
-      )}
+      <VideoSelectionBar
+        onDelete={() => setShowDeleteDialog(true)}
+        isDeleting={isDeleting}
+      />
 
       {/* Delete Confirmation Dialog */}
       <DeleteVideosDialog

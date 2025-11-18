@@ -35,6 +35,8 @@ export function VideoDateFilterPanel() {
     removeDateRange,
     shouldRemovePrivateVideos,
     setShouldRemovePrivateVideos,
+    shouldRemoveDeletedVideos,
+    setShouldRemoveDeletedVideos,
   } = useVideoSelection();
 
   const handleSelectByDateRange = () => {
@@ -82,6 +84,28 @@ export function VideoDateFilterPanel() {
             </div>
             <p className="text-xs text-muted-foreground ml-6">
               If enabled, private videos will also be deleted
+            </p>
+          </div>
+
+          {/* Remove Deleted Videos Checkbox */}
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="remove-deleted-videos"
+                checked={shouldRemoveDeletedVideos}
+                onCheckedChange={(checked) =>
+                  setShouldRemoveDeletedVideos(checked === true)
+                }
+              />
+              <Label
+                htmlFor="remove-deleted-videos"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+              >
+                Remove deleted videos
+              </Label>
+            </div>
+            <p className="text-xs text-muted-foreground ml-6">
+              If enabled, deleted videos will also be removed
             </p>
           </div>
 

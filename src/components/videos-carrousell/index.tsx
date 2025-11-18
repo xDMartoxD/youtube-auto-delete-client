@@ -34,7 +34,23 @@ export function VideosCarrousell(
   const scrollPositionRef = useRef<number | null>(null);
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
 
-  const { toggleVideoSelection, selectedVideoIds } = useVideoSelection();
+  const { toggleVideoSelection, selectedVideoIds, isDeleting } =
+    useVideoSelection();
+  const [deletingVideoIds, setDeletingVideoIds] = React.useState<Set<string>>(
+    new Set()
+  );
+
+  // Rastrear videos que se están eliminando para la animación
+  React.useEffect(() => {
+    if (isDeleting && selectedVideoIds.length > 0) {
+      setDeletingVideoIds(new Set(selectedVideoIds));
+      // Limpiar después de la animación
+      const timer = setTimeout(() => {
+        setDeletingVideoIds(new Set());
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isDeleting, selectedVideoIds]);
 
   const videosItems = props.videos;
 
@@ -139,15 +155,15 @@ export function VideosCarrousell(
         {props.showAdvanceFilterButton && <VideoDateFilterPanel />}
       </div>
       <Carousel
-        className="w-full max-w-7xl"
+        className="w-full max-w-7xl "
         setApi={handleSetApi}
         opts={{
           align: 'start',
           dragFree: true,
         }}
       >
-        <div ref={carouselContainerRef} className="w-full">
-          <CarouselContent className="-ml-2 md:-ml-4">
+        <div ref={carouselContainerRef} className="w-full ">
+          <CarouselContent className="-ml-2 md:-ml-4 p-4">
             {videosItems.map((video, index) => {
               const thumbnailUrl = getVideoThumbnailUrl(video);
               // Use selectedVideoIds directly to ensure re-render when it changes
@@ -159,10 +175,17 @@ export function VideosCarrousell(
                 video.snippet?.channelTitle ||
                 'Unknown Channel';
 
+              const isBeingDeleted = deletingVideoIds.has(video.id);
+
               return (
                 <CarouselItem
                   key={video.id}
-                  className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 mv-2 py-2"
+                  className={cn(
+                    'pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 mv-2 py-2',
+                    'animate-in fade-in slide-in-from-bottom-2 duration-300',
+                    isBeingDeleted &&
+                      'animate-out fade-out slide-out-to-bottom-2 zoom-out-95 duration-300'
+                  )}
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleVideoSelection(video.id);
@@ -174,8 +197,10 @@ export function VideosCarrousell(
                   >
                     <Card
                       className={cn(
-                        'overflow-hidden transition-all hover:shadow-lg h-full flex flex-col mx-1',
-                        isSelected && 'ring-2 ring-primary'
+                        'overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg h-full flex flex-col mx-1',
+                        'hover:scale-105 transform',
+                        isSelected && 'ring-2 ring-primary',
+                        isBeingDeleted && 'opacity-50 scale-95'
                       )}
                     >
                       <CardContent className="p-0 flex flex-col h-full">
