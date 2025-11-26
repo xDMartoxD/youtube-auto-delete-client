@@ -3,9 +3,9 @@ import { devtools } from 'zustand/middleware';
 import { toast } from 'sonner';
 import {
   type YoutubePlaylistListResponse,
-  type GetUserPlaylistsApiYoutubePlaylistsGetError,
+  type GetUserPlaylistsV1YoutubePlaylistsGetError,
   type PlaylistVideoResponse,
-  type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError,
+  type GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetError,
 } from '@/api';
 import {
   getUserPlaylists as getUserPlaylistsService,
@@ -47,7 +47,7 @@ export interface YoutubeActions {
 interface BaseVideosLoadingState {
   videos: PlaylistVideoResponse | null;
   isLoading: boolean;
-  error: GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError | null;
+  error: GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetError | null;
 }
 
 interface DateRangeSelection extends BaseVideosLoadingState {
@@ -80,7 +80,7 @@ interface YoutubeState {
   // Loading states
   isLoadingPlaylists: boolean;
   // Error states
-  playlistsError: GetUserPlaylistsApiYoutubePlaylistsGetError | null;
+  playlistsError: GetUserPlaylistsV1YoutubePlaylistsGetError | null;
   selectedPlaylistId: string | null;
   // Estado normalizado de selección
   videoSelection: VideoSelectionState;

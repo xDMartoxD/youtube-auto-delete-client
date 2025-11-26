@@ -1,6 +1,6 @@
 import type { CodeResponse } from '@react-oauth/google';
 import { create } from 'zustand';
-import { type UserInfo, type CodeLoginApiAuthExchangePostError } from '@/api';
+import { type UserInfo, type CodeLoginV1AuthExchangePostError } from '@/api';
 import {
   exchangeCode as exchangeCodeService,
   getUserProfile as getUserProfileService,
@@ -17,8 +17,8 @@ interface AuthState {
   isAuthenticating: boolean;
   isLoadingProfile: boolean;
   // Error states
-  authError: CodeLoginApiAuthExchangePostError | null;
-  profileError: Error | CodeLoginApiAuthExchangePostError | null;
+  authError: CodeLoginV1AuthExchangePostError | null;
+  profileError: Error | CodeLoginV1AuthExchangePostError | null;
   // Actions
   authenticate: (codeResponse: CodeResponse) => Promise<void>;
   me: () => Promise<void>;
@@ -51,7 +51,7 @@ const authStore = create<AuthState>((set) => ({
       });
     } else if (result.error) {
       set({
-        authError: result.error as CodeLoginApiAuthExchangePostError,
+        authError: result.error as CodeLoginV1AuthExchangePostError,
         isAuthenticating: false,
       });
       handleServiceError(result, 'Failed to authenticate');

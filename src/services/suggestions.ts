@@ -1,13 +1,13 @@
 import { apiClient } from '@/configs/client-config';
 import {
-  createSuggestionApiSuggestionsPost,
-  type CreateSuggestionApiSuggestionsPostError,
+  createSuggestionV1SuggestionsPost,
+  type CreateSuggestionV1SuggestionsPostError,
   type SuggestionResponse,
 } from '@/api';
 
 export interface ServiceResult<T> {
   data?: T;
-  error?: CreateSuggestionApiSuggestionsPostError;
+  error?: CreateSuggestionV1SuggestionsPostError;
   success: boolean;
 }
 
@@ -22,7 +22,7 @@ export async function postSuggestion(
   message: string
 ): Promise<ServiceResult<SuggestionResponse>> {
   try {
-    const result = await createSuggestionApiSuggestionsPost({
+    const result = await createSuggestionV1SuggestionsPost({
       client: apiClient,
       body: {
         title: title.trim(),
@@ -49,7 +49,7 @@ export async function postSuggestion(
     };
   } catch (error) {
     return {
-      error: error as CreateSuggestionApiSuggestionsPostError,
+      error: error as CreateSuggestionV1SuggestionsPostError,
       success: false,
     };
   }

@@ -7,13 +7,13 @@
 
 import { apiClient } from '@/configs/client-config';
 import {
-  getUserPlaylistsApiYoutubePlaylistsGet,
-  getPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGet,
-  deletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePost,
-  type GetUserPlaylistsApiYoutubePlaylistsGetError,
-  type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError,
-  type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData,
-  type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostError,
+  getUserPlaylistsV1YoutubePlaylistsGet,
+  getPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGet,
+  deletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePost,
+  type GetUserPlaylistsV1YoutubePlaylistsGetError,
+  type GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetError,
+  type GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetData,
+  type DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostError,
 } from '@/api';
 
 export interface GetPlaylistsOptions {
@@ -31,9 +31,9 @@ export interface GetPlaylistVideosOptions {
 export interface ServiceResult<T> {
   data?: T;
   error?:
-    | GetUserPlaylistsApiYoutubePlaylistsGetError
-    | GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError
-    | DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostError;
+    | GetUserPlaylistsV1YoutubePlaylistsGetError
+    | GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetError
+    | DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostError;
   success: boolean;
 }
 
@@ -49,11 +49,11 @@ export async function getUserPlaylists(
   options?: GetPlaylistsOptions
 ): Promise<
   ServiceResult<
-    Awaited<ReturnType<typeof getUserPlaylistsApiYoutubePlaylistsGet>>['data']
+    Awaited<ReturnType<typeof getUserPlaylistsV1YoutubePlaylistsGet>>['data']
   >
 > {
   try {
-    const result = await getUserPlaylistsApiYoutubePlaylistsGet({
+    const result = await getUserPlaylistsV1YoutubePlaylistsGet({
       client: apiClient,
       query: options
         ? {
@@ -82,7 +82,7 @@ export async function getUserPlaylists(
     };
   } catch (error) {
     return {
-      error: error as GetUserPlaylistsApiYoutubePlaylistsGetError,
+      error: error as GetUserPlaylistsV1YoutubePlaylistsGetError,
       success: false,
     };
   }
@@ -105,12 +105,12 @@ export async function getPlaylistVideos(
 ): Promise<
   ServiceResult<
     Awaited<
-      ReturnType<typeof getPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGet>
+      ReturnType<typeof getPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGet>
     >['data']
   >
 > {
   try {
-    const query: GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData['query'] =
+    const query: GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetData['query'] =
       {
         page_token: options?.pageToken || undefined,
         date_from: options?.dateFrom?.toISOString() || undefined,
@@ -118,12 +118,13 @@ export async function getPlaylistVideos(
         max_results: options?.maxResults || 50,
       };
 
-    const result =
-      await getPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGet({
+    const result = await getPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGet(
+      {
         client: apiClient,
         path: { playlist_id: playlistId },
         query,
-      });
+      }
+    );
 
     if (result.response.status === 200 && result.data) {
       return {
@@ -145,7 +146,7 @@ export async function getPlaylistVideos(
   } catch (error) {
     return {
       error:
-        error as GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError,
+        error as GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetError,
       success: false,
     };
   }
@@ -167,7 +168,7 @@ export async function deletePlaylistVideos(
 ): Promise<ServiceResult<void>> {
   try {
     const result =
-      await deletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePost({
+      await deletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePost({
         client: apiClient,
         path: { playlist_id: playlistId },
         body: {
@@ -198,7 +199,7 @@ export async function deletePlaylistVideos(
   } catch (error) {
     return {
       error:
-        error as DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostError,
+        error as DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostError,
       success: false,
     };
   }

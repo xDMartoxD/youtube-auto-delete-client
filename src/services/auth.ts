@@ -1,6 +1,6 @@
 /**
  * Auth API Service
- * 
+ *
  * Esta capa encapsula todas las llamadas a la API de autenticación.
  * El store solo debe usar estos servicios, no llamar directamente a la API.
  */
@@ -8,17 +8,17 @@
 import { apiClient } from '@/configs/client-config';
 import { REDIRECT_URI } from '@/constants';
 import {
-  codeLoginApiAuthExchangePost,
-  getUserProfileApiAuthMeGet,
-  logoutApiAuthLogoutPost,
+  codeLoginV1AuthExchangePost,
+  getUserProfileV1AuthMeGet,
+  logoutV1AuthLogoutPost,
   type AuthSuccessResponse,
-  type CodeLoginApiAuthExchangePostError,
+  type CodeLoginV1AuthExchangePostError,
 } from '@/api';
 import type { CodeResponse } from '@react-oauth/google';
 
 export interface ServiceResult<T> {
   data?: T;
-  error?: CodeLoginApiAuthExchangePostError | Error;
+  error?: CodeLoginV1AuthExchangePostError | Error;
   success: boolean;
 }
 
@@ -38,7 +38,7 @@ export async function exchangeCode(
   }
 
   try {
-    const result = await codeLoginApiAuthExchangePost({
+    const result = await codeLoginV1AuthExchangePost({
       client: apiClient,
       body: {
         code,
@@ -65,7 +65,7 @@ export async function exchangeCode(
     };
   } catch (error) {
     return {
-      error: error as CodeLoginApiAuthExchangePostError,
+      error: error as CodeLoginV1AuthExchangePostError,
       success: false,
     };
   }
@@ -74,9 +74,11 @@ export async function exchangeCode(
 /**
  * Obtiene el perfil del usuario autenticado
  */
-export async function getUserProfile(): Promise<ServiceResult<AuthSuccessResponse>> {
+export async function getUserProfile(): Promise<
+  ServiceResult<AuthSuccessResponse>
+> {
   try {
-    const result = await getUserProfileApiAuthMeGet({
+    const result = await getUserProfileV1AuthMeGet({
       client: apiClient,
     });
 
@@ -110,7 +112,7 @@ export async function getUserProfile(): Promise<ServiceResult<AuthSuccessRespons
  */
 export async function logout(): Promise<ServiceResult<void>> {
   try {
-    const result = await logoutApiAuthLogoutPost({
+    const result = await logoutV1AuthLogoutPost({
       client: apiClient,
     });
 
@@ -138,4 +140,3 @@ export async function logout(): Promise<ServiceResult<void>> {
     };
   }
 }
-

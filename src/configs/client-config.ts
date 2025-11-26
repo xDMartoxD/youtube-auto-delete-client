@@ -8,7 +8,7 @@ const getApiBaseUrl = (): string => {
     return envUrl;
   }
   // Fallback para desarrollo local
-  return 'http://localhost:8080';
+  return 'http://3.95.27.211:80';
 };
 
 export const apiClient = createClient(

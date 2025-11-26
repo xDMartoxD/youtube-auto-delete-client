@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CodeLoginApiAuthExchangePostData, CodeLoginApiAuthExchangePostErrors, CodeLoginApiAuthExchangePostResponses, CreateSuggestionApiSuggestionsPostData, CreateSuggestionApiSuggestionsPostErrors, CreateSuggestionApiSuggestionsPostResponses, DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostData, DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostErrors, DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponses, DeleteSuggestionApiSuggestionsSuggestionIdDeleteData, DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors, DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses, DetailedHealthCheckApiHealthHealthDetailedGetData, DetailedHealthCheckApiHealthHealthDetailedGetResponses, GetAllSuggestionsApiSuggestionsGetData, GetAllSuggestionsApiSuggestionsGetResponses, GetMetricsApiHealthMetricsGetData, GetMetricsApiHealthMetricsGetResponses, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses, GetSuggestionApiSuggestionsSuggestionIdGetData, GetSuggestionApiSuggestionsSuggestionIdGetErrors, GetSuggestionApiSuggestionsSuggestionIdGetResponses, GetUserPlaylistsApiYoutubePlaylistsGetData, GetUserPlaylistsApiYoutubePlaylistsGetErrors, GetUserPlaylistsApiYoutubePlaylistsGetResponses, GetUserProfileApiAuthMeGetData, GetUserProfileApiAuthMeGetResponses, HealthCheckApiHealthHealthGetData, HealthCheckApiHealthHealthGetResponses, LogoutApiAuthLogoutPostData, LogoutApiAuthLogoutPostResponses, ReadinessCheckApiHealthReadyGetData, ReadinessCheckApiHealthReadyGetResponses, UpdateSuggestionApiSuggestionsSuggestionIdPutData, UpdateSuggestionApiSuggestionsSuggestionIdPutErrors, UpdateSuggestionApiSuggestionsSuggestionIdPutResponses } from './types.gen';
+import type { CodeLoginV1AuthExchangePostData, CodeLoginV1AuthExchangePostErrors, CodeLoginV1AuthExchangePostResponses, CreateSuggestionV1SuggestionsPostData, CreateSuggestionV1SuggestionsPostErrors, CreateSuggestionV1SuggestionsPostResponses, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostData, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostErrors, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostResponses, DeleteSuggestionV1SuggestionsSuggestionIdDeleteData, DeleteSuggestionV1SuggestionsSuggestionIdDeleteErrors, DeleteSuggestionV1SuggestionsSuggestionIdDeleteResponses, DetailedHealthCheckV1HealthDetailedGetData, DetailedHealthCheckV1HealthDetailedGetResponses, GetAllSuggestionsV1SuggestionsGetData, GetAllSuggestionsV1SuggestionsGetResponses, GetMetricsV1HealthMetricsGetData, GetMetricsV1HealthMetricsGetResponses, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetData, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetErrors, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetResponses, GetSuggestionV1SuggestionsSuggestionIdGetData, GetSuggestionV1SuggestionsSuggestionIdGetErrors, GetSuggestionV1SuggestionsSuggestionIdGetResponses, GetUserPlaylistsV1YoutubePlaylistsGetData, GetUserPlaylistsV1YoutubePlaylistsGetErrors, GetUserPlaylistsV1YoutubePlaylistsGetResponses, GetUserProfileV1AuthMeGetData, GetUserProfileV1AuthMeGetResponses, HealthCheckV1HealthGetData, HealthCheckV1HealthGetResponses, LogoutV1AuthLogoutPostData, LogoutV1AuthLogoutPostResponses, ReadinessCheckV1HealthReadyGetData, ReadinessCheckV1HealthReadyGetResponses, UpdateSuggestionV1SuggestionsSuggestionIdPutData, UpdateSuggestionV1SuggestionsSuggestionIdPutErrors, UpdateSuggestionV1SuggestionsSuggestionIdPutResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -28,9 +28,9 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
  *
  * Retorna información del usuario autenticado y establece una cookie de sesión.
  */
-export const codeLoginApiAuthExchangePost = <ThrowOnError extends boolean = false>(options: Options<CodeLoginApiAuthExchangePostData, ThrowOnError>) => {
-    return (options.client ?? client).post<CodeLoginApiAuthExchangePostResponses, CodeLoginApiAuthExchangePostErrors, ThrowOnError>({
-        url: '/api/auth/exchange',
+export const codeLoginV1AuthExchangePost = <ThrowOnError extends boolean = false>(options: Options<CodeLoginV1AuthExchangePostData, ThrowOnError>) => {
+    return (options.client ?? client).post<CodeLoginV1AuthExchangePostResponses, CodeLoginV1AuthExchangePostErrors, ThrowOnError>({
+        url: '/v1/auth/exchange',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -44,15 +44,15 @@ export const codeLoginApiAuthExchangePost = <ThrowOnError extends boolean = fals
  *
  * Logout the current user by clearing the session cookie.
  */
-export const logoutApiAuthLogoutPost = <ThrowOnError extends boolean = false>(options?: Options<LogoutApiAuthLogoutPostData, ThrowOnError>) => {
-    return (options?.client ?? client).post<LogoutApiAuthLogoutPostResponses, unknown, ThrowOnError>({
+export const logoutV1AuthLogoutPost = <ThrowOnError extends boolean = false>(options?: Options<LogoutV1AuthLogoutPostData, ThrowOnError>) => {
+    return (options?.client ?? client).post<LogoutV1AuthLogoutPostResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/auth/logout',
+        url: '/v1/auth/logout',
         ...options
     });
 };
@@ -70,15 +70,15 @@ export const logoutApiAuthLogoutPost = <ThrowOnError extends boolean = false>(op
  * - Type: HTTP-only cookie
  * - Security: Secure, SameSite=Strict
  */
-export const getUserProfileApiAuthMeGet = <ThrowOnError extends boolean = false>(options?: Options<GetUserProfileApiAuthMeGetData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetUserProfileApiAuthMeGetResponses, unknown, ThrowOnError>({
+export const getUserProfileV1AuthMeGet = <ThrowOnError extends boolean = false>(options?: Options<GetUserProfileV1AuthMeGetData, ThrowOnError>) => {
+    return (options?.client ?? client).get<GetUserProfileV1AuthMeGetResponses, unknown, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/auth/me',
+        url: '/v1/auth/me',
         ...options
     });
 };
@@ -88,9 +88,9 @@ export const getUserProfileApiAuthMeGet = <ThrowOnError extends boolean = false>
  *
  * Endpoint de health check básico.
  */
-export const healthCheckApiHealthHealthGet = <ThrowOnError extends boolean = false>(options?: Options<HealthCheckApiHealthHealthGetData, ThrowOnError>) => {
-    return (options?.client ?? client).get<HealthCheckApiHealthHealthGetResponses, unknown, ThrowOnError>({
-        url: '/api/health/health',
+export const healthCheckV1HealthGet = <ThrowOnError extends boolean = false>(options?: Options<HealthCheckV1HealthGetData, ThrowOnError>) => {
+    return (options?.client ?? client).get<HealthCheckV1HealthGetResponses, unknown, ThrowOnError>({
+        url: '/v1/health/',
         ...options
     });
 };
@@ -100,9 +100,9 @@ export const healthCheckApiHealthHealthGet = <ThrowOnError extends boolean = fal
  *
  * Health check detallado que verifica dependencias.
  */
-export const detailedHealthCheckApiHealthHealthDetailedGet = <ThrowOnError extends boolean = false>(options?: Options<DetailedHealthCheckApiHealthHealthDetailedGetData, ThrowOnError>) => {
-    return (options?.client ?? client).get<DetailedHealthCheckApiHealthHealthDetailedGetResponses, unknown, ThrowOnError>({
-        url: '/api/health/health/detailed',
+export const detailedHealthCheckV1HealthDetailedGet = <ThrowOnError extends boolean = false>(options?: Options<DetailedHealthCheckV1HealthDetailedGetData, ThrowOnError>) => {
+    return (options?.client ?? client).get<DetailedHealthCheckV1HealthDetailedGetResponses, unknown, ThrowOnError>({
+        url: '/v1/health/detailed',
         ...options
     });
 };
@@ -112,9 +112,9 @@ export const detailedHealthCheckApiHealthHealthDetailedGet = <ThrowOnError exten
  *
  * Endpoint básico de métricas de la aplicación.
  */
-export const getMetricsApiHealthMetricsGet = <ThrowOnError extends boolean = false>(options?: Options<GetMetricsApiHealthMetricsGetData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetMetricsApiHealthMetricsGetResponses, unknown, ThrowOnError>({
-        url: '/api/health/metrics',
+export const getMetricsV1HealthMetricsGet = <ThrowOnError extends boolean = false>(options?: Options<GetMetricsV1HealthMetricsGetData, ThrowOnError>) => {
+    return (options?.client ?? client).get<GetMetricsV1HealthMetricsGetResponses, unknown, ThrowOnError>({
+        url: '/v1/health/metrics',
         ...options
     });
 };
@@ -124,9 +124,9 @@ export const getMetricsApiHealthMetricsGet = <ThrowOnError extends boolean = fal
  *
  * Endpoint de readiness check para Kubernetes.
  */
-export const readinessCheckApiHealthReadyGet = <ThrowOnError extends boolean = false>(options?: Options<ReadinessCheckApiHealthReadyGetData, ThrowOnError>) => {
-    return (options?.client ?? client).get<ReadinessCheckApiHealthReadyGetResponses, unknown, ThrowOnError>({
-        url: '/api/health/ready',
+export const readinessCheckV1HealthReadyGet = <ThrowOnError extends boolean = false>(options?: Options<ReadinessCheckV1HealthReadyGetData, ThrowOnError>) => {
+    return (options?.client ?? client).get<ReadinessCheckV1HealthReadyGetResponses, unknown, ThrowOnError>({
+        url: '/v1/health/ready',
         ...options
     });
 };
@@ -136,15 +136,15 @@ export const readinessCheckApiHealthReadyGet = <ThrowOnError extends boolean = f
  *
  * Get user's YouTube playlists with pagination.
  */
-export const getUserPlaylistsApiYoutubePlaylistsGet = <ThrowOnError extends boolean = false>(options?: Options<GetUserPlaylistsApiYoutubePlaylistsGetData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetUserPlaylistsApiYoutubePlaylistsGetResponses, GetUserPlaylistsApiYoutubePlaylistsGetErrors, ThrowOnError>({
+export const getUserPlaylistsV1YoutubePlaylistsGet = <ThrowOnError extends boolean = false>(options?: Options<GetUserPlaylistsV1YoutubePlaylistsGetData, ThrowOnError>) => {
+    return (options?.client ?? client).get<GetUserPlaylistsV1YoutubePlaylistsGetResponses, GetUserPlaylistsV1YoutubePlaylistsGetErrors, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/youtube/playlists',
+        url: '/v1/youtube/playlists',
         ...options
     });
 };
@@ -159,15 +159,15 @@ export const getUserPlaylistsApiYoutubePlaylistsGet = <ThrowOnError extends bool
  * - **date_from**: Filtrar videos agregados a la playlist desde esta fecha (ISO 8601)
  * - **date_to**: Filtrar videos agregados a la playlist hasta esta fecha (ISO 8601)
  */
-export const getPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGet = <ThrowOnError extends boolean = false>(options: Options<GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses, GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors, ThrowOnError>({
+export const getPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGet = <ThrowOnError extends boolean = false>(options: Options<GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetResponses, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetErrors, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/youtube/playlists/{playlist_id}/videos',
+        url: '/v1/youtube/playlists/{playlist_id}/videos',
         ...options
     });
 };
@@ -175,15 +175,15 @@ export const getPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGet = <ThrowOnE
 /**
  * Delete Playlist Videos
  */
-export const deletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePost = <ThrowOnError extends boolean = false>(options: Options<DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostData, ThrowOnError>) => {
-    return (options.client ?? client).post<DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponses, DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostErrors, ThrowOnError>({
+export const deletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePost = <ThrowOnError extends boolean = false>(options: Options<DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostData, ThrowOnError>) => {
+    return (options.client ?? client).post<DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostResponses, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostErrors, ThrowOnError>({
         security: [
             {
                 scheme: 'bearer',
                 type: 'http'
             }
         ],
-        url: '/api/youtube/playlists/{playlist_id}/delete',
+        url: '/v1/youtube/playlists/{playlist_id}/delete',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -197,9 +197,9 @@ export const deletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePost = <Thro
  *
  * Obtiene todas las sugerencias.
  */
-export const getAllSuggestionsApiSuggestionsGet = <ThrowOnError extends boolean = false>(options?: Options<GetAllSuggestionsApiSuggestionsGetData, ThrowOnError>) => {
-    return (options?.client ?? client).get<GetAllSuggestionsApiSuggestionsGetResponses, unknown, ThrowOnError>({
-        url: '/api/suggestions',
+export const getAllSuggestionsV1SuggestionsGet = <ThrowOnError extends boolean = false>(options?: Options<GetAllSuggestionsV1SuggestionsGetData, ThrowOnError>) => {
+    return (options?.client ?? client).get<GetAllSuggestionsV1SuggestionsGetResponses, unknown, ThrowOnError>({
+        url: '/v1/suggestions',
         ...options
     });
 };
@@ -212,9 +212,9 @@ export const getAllSuggestionsApiSuggestionsGet = <ThrowOnError extends boolean 
  * - **title**: Título de la sugerencia (1-200 caracteres)
  * - **description**: Descripción de la sugerencia (1-1000 caracteres)
  */
-export const createSuggestionApiSuggestionsPost = <ThrowOnError extends boolean = false>(options: Options<CreateSuggestionApiSuggestionsPostData, ThrowOnError>) => {
-    return (options.client ?? client).post<CreateSuggestionApiSuggestionsPostResponses, CreateSuggestionApiSuggestionsPostErrors, ThrowOnError>({
-        url: '/api/suggestions',
+export const createSuggestionV1SuggestionsPost = <ThrowOnError extends boolean = false>(options: Options<CreateSuggestionV1SuggestionsPostData, ThrowOnError>) => {
+    return (options.client ?? client).post<CreateSuggestionV1SuggestionsPostResponses, CreateSuggestionV1SuggestionsPostErrors, ThrowOnError>({
+        url: '/v1/suggestions',
         ...options,
         headers: {
             'Content-Type': 'application/json',
@@ -228,9 +228,9 @@ export const createSuggestionApiSuggestionsPost = <ThrowOnError extends boolean 
  *
  * Elimina una sugerencia por su ID.
  */
-export const deleteSuggestionApiSuggestionsSuggestionIdDelete = <ThrowOnError extends boolean = false>(options: Options<DeleteSuggestionApiSuggestionsSuggestionIdDeleteData, ThrowOnError>) => {
-    return (options.client ?? client).delete<DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses, DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors, ThrowOnError>({
-        url: '/api/suggestions/{suggestion_id}',
+export const deleteSuggestionV1SuggestionsSuggestionIdDelete = <ThrowOnError extends boolean = false>(options: Options<DeleteSuggestionV1SuggestionsSuggestionIdDeleteData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DeleteSuggestionV1SuggestionsSuggestionIdDeleteResponses, DeleteSuggestionV1SuggestionsSuggestionIdDeleteErrors, ThrowOnError>({
+        url: '/v1/suggestions/{suggestion_id}',
         ...options
     });
 };
@@ -240,9 +240,9 @@ export const deleteSuggestionApiSuggestionsSuggestionIdDelete = <ThrowOnError ex
  *
  * Obtiene una sugerencia por su ID.
  */
-export const getSuggestionApiSuggestionsSuggestionIdGet = <ThrowOnError extends boolean = false>(options: Options<GetSuggestionApiSuggestionsSuggestionIdGetData, ThrowOnError>) => {
-    return (options.client ?? client).get<GetSuggestionApiSuggestionsSuggestionIdGetResponses, GetSuggestionApiSuggestionsSuggestionIdGetErrors, ThrowOnError>({
-        url: '/api/suggestions/{suggestion_id}',
+export const getSuggestionV1SuggestionsSuggestionIdGet = <ThrowOnError extends boolean = false>(options: Options<GetSuggestionV1SuggestionsSuggestionIdGetData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetSuggestionV1SuggestionsSuggestionIdGetResponses, GetSuggestionV1SuggestionsSuggestionIdGetErrors, ThrowOnError>({
+        url: '/v1/suggestions/{suggestion_id}',
         ...options
     });
 };
@@ -255,9 +255,9 @@ export const getSuggestionApiSuggestionsSuggestionIdGet = <ThrowOnError extends 
  * - **title**: Título de la sugerencia (opcional, 1-200 caracteres)
  * - **description**: Descripción de la sugerencia (opcional, 1-1000 caracteres)
  */
-export const updateSuggestionApiSuggestionsSuggestionIdPut = <ThrowOnError extends boolean = false>(options: Options<UpdateSuggestionApiSuggestionsSuggestionIdPutData, ThrowOnError>) => {
-    return (options.client ?? client).put<UpdateSuggestionApiSuggestionsSuggestionIdPutResponses, UpdateSuggestionApiSuggestionsSuggestionIdPutErrors, ThrowOnError>({
-        url: '/api/suggestions/{suggestion_id}',
+export const updateSuggestionV1SuggestionsSuggestionIdPut = <ThrowOnError extends boolean = false>(options: Options<UpdateSuggestionV1SuggestionsSuggestionIdPutData, ThrowOnError>) => {
+    return (options.client ?? client).put<UpdateSuggestionV1SuggestionsSuggestionIdPutResponses, UpdateSuggestionV1SuggestionsSuggestionIdPutErrors, ThrowOnError>({
+        url: '/v1/suggestions/{suggestion_id}',
         ...options,
         headers: {
             'Content-Type': 'application/json',

@@ -625,41 +625,41 @@ export type YoutubePlaylistListResponse = {
     items: Array<PlaylistItem>;
 };
 
-export type CodeLoginApiAuthExchangePostData = {
+export type CodeLoginV1AuthExchangePostData = {
     body: GoogleCodeLogin;
     path?: never;
     query?: never;
-    url: '/api/auth/exchange';
+    url: '/v1/auth/exchange';
 };
 
-export type CodeLoginApiAuthExchangePostErrors = {
+export type CodeLoginV1AuthExchangePostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CodeLoginApiAuthExchangePostError = CodeLoginApiAuthExchangePostErrors[keyof CodeLoginApiAuthExchangePostErrors];
+export type CodeLoginV1AuthExchangePostError = CodeLoginV1AuthExchangePostErrors[keyof CodeLoginV1AuthExchangePostErrors];
 
-export type CodeLoginApiAuthExchangePostResponses = {
+export type CodeLoginV1AuthExchangePostResponses = {
     /**
      * Successful Response
      */
     200: AuthSuccessResponse;
 };
 
-export type CodeLoginApiAuthExchangePostResponse = CodeLoginApiAuthExchangePostResponses[keyof CodeLoginApiAuthExchangePostResponses];
+export type CodeLoginV1AuthExchangePostResponse = CodeLoginV1AuthExchangePostResponses[keyof CodeLoginV1AuthExchangePostResponses];
 
-export type LogoutApiAuthLogoutPostData = {
+export type LogoutV1AuthLogoutPostData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/auth/logout';
+    url: '/v1/auth/logout';
 };
 
-export type LogoutApiAuthLogoutPostResponses = {
+export type LogoutV1AuthLogoutPostResponses = {
     /**
-     * Response Logout Api Auth Logout Post
+     * Response Logout V1 Auth Logout Post
      *
      * Successful Response
      */
@@ -668,81 +668,81 @@ export type LogoutApiAuthLogoutPostResponses = {
     };
 };
 
-export type LogoutApiAuthLogoutPostResponse = LogoutApiAuthLogoutPostResponses[keyof LogoutApiAuthLogoutPostResponses];
+export type LogoutV1AuthLogoutPostResponse = LogoutV1AuthLogoutPostResponses[keyof LogoutV1AuthLogoutPostResponses];
 
-export type GetUserProfileApiAuthMeGetData = {
+export type GetUserProfileV1AuthMeGetData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/auth/me';
+    url: '/v1/auth/me';
 };
 
-export type GetUserProfileApiAuthMeGetResponses = {
+export type GetUserProfileV1AuthMeGetResponses = {
     /**
      * Successful Response
      */
     200: AuthSuccessResponse;
 };
 
-export type GetUserProfileApiAuthMeGetResponse = GetUserProfileApiAuthMeGetResponses[keyof GetUserProfileApiAuthMeGetResponses];
+export type GetUserProfileV1AuthMeGetResponse = GetUserProfileV1AuthMeGetResponses[keyof GetUserProfileV1AuthMeGetResponses];
 
-export type HealthCheckApiHealthHealthGetData = {
+export type HealthCheckV1HealthGetData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/health/health';
+    url: '/v1/health/';
 };
 
-export type HealthCheckApiHealthHealthGetResponses = {
+export type HealthCheckV1HealthGetResponses = {
     /**
      * Successful Response
      */
     200: unknown;
 };
 
-export type DetailedHealthCheckApiHealthHealthDetailedGetData = {
+export type DetailedHealthCheckV1HealthDetailedGetData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/health/health/detailed';
+    url: '/v1/health/detailed';
 };
 
-export type DetailedHealthCheckApiHealthHealthDetailedGetResponses = {
+export type DetailedHealthCheckV1HealthDetailedGetResponses = {
     /**
      * Successful Response
      */
     200: unknown;
 };
 
-export type GetMetricsApiHealthMetricsGetData = {
+export type GetMetricsV1HealthMetricsGetData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/health/metrics';
+    url: '/v1/health/metrics';
 };
 
-export type GetMetricsApiHealthMetricsGetResponses = {
+export type GetMetricsV1HealthMetricsGetResponses = {
     /**
      * Successful Response
      */
     200: unknown;
 };
 
-export type ReadinessCheckApiHealthReadyGetData = {
+export type ReadinessCheckV1HealthReadyGetData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/health/ready';
+    url: '/v1/health/ready';
 };
 
-export type ReadinessCheckApiHealthReadyGetResponses = {
+export type ReadinessCheckV1HealthReadyGetResponses = {
     /**
      * Successful Response
      */
     200: unknown;
 };
 
-export type GetUserPlaylistsApiYoutubePlaylistsGetData = {
+export type GetUserPlaylistsV1YoutubePlaylistsGetData = {
     body?: never;
     path?: never;
     query?: {
@@ -759,28 +759,28 @@ export type GetUserPlaylistsApiYoutubePlaylistsGetData = {
          */
         page_token?: string | null;
     };
-    url: '/api/youtube/playlists';
+    url: '/v1/youtube/playlists';
 };
 
-export type GetUserPlaylistsApiYoutubePlaylistsGetErrors = {
+export type GetUserPlaylistsV1YoutubePlaylistsGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetUserPlaylistsApiYoutubePlaylistsGetError = GetUserPlaylistsApiYoutubePlaylistsGetErrors[keyof GetUserPlaylistsApiYoutubePlaylistsGetErrors];
+export type GetUserPlaylistsV1YoutubePlaylistsGetError = GetUserPlaylistsV1YoutubePlaylistsGetErrors[keyof GetUserPlaylistsV1YoutubePlaylistsGetErrors];
 
-export type GetUserPlaylistsApiYoutubePlaylistsGetResponses = {
+export type GetUserPlaylistsV1YoutubePlaylistsGetResponses = {
     /**
      * Successful Response
      */
     200: YoutubePlaylistListResponse;
 };
 
-export type GetUserPlaylistsApiYoutubePlaylistsGetResponse = GetUserPlaylistsApiYoutubePlaylistsGetResponses[keyof GetUserPlaylistsApiYoutubePlaylistsGetResponses];
+export type GetUserPlaylistsV1YoutubePlaylistsGetResponse = GetUserPlaylistsV1YoutubePlaylistsGetResponses[keyof GetUserPlaylistsV1YoutubePlaylistsGetResponses];
 
-export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData = {
+export type GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetData = {
     body?: never;
     path: {
         /**
@@ -814,28 +814,28 @@ export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetData = {
          */
         date_to?: string | null;
     };
-    url: '/api/youtube/playlists/{playlist_id}/videos';
+    url: '/v1/youtube/playlists/{playlist_id}/videos';
 };
 
-export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors = {
+export type GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError = GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors[keyof GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetErrors];
+export type GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetError = GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetErrors[keyof GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetErrors];
 
-export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses = {
+export type GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetResponses = {
     /**
      * Successful Response
      */
     200: PlaylistVideoResponse;
 };
 
-export type GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponse = GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses[keyof GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetResponses];
+export type GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetResponse = GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetResponses[keyof GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetResponses];
 
-export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostData = {
+export type DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostData = {
     body: DeletePlaylistVideosRequest;
     path: {
         /**
@@ -844,69 +844,69 @@ export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostData = {
         playlist_id: string;
     };
     query?: never;
-    url: '/api/youtube/playlists/{playlist_id}/delete';
+    url: '/v1/youtube/playlists/{playlist_id}/delete';
 };
 
-export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostErrors = {
+export type DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostError = DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostErrors[keyof DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostErrors];
+export type DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostError = DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostErrors[keyof DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostErrors];
 
-export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponses = {
+export type DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostResponses = {
     /**
      * Successful Response
      */
     204: void;
 };
 
-export type DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponse = DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponses[keyof DeletePlaylistVideosApiYoutubePlaylistsPlaylistIdDeletePostResponses];
+export type DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostResponse = DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostResponses[keyof DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostResponses];
 
-export type GetAllSuggestionsApiSuggestionsGetData = {
+export type GetAllSuggestionsV1SuggestionsGetData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/suggestions';
+    url: '/v1/suggestions';
 };
 
-export type GetAllSuggestionsApiSuggestionsGetResponses = {
+export type GetAllSuggestionsV1SuggestionsGetResponses = {
     /**
      * Successful Response
      */
     200: SuggestionListResponse;
 };
 
-export type GetAllSuggestionsApiSuggestionsGetResponse = GetAllSuggestionsApiSuggestionsGetResponses[keyof GetAllSuggestionsApiSuggestionsGetResponses];
+export type GetAllSuggestionsV1SuggestionsGetResponse = GetAllSuggestionsV1SuggestionsGetResponses[keyof GetAllSuggestionsV1SuggestionsGetResponses];
 
-export type CreateSuggestionApiSuggestionsPostData = {
+export type CreateSuggestionV1SuggestionsPostData = {
     body: SuggestionCreate;
     path?: never;
     query?: never;
-    url: '/api/suggestions';
+    url: '/v1/suggestions';
 };
 
-export type CreateSuggestionApiSuggestionsPostErrors = {
+export type CreateSuggestionV1SuggestionsPostErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CreateSuggestionApiSuggestionsPostError = CreateSuggestionApiSuggestionsPostErrors[keyof CreateSuggestionApiSuggestionsPostErrors];
+export type CreateSuggestionV1SuggestionsPostError = CreateSuggestionV1SuggestionsPostErrors[keyof CreateSuggestionV1SuggestionsPostErrors];
 
-export type CreateSuggestionApiSuggestionsPostResponses = {
+export type CreateSuggestionV1SuggestionsPostResponses = {
     /**
      * Successful Response
      */
     201: SuggestionResponse;
 };
 
-export type CreateSuggestionApiSuggestionsPostResponse = CreateSuggestionApiSuggestionsPostResponses[keyof CreateSuggestionApiSuggestionsPostResponses];
+export type CreateSuggestionV1SuggestionsPostResponse = CreateSuggestionV1SuggestionsPostResponses[keyof CreateSuggestionV1SuggestionsPostResponses];
 
-export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteData = {
+export type DeleteSuggestionV1SuggestionsSuggestionIdDeleteData = {
     body?: never;
     path: {
         /**
@@ -915,28 +915,28 @@ export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteData = {
         suggestion_id: string;
     };
     query?: never;
-    url: '/api/suggestions/{suggestion_id}';
+    url: '/v1/suggestions/{suggestion_id}';
 };
 
-export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors = {
+export type DeleteSuggestionV1SuggestionsSuggestionIdDeleteErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteError = DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors[keyof DeleteSuggestionApiSuggestionsSuggestionIdDeleteErrors];
+export type DeleteSuggestionV1SuggestionsSuggestionIdDeleteError = DeleteSuggestionV1SuggestionsSuggestionIdDeleteErrors[keyof DeleteSuggestionV1SuggestionsSuggestionIdDeleteErrors];
 
-export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses = {
+export type DeleteSuggestionV1SuggestionsSuggestionIdDeleteResponses = {
     /**
      * Successful Response
      */
     204: void;
 };
 
-export type DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponse = DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses[keyof DeleteSuggestionApiSuggestionsSuggestionIdDeleteResponses];
+export type DeleteSuggestionV1SuggestionsSuggestionIdDeleteResponse = DeleteSuggestionV1SuggestionsSuggestionIdDeleteResponses[keyof DeleteSuggestionV1SuggestionsSuggestionIdDeleteResponses];
 
-export type GetSuggestionApiSuggestionsSuggestionIdGetData = {
+export type GetSuggestionV1SuggestionsSuggestionIdGetData = {
     body?: never;
     path: {
         /**
@@ -945,28 +945,28 @@ export type GetSuggestionApiSuggestionsSuggestionIdGetData = {
         suggestion_id: string;
     };
     query?: never;
-    url: '/api/suggestions/{suggestion_id}';
+    url: '/v1/suggestions/{suggestion_id}';
 };
 
-export type GetSuggestionApiSuggestionsSuggestionIdGetErrors = {
+export type GetSuggestionV1SuggestionsSuggestionIdGetErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type GetSuggestionApiSuggestionsSuggestionIdGetError = GetSuggestionApiSuggestionsSuggestionIdGetErrors[keyof GetSuggestionApiSuggestionsSuggestionIdGetErrors];
+export type GetSuggestionV1SuggestionsSuggestionIdGetError = GetSuggestionV1SuggestionsSuggestionIdGetErrors[keyof GetSuggestionV1SuggestionsSuggestionIdGetErrors];
 
-export type GetSuggestionApiSuggestionsSuggestionIdGetResponses = {
+export type GetSuggestionV1SuggestionsSuggestionIdGetResponses = {
     /**
      * Successful Response
      */
     200: SuggestionResponse;
 };
 
-export type GetSuggestionApiSuggestionsSuggestionIdGetResponse = GetSuggestionApiSuggestionsSuggestionIdGetResponses[keyof GetSuggestionApiSuggestionsSuggestionIdGetResponses];
+export type GetSuggestionV1SuggestionsSuggestionIdGetResponse = GetSuggestionV1SuggestionsSuggestionIdGetResponses[keyof GetSuggestionV1SuggestionsSuggestionIdGetResponses];
 
-export type UpdateSuggestionApiSuggestionsSuggestionIdPutData = {
+export type UpdateSuggestionV1SuggestionsSuggestionIdPutData = {
     body: SuggestionUpdate;
     path: {
         /**
@@ -975,23 +975,23 @@ export type UpdateSuggestionApiSuggestionsSuggestionIdPutData = {
         suggestion_id: string;
     };
     query?: never;
-    url: '/api/suggestions/{suggestion_id}';
+    url: '/v1/suggestions/{suggestion_id}';
 };
 
-export type UpdateSuggestionApiSuggestionsSuggestionIdPutErrors = {
+export type UpdateSuggestionV1SuggestionsSuggestionIdPutErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type UpdateSuggestionApiSuggestionsSuggestionIdPutError = UpdateSuggestionApiSuggestionsSuggestionIdPutErrors[keyof UpdateSuggestionApiSuggestionsSuggestionIdPutErrors];
+export type UpdateSuggestionV1SuggestionsSuggestionIdPutError = UpdateSuggestionV1SuggestionsSuggestionIdPutErrors[keyof UpdateSuggestionV1SuggestionsSuggestionIdPutErrors];
 
-export type UpdateSuggestionApiSuggestionsSuggestionIdPutResponses = {
+export type UpdateSuggestionV1SuggestionsSuggestionIdPutResponses = {
     /**
      * Successful Response
      */
     200: SuggestionResponse;
 };
 
-export type UpdateSuggestionApiSuggestionsSuggestionIdPutResponse = UpdateSuggestionApiSuggestionsSuggestionIdPutResponses[keyof UpdateSuggestionApiSuggestionsSuggestionIdPutResponses];
+export type UpdateSuggestionV1SuggestionsSuggestionIdPutResponse = UpdateSuggestionV1SuggestionsSuggestionIdPutResponses[keyof UpdateSuggestionV1SuggestionsSuggestionIdPutResponses];
