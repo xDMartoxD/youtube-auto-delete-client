@@ -21,7 +21,7 @@ interface AuthState {
   profileError: Error | CodeLoginV1AuthExchangePostError | null;
   // Actions
   authenticate: (codeResponse: CodeResponse) => Promise<void>;
-  me: () => Promise<void>;
+  me: (silent?: boolean) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -77,7 +77,7 @@ const authStore = create<AuthState>((set) => ({
     });
   },
 
-  me: async () => {
+  me: async (silent = false) => {
     set({ isLoadingProfile: true, profileError: null });
 
     const result = await getUserProfileService();
@@ -96,7 +96,10 @@ const authStore = create<AuthState>((set) => ({
         profileError: result.error,
         isLoadingProfile: false,
       });
-      handleServiceError(result, 'Failed to load user profile');
+      // Solo mostrar toast si no está en modo silencioso
+      if (!silent) {
+        handleServiceError(result, 'Failed to load user profile');
+      }
     } else {
       set({
         profileError: null,

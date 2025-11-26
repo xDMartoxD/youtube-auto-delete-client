@@ -4,7 +4,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import LandingPage from './pages/landing/index';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import NotFoundPage from './pages/not-found';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAuth } from './hooks';
 import { Toaster } from 'sonner';
 
@@ -15,8 +15,14 @@ const router = createBrowserRouter([
 
 function App() {
   const { me } = useAuth();
+  const hasRunRef = useRef(false);
+
   useEffect(() => {
-    me();
+    // Evitar ejecución duplicada (incluso con StrictMode)
+    if (hasRunRef.current) return;
+    hasRunRef.current = true;
+    // Ejecutar en modo silencioso para no mostrar toast de error
+    me(true);
   }, [me]);
   return (
     <ErrorBoundary>
