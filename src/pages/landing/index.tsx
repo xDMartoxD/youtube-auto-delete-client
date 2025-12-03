@@ -8,7 +8,7 @@ import { VideoSelectionBar } from '@/components/video-selection-bar';
 import { DeleteVideosDialog } from '@/components/delete-videos-dialog';
 import { FeedbackDialog } from '@/components/feedback-dialog';
 import { useState } from 'react';
-import { LogOut, PlayCircle, Loader2 } from 'lucide-react';
+import { LogOut, PlayCircle, Loader2} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   useVideoSelection,

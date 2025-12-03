@@ -67,7 +67,7 @@ export function handleApiError(
 /**
  * Handles service result errors
  */
-export function handleServiceError<T>(
+export function handleServiceError(
   result: { success: boolean; error?: unknown },
   defaultMessage = 'Operation failed'
 ): boolean {
@@ -94,4 +94,3 @@ export function createAppError(
     details,
   };
 }
-

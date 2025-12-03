@@ -4,12 +4,14 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import LandingPage from './pages/landing/index';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import NotFoundPage from './pages/not-found';
+import PrivacyPolicyPage from './pages/privacy-policy/index';
 import { useEffect, useRef } from 'react';
 import { useAuth } from './hooks';
 import { Toaster } from 'sonner';
 
 const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
+  { path: '/privacy-policy', element: <PrivacyPolicyPage /> },
   { path: '*', element: <NotFoundPage /> },
 ]);
 

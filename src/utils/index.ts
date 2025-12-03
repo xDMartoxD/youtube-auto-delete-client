@@ -1,6 +1,6 @@
 import type {
   PlaylistVideoResponse,
-  GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError,
+  GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetError,
 } from '@/api';
 
 const formatDate = (date: Date | null): string => {
@@ -19,7 +19,7 @@ export interface DateRangeState {
   end: Date | null;
   videos: PlaylistVideoResponse | null;
   isLoading: boolean;
-  error: GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError | null;
+  error: GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetError | null;
 }
 
 const createDateRange = (
@@ -27,7 +27,7 @@ const createDateRange = (
   end: Date | null,
   videos: PlaylistVideoResponse | null,
   isLoading: boolean,
-  error: GetPlaylistVideosApiYoutubePlaylistsPlaylistIdVideosGetError | null
+  error: GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetError | null
 ): DateRangeState => ({
   start,
   end,
