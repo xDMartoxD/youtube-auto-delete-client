@@ -6,7 +6,7 @@
  */
 
 import { apiClient } from '@/configs/client-config';
-import { REDIRECT_URI } from '@/constants';
+import { getRedirectUri } from '@/constants';
 import {
   codeLoginV1AuthExchangePost,
   getUserProfileV1AuthMeGet,
@@ -42,7 +42,7 @@ export async function exchangeCode(
       client: apiClient,
       body: {
         code,
-        redirect_uri: REDIRECT_URI,
+        redirect_uri: getRedirectUri(),
       },
     });
 

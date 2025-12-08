@@ -8,7 +8,8 @@ import { VideoSelectionBar } from '@/components/video-selection-bar';
 import { DeleteVideosDialog } from '@/components/delete-videos-dialog';
 import { FeedbackDialog } from '@/components/feedback-dialog';
 import { useState } from 'react';
-import { LogOut, PlayCircle, Loader2} from 'lucide-react';
+import { LogOut, PlayCircle, Loader2, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import {
   useVideoSelection,
@@ -20,6 +21,7 @@ import {
 import { formatDate, handleApiError } from '@/utils';
 
 export default function LandingPage() {
+  const navigate = useNavigate();
   const { authenticate, logout, isAuthenticated, isAuthenticating } = useAuth();
   const {
     playlists,
@@ -66,6 +68,15 @@ export default function LandingPage() {
 
             {/* Actions */}
             <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/privacy-policy')}
+                className="gap-2"
+              >
+                <FileText className="h-4 w-4" />
+                <span className="hidden sm:inline">Privacy Policy</span>
+              </Button>
               {isAuthenticated && (
                 <>
                   <FeedbackDialog />

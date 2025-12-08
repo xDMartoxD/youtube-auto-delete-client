@@ -8,7 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <meta name="apple-mobile-web-app-title" content="YT Playlist Manager" />
 
     <!-- Primary Meta Tags -->
@@ -58,45 +61,63 @@
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://youtube-auto-delete.com/" />
-    
+
     <!-- Preconnect to external domains for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://accounts.google.com" />
     <link rel="preconnect" href="https://oauth2.googleapis.com" />
     <link rel="dns-prefetch" href="https://www.googleapis.com" />
-    
+
     <!-- Structured Data (JSON-LD) for better SEO -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "YouTube Playlist Manager",
-      "description": "Efficiently manage and delete videos from your YouTube playlists. Select multiple videos by date range or individually and remove them with a single click.",
-      "url": "https://youtube-auto-delete.com",
-      "applicationCategory": "UtilityApplication",
-      "operatingSystem": "Web",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.5",
-        "ratingCount": "1"
-      },
-      "featureList": [
-        "Bulk delete YouTube videos",
-        "Date range video selection",
-        "Private video removal",
-        "Deleted video cleanup",
-        "Playlist management"
-      ]
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "YouTube Playlist Manager",
+        "description": "Efficiently manage and delete videos from your YouTube playlists. Select multiple videos by date range or individually and remove them with a single click.",
+        "url": "https://youtube-auto-delete.com",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Web",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.5",
+          "ratingCount": "1"
+        },
+        "featureList": [
+          "Bulk delete YouTube videos",
+          "Date range video selection",
+          "Private video removal",
+          "Deleted video cleanup",
+          "Playlist management"
+        ]
+      }
     </script>
   </head>
   <body>
+    <noscript>
+      <div
+        style="
+          padding: 20px;
+          text-align: center;
+          font-family: Arial, sans-serif;
+        "
+      >
+        <h1>JavaScript Required</h1>
+        <p>
+          This application requires JavaScript to function. Please enable
+          JavaScript in your browser settings.
+        </p>
+        <p>
+          <a href="/privacy-policy" style="color: #0066cc">Privacy Policy</a>
+        </p>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
