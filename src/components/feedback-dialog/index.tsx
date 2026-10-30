@@ -48,7 +48,9 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
           setIsSuccess(false);
         }, 2000);
       } else {
-        throw new Error(result.error ? 'Failed to submit suggestion' : 'Unknown error');
+        throw new Error(
+          result.error ? 'Failed to submit suggestion' : 'Unknown error'
+        );
       }
     } catch (error) {
       handleApiError(error, 'Failed to send suggestion');
@@ -75,10 +77,14 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {trigger || (
-          <Button variant="outline" size="sm" className="gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            aria-label="Send suggestion"
+          >
             <MessageSquare className="h-4 w-4" />
             <span className="hidden sm:inline">Send suggestion</span>
-            <span className="sm:hidden">Suggestion</span>
           </Button>
         )}
       </DialogTrigger>
@@ -89,7 +95,8 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
             Send Suggestion
           </DialogTitle>
           <DialogDescription>
-            Share your ideas, comments, or report issues. Your feedback helps us improve.
+            Share your ideas, comments, or report issues. Your feedback helps us
+            improve.
           </DialogDescription>
         </DialogHeader>
 
@@ -140,7 +147,10 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting || !title.trim() || !message.trim()}>
+              <Button
+                type="submit"
+                disabled={isSubmitting || !title.trim() || !message.trim()}
+              >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -160,4 +170,3 @@ export function FeedbackDialog({ trigger }: FeedbackDialogProps) {
     </Dialog>
   );
 }
-

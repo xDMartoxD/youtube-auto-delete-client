@@ -219,7 +219,7 @@ function PlaylistCleanupPanel({ playlist }: { playlist: PlaylistResponse }) {
               size="sm"
               variant="destructive"
               onClick={() => setConfirming(true)}
-              className="rounded-full"
+              className="dark:bg-destructive rounded-full"
             >
               <Trash2 /> Remove
             </Button>

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { AvatarComponent } from '@/components/google-avatar';
 import { FeedbackDialog } from '@/components/feedback-dialog';
 import { useAuth } from '@/hooks';
+import { cn } from '@/lib/utils';
 
 export function AppHeader() {
   const { isAuthenticated, logout } = useAuth();
@@ -21,7 +22,12 @@ export function AppHeader() {
         </Link>
 
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            asChild
+            className={cn(isAuthenticated && 'hidden sm:inline-flex')}
+          >
             <Link to="/privacy-policy">Privacy</Link>
           </Button>
           {isAuthenticated && (
