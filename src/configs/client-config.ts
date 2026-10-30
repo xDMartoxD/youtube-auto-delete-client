@@ -7,8 +7,10 @@ const getApiBaseUrl = (): string => {
   if (envUrl) {
     return envUrl;
   }
-  // Fallback para desarrollo local
-  return 'http://3.95.27.211:80';
+  // Defaults: production API for production builds, local backend otherwise
+  return import.meta.env.PROD
+    ? 'https://api.youtube-auto-delete.com'
+    : 'http://localhost:8080';
 };
 
 export const apiClient = createClient(
