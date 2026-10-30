@@ -1,8 +1,10 @@
 // Centralized exports for hooks
-export { useCarouselInfiniteScroll } from './useCarouselInfiniteScroll';
-export { useVideoSelection } from './useVideoSelection';
-export { usePlaylistVideos } from './usePlaylistVideos';
-export { usePlaylists } from './usePlaylists';
-export { useSelectedPlaylist } from './useSelectedPlaylist';
 export { useAuth } from './useAuth';
-
+export {
+  useProviders,
+  usePlaylists,
+  usePlaylistTracks,
+  usePlaylistOperations,
+} from './useProviders';
+export { useTrackSelection } from './useTrackSelection';
+export type { TrackFilter, TrackFilters } from './useTrackSelection';

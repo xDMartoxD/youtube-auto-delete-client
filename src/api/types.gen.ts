@@ -22,6 +22,13 @@ export type AuthSuccessResponse = {
 };
 
 /**
+ * CompositionMode
+ *
+ * How source playlists are combined into a new one.
+ */
+export type CompositionMode = 'union' | 'intersection' | 'difference';
+
+/**
  * ContentDetails
  *
  * Video content details.
@@ -39,6 +46,32 @@ export type ContentDetails = {
      * Original video publication date
      */
     videoPublishedAt?: string | null;
+};
+
+/**
+ * CreatePlaylistFromSourcesRequest
+ */
+export type CreatePlaylistFromSourcesRequest = {
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Description
+     */
+    description?: string;
+    /**
+     * Source Playlist Ids
+     */
+    source_playlist_ids: Array<string>;
+    /**
+     * union: all tracks; intersection: tracks in every source; difference: tracks of the first source not in the others
+     */
+    mode?: CompositionMode;
+    /**
+     * Remove Duplicates
+     */
+    remove_duplicates?: boolean;
 };
 
 /**
@@ -93,6 +126,32 @@ export type HttpValidationError = {
      * Detail
      */
     detail?: Array<ValidationError>;
+};
+
+/**
+ * MergePlaylistsRequest
+ */
+export type MergePlaylistsRequest = {
+    /**
+     * Source Playlist Ids
+     */
+    source_playlist_ids: Array<string>;
+    /**
+     * Target Playlist Id
+     *
+     * Existing playlist that receives the tracks
+     */
+    target_playlist_id?: string | null;
+    /**
+     * New Playlist Name
+     *
+     * Create a new playlist instead
+     */
+    new_playlist_name?: string | null;
+    /**
+     * Remove Duplicates
+     */
+    remove_duplicates?: boolean;
 };
 
 /**
@@ -331,6 +390,58 @@ export type PlaylistItemVideoOutput = {
 };
 
 /**
+ * PlaylistListResponse
+ */
+export type PlaylistListResponse = {
+    provider: ProviderType;
+    /**
+     * Playlists
+     */
+    playlists: Array<PlaylistResponse>;
+};
+
+/**
+ * PlaylistOperationResponse
+ */
+export type PlaylistOperationResponse = {
+    playlist: PlaylistResponse;
+    /**
+     * Added Count
+     */
+    added_count: number;
+};
+
+/**
+ * PlaylistResponse
+ */
+export type PlaylistResponse = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Name
+     */
+    name: string;
+    /**
+     * Description
+     */
+    description?: string;
+    /**
+     * Image Url
+     */
+    image_url?: string | null;
+    /**
+     * Track Count
+     */
+    track_count?: number;
+    /**
+     * Owner
+     */
+    owner?: string | null;
+};
+
+/**
  * PlaylistSnippet
  */
 export type PlaylistSnippet = {
@@ -396,6 +507,69 @@ export type PlaylistVideoResponse = {
      * Page information
      */
     page_info: PageInfo;
+};
+
+/**
+ * ProviderInfo
+ */
+export type ProviderInfo = {
+    /**
+     * Provider identifier
+     */
+    id: ProviderType;
+    /**
+     * Name
+     *
+     * Display name
+     */
+    name: string;
+    /**
+     * Is Mock
+     *
+     * True when the provider serves demo data
+     */
+    is_mock: boolean;
+};
+
+/**
+ * ProviderListResponse
+ */
+export type ProviderListResponse = {
+    /**
+     * Providers
+     */
+    providers: Array<ProviderInfo>;
+};
+
+/**
+ * ProviderType
+ *
+ * Identifier of each music/video service the app can manage playlists for.
+ */
+export type ProviderType = 'youtube' | 'youtube_music' | 'spotify' | 'apple_music' | 'amazon_music';
+
+/**
+ * RemoveTracksRequest
+ */
+export type RemoveTracksRequest = {
+    /**
+     * Item Ids
+     */
+    item_ids: Array<string>;
+};
+
+/**
+ * RemoveTracksResponse
+ */
+export type RemoveTracksResponse = {
+    /**
+     * Removed Count
+     */
+    removed_count: number;
+    /**
+     * Requested Count
+     */
+    requested_count: number;
 };
 
 /**
@@ -547,6 +721,76 @@ export type Thumbnails = {
     high?: Thumbnail | null;
     standard?: Thumbnail | null;
     maxres?: Thumbnail | null;
+};
+
+/**
+ * TrackListResponse
+ */
+export type TrackListResponse = {
+    /**
+     * Playlist Id
+     */
+    playlist_id: string;
+    /**
+     * Tracks
+     */
+    tracks: Array<TrackResponse>;
+    /**
+     * Duplicate Item Ids
+     *
+     * Entries that repeat a track already earlier in the playlist
+     */
+    duplicate_item_ids: Array<string>;
+};
+
+/**
+ * TrackResponse
+ */
+export type TrackResponse = {
+    /**
+     * Item Id
+     *
+     * Entry id inside the playlist (use it to remove)
+     */
+    item_id: string;
+    /**
+     * Track Id
+     *
+     * Song/video id in the provider catalog
+     */
+    track_id: string;
+    /**
+     * Title
+     */
+    title: string;
+    /**
+     * Artist
+     */
+    artist?: string | null;
+    /**
+     * Album
+     */
+    album?: string | null;
+    /**
+     * Duration Ms
+     */
+    duration_ms?: number | null;
+    /**
+     * Image Url
+     */
+    image_url?: string | null;
+    /**
+     * Added At
+     *
+     * When it was added to the playlist
+     */
+    added_at?: string | null;
+    /**
+     * Is Available
+     *
+     * False for deleted/private tracks
+     */
+    is_available?: boolean;
 };
 
 /**
@@ -995,3 +1239,162 @@ export type UpdateSuggestionV1SuggestionsSuggestionIdPutResponses = {
 };
 
 export type UpdateSuggestionV1SuggestionsSuggestionIdPutResponse = UpdateSuggestionV1SuggestionsSuggestionIdPutResponses[keyof UpdateSuggestionV1SuggestionsSuggestionIdPutResponses];
+
+export type ListProvidersV1ProvidersGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/v1/providers';
+};
+
+export type ListProvidersV1ProvidersGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProviderListResponse;
+};
+
+export type ListProvidersV1ProvidersGetResponse = ListProvidersV1ProvidersGetResponses[keyof ListProvidersV1ProvidersGetResponses];
+
+export type ListPlaylistsV1ProvidersProviderPlaylistsGetData = {
+    body?: never;
+    path: {
+        provider: ProviderType;
+    };
+    query?: never;
+    url: '/v1/providers/{provider}/playlists';
+};
+
+export type ListPlaylistsV1ProvidersProviderPlaylistsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListPlaylistsV1ProvidersProviderPlaylistsGetError = ListPlaylistsV1ProvidersProviderPlaylistsGetErrors[keyof ListPlaylistsV1ProvidersProviderPlaylistsGetErrors];
+
+export type ListPlaylistsV1ProvidersProviderPlaylistsGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlaylistListResponse;
+};
+
+export type ListPlaylistsV1ProvidersProviderPlaylistsGetResponse = ListPlaylistsV1ProvidersProviderPlaylistsGetResponses[keyof ListPlaylistsV1ProvidersProviderPlaylistsGetResponses];
+
+export type CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostData = {
+    body: CreatePlaylistFromSourcesRequest;
+    path: {
+        provider: ProviderType;
+    };
+    query?: never;
+    url: '/v1/providers/{provider}/playlists';
+};
+
+export type CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostError = CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostErrors[keyof CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostErrors];
+
+export type CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostResponses = {
+    /**
+     * Successful Response
+     */
+    201: PlaylistOperationResponse;
+};
+
+export type CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostResponse = CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostResponses[keyof CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostResponses];
+
+export type GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetData = {
+    body?: never;
+    path: {
+        provider: ProviderType;
+        /**
+         * Playlist Id
+         */
+        playlist_id: string;
+    };
+    query?: never;
+    url: '/v1/providers/{provider}/playlists/{playlist_id}/tracks';
+};
+
+export type GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetError = GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetErrors[keyof GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetErrors];
+
+export type GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: TrackListResponse;
+};
+
+export type GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetResponse = GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetResponses[keyof GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetResponses];
+
+export type RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostData = {
+    body: RemoveTracksRequest;
+    path: {
+        provider: ProviderType;
+        /**
+         * Playlist Id
+         */
+        playlist_id: string;
+    };
+    query?: never;
+    url: '/v1/providers/{provider}/playlists/{playlist_id}/tracks/remove';
+};
+
+export type RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostError = RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostErrors[keyof RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostErrors];
+
+export type RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: RemoveTracksResponse;
+};
+
+export type RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostResponse = RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostResponses[keyof RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostResponses];
+
+export type MergePlaylistsV1ProvidersProviderPlaylistsMergePostData = {
+    body: MergePlaylistsRequest;
+    path: {
+        provider: ProviderType;
+    };
+    query?: never;
+    url: '/v1/providers/{provider}/playlists/merge';
+};
+
+export type MergePlaylistsV1ProvidersProviderPlaylistsMergePostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type MergePlaylistsV1ProvidersProviderPlaylistsMergePostError = MergePlaylistsV1ProvidersProviderPlaylistsMergePostErrors[keyof MergePlaylistsV1ProvidersProviderPlaylistsMergePostErrors];
+
+export type MergePlaylistsV1ProvidersProviderPlaylistsMergePostResponses = {
+    /**
+     * Successful Response
+     */
+    200: PlaylistOperationResponse;
+};
+
+export type MergePlaylistsV1ProvidersProviderPlaylistsMergePostResponse = MergePlaylistsV1ProvidersProviderPlaylistsMergePostResponses[keyof MergePlaylistsV1ProvidersProviderPlaylistsMergePostResponses];

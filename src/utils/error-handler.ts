@@ -24,6 +24,18 @@ export function getErrorMessage(error: unknown): string {
     return error;
   }
 
+  // API errors: { detail, user_message }; validation errors: { detail: [{ msg }] }
+  if (error && typeof error === 'object') {
+    if ('user_message' in error && error.user_message) {
+      return String(error.user_message);
+    }
+    if ('detail' in error) {
+      const { detail } = error;
+      if (typeof detail === 'string') return detail;
+      if (Array.isArray(detail) && detail[0]?.msg) return String(detail[0].msg);
+    }
+  }
+
   if (error && typeof error === 'object' && 'message' in error) {
     return String(error.message);
   }

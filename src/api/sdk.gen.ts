@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CodeLoginV1AuthExchangePostData, CodeLoginV1AuthExchangePostErrors, CodeLoginV1AuthExchangePostResponses, CreateSuggestionV1SuggestionsPostData, CreateSuggestionV1SuggestionsPostErrors, CreateSuggestionV1SuggestionsPostResponses, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostData, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostErrors, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostResponses, DeleteSuggestionV1SuggestionsSuggestionIdDeleteData, DeleteSuggestionV1SuggestionsSuggestionIdDeleteErrors, DeleteSuggestionV1SuggestionsSuggestionIdDeleteResponses, DetailedHealthCheckV1HealthDetailedGetData, DetailedHealthCheckV1HealthDetailedGetResponses, GetAllSuggestionsV1SuggestionsGetData, GetAllSuggestionsV1SuggestionsGetResponses, GetMetricsV1HealthMetricsGetData, GetMetricsV1HealthMetricsGetResponses, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetData, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetErrors, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetResponses, GetSuggestionV1SuggestionsSuggestionIdGetData, GetSuggestionV1SuggestionsSuggestionIdGetErrors, GetSuggestionV1SuggestionsSuggestionIdGetResponses, GetUserPlaylistsV1YoutubePlaylistsGetData, GetUserPlaylistsV1YoutubePlaylistsGetErrors, GetUserPlaylistsV1YoutubePlaylistsGetResponses, GetUserProfileV1AuthMeGetData, GetUserProfileV1AuthMeGetResponses, HealthCheckV1HealthGetData, HealthCheckV1HealthGetResponses, LogoutV1AuthLogoutPostData, LogoutV1AuthLogoutPostResponses, ReadinessCheckV1HealthReadyGetData, ReadinessCheckV1HealthReadyGetResponses, UpdateSuggestionV1SuggestionsSuggestionIdPutData, UpdateSuggestionV1SuggestionsSuggestionIdPutErrors, UpdateSuggestionV1SuggestionsSuggestionIdPutResponses } from './types.gen';
+import type { CodeLoginV1AuthExchangePostData, CodeLoginV1AuthExchangePostErrors, CodeLoginV1AuthExchangePostResponses, CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostData, CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostErrors, CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostResponses, CreateSuggestionV1SuggestionsPostData, CreateSuggestionV1SuggestionsPostErrors, CreateSuggestionV1SuggestionsPostResponses, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostData, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostErrors, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostResponses, DeleteSuggestionV1SuggestionsSuggestionIdDeleteData, DeleteSuggestionV1SuggestionsSuggestionIdDeleteErrors, DeleteSuggestionV1SuggestionsSuggestionIdDeleteResponses, DetailedHealthCheckV1HealthDetailedGetData, DetailedHealthCheckV1HealthDetailedGetResponses, GetAllSuggestionsV1SuggestionsGetData, GetAllSuggestionsV1SuggestionsGetResponses, GetMetricsV1HealthMetricsGetData, GetMetricsV1HealthMetricsGetResponses, GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetData, GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetErrors, GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetResponses, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetData, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetErrors, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetResponses, GetSuggestionV1SuggestionsSuggestionIdGetData, GetSuggestionV1SuggestionsSuggestionIdGetErrors, GetSuggestionV1SuggestionsSuggestionIdGetResponses, GetUserPlaylistsV1YoutubePlaylistsGetData, GetUserPlaylistsV1YoutubePlaylistsGetErrors, GetUserPlaylistsV1YoutubePlaylistsGetResponses, GetUserProfileV1AuthMeGetData, GetUserProfileV1AuthMeGetResponses, HealthCheckV1HealthGetData, HealthCheckV1HealthGetResponses, ListPlaylistsV1ProvidersProviderPlaylistsGetData, ListPlaylistsV1ProvidersProviderPlaylistsGetErrors, ListPlaylistsV1ProvidersProviderPlaylistsGetResponses, ListProvidersV1ProvidersGetData, ListProvidersV1ProvidersGetResponses, LogoutV1AuthLogoutPostData, LogoutV1AuthLogoutPostResponses, MergePlaylistsV1ProvidersProviderPlaylistsMergePostData, MergePlaylistsV1ProvidersProviderPlaylistsMergePostErrors, MergePlaylistsV1ProvidersProviderPlaylistsMergePostResponses, ReadinessCheckV1HealthReadyGetData, ReadinessCheckV1HealthReadyGetResponses, RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostData, RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostErrors, RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostResponses, UpdateSuggestionV1SuggestionsSuggestionIdPutData, UpdateSuggestionV1SuggestionsSuggestionIdPutErrors, UpdateSuggestionV1SuggestionsSuggestionIdPutResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -86,7 +86,9 @@ export const getUserProfileV1AuthMeGet = <ThrowOnError extends boolean = false>(
 /**
  * Health Check
  *
- * Endpoint de health check básico.
+ * Endpoint de health check básico (liveness).
+ * Retorna 200 OK si el proceso está vivo.
+ * Usado por ECS/Kubernetes para liveness probes.
  */
 export const healthCheckV1HealthGet = <ThrowOnError extends boolean = false>(options?: Options<HealthCheckV1HealthGetData, ThrowOnError>) => {
     return (options?.client ?? client).get<HealthCheckV1HealthGetResponses, unknown, ThrowOnError>({
@@ -122,7 +124,10 @@ export const getMetricsV1HealthMetricsGet = <ThrowOnError extends boolean = fals
 /**
  * Readiness Check
  *
- * Endpoint de readiness check para Kubernetes.
+ * Endpoint de readiness check para Kubernetes/ECS.
+ * Retorna 200 OK si el servicio está listo para recibir tráfico.
+ * Retorna 503 si el servicio no está listo (dependencias no disponibles).
+ * Usado por Kubernetes readiness probes y ECS health checks.
  */
 export const readinessCheckV1HealthReadyGet = <ThrowOnError extends boolean = false>(options?: Options<ReadinessCheckV1HealthReadyGetData, ThrowOnError>) => {
     return (options?.client ?? client).get<ReadinessCheckV1HealthReadyGetResponses, unknown, ThrowOnError>({
@@ -258,6 +263,126 @@ export const getSuggestionV1SuggestionsSuggestionIdGet = <ThrowOnError extends b
 export const updateSuggestionV1SuggestionsSuggestionIdPut = <ThrowOnError extends boolean = false>(options: Options<UpdateSuggestionV1SuggestionsSuggestionIdPutData, ThrowOnError>) => {
     return (options.client ?? client).put<UpdateSuggestionV1SuggestionsSuggestionIdPutResponses, UpdateSuggestionV1SuggestionsSuggestionIdPutErrors, ThrowOnError>({
         url: '/v1/suggestions/{suggestion_id}',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
+ * List Providers
+ *
+ * List supported providers and whether each one serves demo data.
+ */
+export const listProvidersV1ProvidersGet = <ThrowOnError extends boolean = false>(options?: Options<ListProvidersV1ProvidersGetData, ThrowOnError>) => {
+    return (options?.client ?? client).get<ListProvidersV1ProvidersGetResponses, unknown, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/v1/providers',
+        ...options
+    });
+};
+
+/**
+ * List Playlists
+ *
+ * Get every playlist of the user on a provider.
+ */
+export const listPlaylistsV1ProvidersProviderPlaylistsGet = <ThrowOnError extends boolean = false>(options: Options<ListPlaylistsV1ProvidersProviderPlaylistsGetData, ThrowOnError>) => {
+    return (options.client ?? client).get<ListPlaylistsV1ProvidersProviderPlaylistsGetResponses, ListPlaylistsV1ProvidersProviderPlaylistsGetErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/v1/providers/{provider}/playlists',
+        ...options
+    });
+};
+
+/**
+ * Create Playlist From Sources
+ *
+ * Create a new playlist by combining other playlists (union, intersection, difference).
+ */
+export const createPlaylistFromSourcesV1ProvidersProviderPlaylistsPost = <ThrowOnError extends boolean = false>(options: Options<CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostData, ThrowOnError>) => {
+    return (options.client ?? client).post<CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostResponses, CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/v1/providers/{provider}/playlists',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
+ * Get Playlist Tracks
+ *
+ * Get all tracks of a playlist, flagging repeated entries.
+ */
+export const getPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGet = <ThrowOnError extends boolean = false>(options: Options<GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetData, ThrowOnError>) => {
+    return (options.client ?? client).get<GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetResponses, GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/v1/providers/{provider}/playlists/{playlist_id}/tracks',
+        ...options
+    });
+};
+
+/**
+ * Remove Playlist Tracks
+ *
+ * Remove several entries from a playlist at once.
+ */
+export const removePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePost = <ThrowOnError extends boolean = false>(options: Options<RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostData, ThrowOnError>) => {
+    return (options.client ?? client).post<RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostResponses, RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/v1/providers/{provider}/playlists/{playlist_id}/tracks/remove',
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers
+        }
+    });
+};
+
+/**
+ * Merge Playlists
+ *
+ * Copy the tracks of several playlists into an existing or a new playlist.
+ */
+export const mergePlaylistsV1ProvidersProviderPlaylistsMergePost = <ThrowOnError extends boolean = false>(options: Options<MergePlaylistsV1ProvidersProviderPlaylistsMergePostData, ThrowOnError>) => {
+    return (options.client ?? client).post<MergePlaylistsV1ProvidersProviderPlaylistsMergePostResponses, MergePlaylistsV1ProvidersProviderPlaylistsMergePostErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/v1/providers/{provider}/playlists/merge',
         ...options,
         headers: {
             'Content-Type': 'application/json',

@@ -1,14 +1,21 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks';
 
+function initials(name: string | null | undefined) {
+  return (name ?? '?')
+    .split(' ')
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
+
 export function AvatarComponent() {
   const { user } = useAuth();
   return (
-    <div className="flex flex-row flex-wrap items-center gap-12">
-      <Avatar>
-        <AvatarImage src={user?.picture || ''} alt={user?.name || 'User'} />
-        <AvatarFallback>CN</AvatarFallback>
-      </Avatar>
-    </div>
+    <Avatar className="size-8">
+      <AvatarImage src={user?.picture || ''} alt={user?.name || 'User'} />
+      <AvatarFallback>{initials(user?.name)}</AvatarFallback>
+    </Avatar>
   );
 }

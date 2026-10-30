@@ -1,4 +1,3 @@
-import './App.css';
 import { ThemeProvider } from './components/theme-provider';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import LandingPage from './pages/landing/index';
