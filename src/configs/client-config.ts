@@ -9,7 +9,7 @@ const getApiBaseUrl = (): string => {
   }
   // Defaults: production API for production builds, local backend otherwise
   return import.meta.env.PROD
-    ? 'https://api.youtube-auto-delete.com'
+    ? 'https://api.playlistsmaster.com'
     : 'http://localhost:8080';
 };
 
