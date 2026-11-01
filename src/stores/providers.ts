@@ -18,6 +18,8 @@ const tracksKey = (provider: ProviderType, playlistId: string) =>
 interface ProvidersActions {
   loadProviders: () => Promise<void>;
   setActiveProvider: (provider: ProviderType) => void;
+  connectProvider: (provider: ProviderType) => Promise<void>;
+  disconnectProvider: (provider: ProviderType) => Promise<void>;
   loadPlaylists: (force?: boolean) => Promise<void>;
   loadTracks: (playlistId: string, force?: boolean) => Promise<void>;
   removeTracks: (playlistId: string, itemIds: string[]) => Promise<boolean>;
@@ -82,6 +84,38 @@ const providersStore = create<ProvidersState>()(
           },
 
           setActiveProvider: (provider) => set({ activeProvider: provider }),
+
+          connectProvider: async (provider) => {
+            const result = await providersService.connectProvider(provider);
+            if (handleServiceError(result, 'Could not start the connection')) {
+              return;
+            }
+            // Leaves the app; the provider redirects back with ?connected=...
+            window.location.assign(result.data!.authorize_url);
+          },
+
+          disconnectProvider: async (provider) => {
+            set({ isMutating: true });
+            const result = await providersService.disconnectProvider(provider);
+            set({ isMutating: false });
+            if (handleServiceError(result, 'Could not disconnect')) return;
+
+            // Drop the real data; the provider falls back to demo playlists
+            set((state) => {
+              const playlists = { ...state.playlists };
+              delete playlists[provider];
+              const tracks = Object.fromEntries(
+                Object.entries(state.tracks).filter(
+                  ([key]) => !key.startsWith(`${provider}:`)
+                )
+              );
+              return { playlists, tracks };
+            });
+            const name = get().providers.find((p) => p.id === provider)?.name;
+            toast.success(`Disconnected ${name ?? provider}`);
+            await get().actions.loadProviders();
+            await get().actions.loadPlaylists(true);
+          },
 
           loadPlaylists: async (force = false) => {
             const provider = get().activeProvider;

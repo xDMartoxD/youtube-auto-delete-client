@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CodeLoginV1AuthExchangePostData, CodeLoginV1AuthExchangePostErrors, CodeLoginV1AuthExchangePostResponses, CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostData, CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostErrors, CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostResponses, CreateSuggestionV1SuggestionsPostData, CreateSuggestionV1SuggestionsPostErrors, CreateSuggestionV1SuggestionsPostResponses, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostData, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostErrors, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostResponses, DeleteSuggestionV1SuggestionsSuggestionIdDeleteData, DeleteSuggestionV1SuggestionsSuggestionIdDeleteErrors, DeleteSuggestionV1SuggestionsSuggestionIdDeleteResponses, DetailedHealthCheckV1HealthDetailedGetData, DetailedHealthCheckV1HealthDetailedGetResponses, GetAllSuggestionsV1SuggestionsGetData, GetAllSuggestionsV1SuggestionsGetResponses, GetMetricsV1HealthMetricsGetData, GetMetricsV1HealthMetricsGetResponses, GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetData, GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetErrors, GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetResponses, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetData, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetErrors, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetResponses, GetSuggestionV1SuggestionsSuggestionIdGetData, GetSuggestionV1SuggestionsSuggestionIdGetErrors, GetSuggestionV1SuggestionsSuggestionIdGetResponses, GetUserPlaylistsV1YoutubePlaylistsGetData, GetUserPlaylistsV1YoutubePlaylistsGetErrors, GetUserPlaylistsV1YoutubePlaylistsGetResponses, GetUserProfileV1AuthMeGetData, GetUserProfileV1AuthMeGetResponses, HealthCheckV1HealthGetData, HealthCheckV1HealthGetResponses, ListPlaylistsV1ProvidersProviderPlaylistsGetData, ListPlaylistsV1ProvidersProviderPlaylistsGetErrors, ListPlaylistsV1ProvidersProviderPlaylistsGetResponses, ListProvidersV1ProvidersGetData, ListProvidersV1ProvidersGetResponses, LogoutV1AuthLogoutPostData, LogoutV1AuthLogoutPostResponses, MergePlaylistsV1ProvidersProviderPlaylistsMergePostData, MergePlaylistsV1ProvidersProviderPlaylistsMergePostErrors, MergePlaylistsV1ProvidersProviderPlaylistsMergePostResponses, ReadinessCheckV1HealthReadyGetData, ReadinessCheckV1HealthReadyGetResponses, RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostData, RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostErrors, RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostResponses, UpdateSuggestionV1SuggestionsSuggestionIdPutData, UpdateSuggestionV1SuggestionsSuggestionIdPutErrors, UpdateSuggestionV1SuggestionsSuggestionIdPutResponses } from './types.gen';
+import type { CodeLoginV1AuthExchangePostData, CodeLoginV1AuthExchangePostErrors, CodeLoginV1AuthExchangePostResponses, ConnectProviderV1ProvidersProviderConnectPostData, ConnectProviderV1ProvidersProviderConnectPostErrors, ConnectProviderV1ProvidersProviderConnectPostResponses, CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostData, CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostErrors, CreatePlaylistFromSourcesV1ProvidersProviderPlaylistsPostResponses, CreateSuggestionV1SuggestionsPostData, CreateSuggestionV1SuggestionsPostErrors, CreateSuggestionV1SuggestionsPostResponses, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostData, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostErrors, DeletePlaylistVideosV1YoutubePlaylistsPlaylistIdDeletePostResponses, DeleteSuggestionV1SuggestionsSuggestionIdDeleteData, DeleteSuggestionV1SuggestionsSuggestionIdDeleteErrors, DeleteSuggestionV1SuggestionsSuggestionIdDeleteResponses, DetailedHealthCheckV1HealthDetailedGetData, DetailedHealthCheckV1HealthDetailedGetResponses, DisconnectProviderV1ProvidersProviderConnectionDeleteData, DisconnectProviderV1ProvidersProviderConnectionDeleteErrors, DisconnectProviderV1ProvidersProviderConnectionDeleteResponses, GetAllSuggestionsV1SuggestionsGetData, GetAllSuggestionsV1SuggestionsGetResponses, GetMetricsV1HealthMetricsGetData, GetMetricsV1HealthMetricsGetResponses, GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetData, GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetErrors, GetPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGetResponses, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetData, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetErrors, GetPlaylistVideosV1YoutubePlaylistsPlaylistIdVideosGetResponses, GetSuggestionV1SuggestionsSuggestionIdGetData, GetSuggestionV1SuggestionsSuggestionIdGetErrors, GetSuggestionV1SuggestionsSuggestionIdGetResponses, GetUserPlaylistsV1YoutubePlaylistsGetData, GetUserPlaylistsV1YoutubePlaylistsGetErrors, GetUserPlaylistsV1YoutubePlaylistsGetResponses, GetUserProfileV1AuthMeGetData, GetUserProfileV1AuthMeGetResponses, HealthCheckV1HealthGetData, HealthCheckV1HealthGetResponses, ListPlaylistsV1ProvidersProviderPlaylistsGetData, ListPlaylistsV1ProvidersProviderPlaylistsGetErrors, ListPlaylistsV1ProvidersProviderPlaylistsGetResponses, ListProvidersV1ProvidersGetData, ListProvidersV1ProvidersGetResponses, LogoutV1AuthLogoutPostData, LogoutV1AuthLogoutPostResponses, MergePlaylistsV1ProvidersProviderPlaylistsMergePostData, MergePlaylistsV1ProvidersProviderPlaylistsMergePostErrors, MergePlaylistsV1ProvidersProviderPlaylistsMergePostResponses, ReadinessCheckV1HealthReadyGetData, ReadinessCheckV1HealthReadyGetResponses, RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostData, RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostErrors, RemovePlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksRemovePostResponses, UpdateSuggestionV1SuggestionsSuggestionIdPutData, UpdateSuggestionV1SuggestionsSuggestionIdPutErrors, UpdateSuggestionV1SuggestionsSuggestionIdPutResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -388,5 +388,41 @@ export const mergePlaylistsV1ProvidersProviderPlaylistsMergePost = <ThrowOnError
             'Content-Type': 'application/json',
             ...options.headers
         }
+    });
+};
+
+/**
+ * Connect Provider
+ *
+ * Start linking the user's account: returns the provider's consent URL.
+ */
+export const connectProviderV1ProvidersProviderConnectPost = <ThrowOnError extends boolean = false>(options: Options<ConnectProviderV1ProvidersProviderConnectPostData, ThrowOnError>) => {
+    return (options.client ?? client).post<ConnectProviderV1ProvidersProviderConnectPostResponses, ConnectProviderV1ProvidersProviderConnectPostErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/v1/providers/{provider}/connect',
+        ...options
+    });
+};
+
+/**
+ * Disconnect Provider
+ *
+ * Unlink the user's account; the provider falls back to demo data.
+ */
+export const disconnectProviderV1ProvidersProviderConnectionDelete = <ThrowOnError extends boolean = false>(options: Options<DisconnectProviderV1ProvidersProviderConnectionDeleteData, ThrowOnError>) => {
+    return (options.client ?? client).delete<DisconnectProviderV1ProvidersProviderConnectionDeleteResponses, DisconnectProviderV1ProvidersProviderConnectionDeleteErrors, ThrowOnError>({
+        security: [
+            {
+                scheme: 'bearer',
+                type: 'http'
+            }
+        ],
+        url: '/v1/providers/{provider}/connection',
+        ...options
     });
 };

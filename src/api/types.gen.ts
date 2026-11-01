@@ -29,6 +29,18 @@ export type AuthSuccessResponse = {
 export type CompositionMode = 'union' | 'intersection' | 'difference';
 
 /**
+ * ConnectResponse
+ */
+export type ConnectResponse = {
+    /**
+     * Authorize Url
+     *
+     * Send the browser here to grant access
+     */
+    authorize_url: string;
+};
+
+/**
  * ContentDetails
  *
  * Video content details.
@@ -529,6 +541,12 @@ export type ProviderInfo = {
      * True when the provider serves demo data
      */
     is_mock: boolean;
+    /**
+     * Connectable
+     *
+     * True when the user can link (or unlink) their own account
+     */
+    connectable: boolean;
 };
 
 /**
@@ -1398,3 +1416,57 @@ export type MergePlaylistsV1ProvidersProviderPlaylistsMergePostResponses = {
 };
 
 export type MergePlaylistsV1ProvidersProviderPlaylistsMergePostResponse = MergePlaylistsV1ProvidersProviderPlaylistsMergePostResponses[keyof MergePlaylistsV1ProvidersProviderPlaylistsMergePostResponses];
+
+export type ConnectProviderV1ProvidersProviderConnectPostData = {
+    body?: never;
+    path: {
+        provider: ProviderType;
+    };
+    query?: never;
+    url: '/v1/providers/{provider}/connect';
+};
+
+export type ConnectProviderV1ProvidersProviderConnectPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ConnectProviderV1ProvidersProviderConnectPostError = ConnectProviderV1ProvidersProviderConnectPostErrors[keyof ConnectProviderV1ProvidersProviderConnectPostErrors];
+
+export type ConnectProviderV1ProvidersProviderConnectPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: ConnectResponse;
+};
+
+export type ConnectProviderV1ProvidersProviderConnectPostResponse = ConnectProviderV1ProvidersProviderConnectPostResponses[keyof ConnectProviderV1ProvidersProviderConnectPostResponses];
+
+export type DisconnectProviderV1ProvidersProviderConnectionDeleteData = {
+    body?: never;
+    path: {
+        provider: ProviderType;
+    };
+    query?: never;
+    url: '/v1/providers/{provider}/connection';
+};
+
+export type DisconnectProviderV1ProvidersProviderConnectionDeleteErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type DisconnectProviderV1ProvidersProviderConnectionDeleteError = DisconnectProviderV1ProvidersProviderConnectionDeleteErrors[keyof DisconnectProviderV1ProvidersProviderConnectionDeleteErrors];
+
+export type DisconnectProviderV1ProvidersProviderConnectionDeleteResponses = {
+    /**
+     * Successful Response
+     */
+    204: void;
+};
+
+export type DisconnectProviderV1ProvidersProviderConnectionDeleteResponse = DisconnectProviderV1ProvidersProviderConnectionDeleteResponses[keyof DisconnectProviderV1ProvidersProviderConnectionDeleteResponses];

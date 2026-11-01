@@ -1,16 +1,12 @@
 import { useEffect, useState } from 'react';
-import {
-  Eraser,
-  FlaskConical,
-  Loader2,
-  Merge,
-  RefreshCw,
-  Sparkles,
-} from 'lucide-react';
+import { toast } from 'sonner';
+import type { ProviderType } from '@/api';
+import { Eraser, Loader2, Merge, RefreshCw, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { CleanupView } from '@/components/cleanup/cleanup-view';
 import { CreateView } from '@/components/create/create-view';
 import { MergeView } from '@/components/merge/merge-view';
+import { ProviderStatus } from '@/components/providers/provider-status';
 import { ProviderSwitcher } from '@/components/providers/provider-switcher';
 import { usePlaylists, useProviders } from '@/hooks';
 import { cn } from '@/lib/utils';
@@ -26,13 +22,32 @@ const TOOLS: { id: Tool; label: string; icon: typeof Eraser }[] = [
 
 /** Signed-in area: pick a service, then a tool. */
 export function Workspace() {
-  const { activeProvider, loadProviders } = useProviders();
+  const { activeProvider, loadProviders, setActiveProvider } = useProviders();
   const { playlists, isLoading, loadPlaylists } = usePlaylists();
   const [tool, setTool] = useState<Tool>('cleanup');
 
   useEffect(() => {
-    loadProviders();
-  }, [loadProviders]);
+    // Returning from a provider's consent page: ?connected=spotify or ?connect_error=...
+    const params = new URLSearchParams(window.location.search);
+    const connected = params.get('connected') as ProviderType | null;
+    const connectError = params.get('connect_error');
+    if (connected || connectError) {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+
+    loadProviders().then(() => {
+      if (connected) {
+        setActiveProvider(connected);
+        toast.success('Account connected', {
+          description: 'Your real playlists are now available.',
+        });
+      } else if (connectError) {
+        toast.error('Could not connect your account', {
+          description: connectError,
+        });
+      }
+    });
+  }, [loadProviders, setActiveProvider]);
 
   useEffect(() => {
     if (activeProvider) loadPlaylists();
@@ -65,20 +80,7 @@ export function Workspace() {
     <div className="space-y-6">
       <ProviderSwitcher />
 
-      {activeProvider?.is_mock && (
-        <div className="flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm">
-          <FlaskConical className="mt-0.5 size-4 shrink-0 text-amber-500" />
-          <p>
-            <span className="font-medium">
-              {activeProvider.name} is in demo mode.
-            </span>{' '}
-            <span className="text-muted-foreground">
-              You’re working with sample playlists; changes are not sent to{' '}
-              {activeProvider.name}.
-            </span>
-          </p>
-        </div>
-      )}
+      {activeProvider && <ProviderStatus provider={activeProvider} />}
 
       <div className="flex items-center justify-between gap-2 border-b">
         <div className="flex gap-1" role="tablist" aria-label="Tools">

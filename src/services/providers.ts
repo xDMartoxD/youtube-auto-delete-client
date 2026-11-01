@@ -7,7 +7,9 @@
 
 import { apiClient } from '@/configs/client-config';
 import {
+  connectProviderV1ProvidersProviderConnectPost,
   createPlaylistFromSourcesV1ProvidersProviderPlaylistsPost,
+  disconnectProviderV1ProvidersProviderConnectionDelete,
   getPlaylistTracksV1ProvidersProviderPlaylistsPlaylistIdTracksGet,
   listPlaylistsV1ProvidersProviderPlaylistsGet,
   listProvidersV1ProvidersGet,
@@ -77,6 +79,24 @@ export function createPlaylistFromSources(
       client: apiClient,
       path: { provider },
       body: request,
+    })
+  );
+}
+
+export function connectProvider(provider: ProviderType) {
+  return toServiceResult(
+    connectProviderV1ProvidersProviderConnectPost({
+      client: apiClient,
+      path: { provider },
+    })
+  );
+}
+
+export function disconnectProvider(provider: ProviderType) {
+  return toServiceResult(
+    disconnectProviderV1ProvidersProviderConnectionDelete({
+      client: apiClient,
+      path: { provider },
     })
   );
 }

@@ -15,13 +15,22 @@ import {
 export function useProviders() {
   const providers = useProvidersList();
   const activeProviderId = useActiveProviderId();
-  const { loadProviders, setActiveProvider } = useProvidersActions();
+  const isMutating = useIsMutating();
+  const {
+    loadProviders,
+    setActiveProvider,
+    connectProvider,
+    disconnectProvider,
+  } = useProvidersActions();
 
   return {
     providers,
     activeProvider: providers.find((p) => p.id === activeProviderId) ?? null,
+    isMutating,
     loadProviders,
     setActiveProvider,
+    connectProvider,
+    disconnectProvider,
   };
 }
 
