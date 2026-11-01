@@ -136,7 +136,14 @@ const providersStore = create<ProvidersState>()(
             }
 
             const removed = result.data?.removed_count ?? 0;
-            toast.success(`Removed ${pluralize(removed, 'track')}`);
+            const requested = result.data?.requested_count ?? itemIds.length;
+            if (removed < requested) {
+              toast.warning(`Removed ${removed} of ${requested} tracks`, {
+                description: 'Some tracks could not be removed. Try again.',
+              });
+            } else {
+              toast.success(`Removed ${pluralize(removed, 'track')}`);
+            }
             await Promise.all([
               get().actions.loadTracks(playlistId, true),
               get().actions.loadPlaylists(true),
