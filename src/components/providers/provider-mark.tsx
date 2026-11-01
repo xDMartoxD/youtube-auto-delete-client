@@ -1,5 +1,5 @@
 import type { ProviderType } from '@/api';
-import { PROVIDER_BRANDS } from '@/constants/providers';
+import { PROVIDER_ICONS } from '@/constants/providers';
 import { cn } from '@/lib/utils';
 
 interface ProviderMarkProps {
@@ -7,19 +7,18 @@ interface ProviderMarkProps {
   className?: string;
 }
 
-/** Small brand-colored tile identifying a provider (no third-party logos). */
+/** The provider's official logo, in its brand color. */
 export function ProviderMark({ provider, className }: ProviderMarkProps) {
-  const brand = PROVIDER_BRANDS[provider];
+  const icon = PROVIDER_ICONS[provider];
   return (
-    <span
+    <svg
+      role="img"
+      viewBox="0 0 24 24"
       aria-hidden
-      className={cn(
-        'inline-flex size-6 shrink-0 items-center justify-center rounded-md text-[10px] font-bold text-white',
-        className
-      )}
-      style={{ backgroundColor: brand.color }}
+      className={cn('size-5 shrink-0', className)}
+      fill={`#${icon.hex}`}
     >
-      {brand.initials}
-    </span>
+      <path d={icon.path} />
+    </svg>
   );
 }

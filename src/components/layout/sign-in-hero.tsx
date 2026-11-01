@@ -46,12 +46,9 @@ export function SignInHero() {
           {(Object.keys(PROVIDER_NAMES) as ProviderType[]).map((provider) => (
             <span
               key={provider}
-              className="bg-card text-muted-foreground flex items-center gap-1.5 rounded-full border py-1 pr-3 pl-1 text-xs font-medium"
+              className="bg-card text-muted-foreground flex items-center gap-1.5 rounded-full border py-1.5 pr-3 pl-2.5 text-xs font-medium"
             >
-              <ProviderMark
-                provider={provider}
-                className="size-5 rounded-full text-[8px]"
-              />
+              <ProviderMark provider={provider} className="size-4" />
               {PROVIDER_NAMES[provider]}
             </span>
           ))}

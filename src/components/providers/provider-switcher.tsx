@@ -20,14 +20,14 @@ export function ProviderSwitcher() {
             aria-pressed={isActive}
             onClick={() => setActiveProvider(provider.id)}
             className={cn(
-              'flex shrink-0 items-center gap-2 rounded-full border py-1.5 pr-3.5 pl-1.5 text-sm font-medium transition-colors',
+              'flex shrink-0 items-center gap-2 rounded-full border py-1.5 pr-3.5 pl-3 text-sm font-medium transition-colors',
               'focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]',
               isActive
                 ? 'border-foreground/20 bg-foreground text-background'
                 : 'bg-card hover:bg-accent text-muted-foreground hover:text-foreground'
             )}
           >
-            <ProviderMark provider={provider.id} className="rounded-full" />
+            <ProviderMark provider={provider.id} />
             {provider.name}
             {provider.is_mock && (
               <span
